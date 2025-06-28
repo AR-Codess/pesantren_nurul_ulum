@@ -17,7 +17,7 @@ class RoleSeeder extends Seeder
         // Buat roles
         $admin = Role::create(['name' => 'admin']);
         $guru = Role::create(['name' => 'guru']);
-        $santri = Role::create(['name' => 'santri']);
+        $user = Role::create(['name' => 'user']);
 
         // Buat user admin
         $adminUser = User::create([
@@ -35,12 +35,12 @@ class RoleSeeder extends Seeder
         ]);
         $guruUser->assignRole('guru');
 
-        // Buat user santri
-        $santriUser = User::create([
-            'name' => 'Santri Pesantren',
-            'email' => 'santri@pondok.test',
+        // Buat user biasa
+        $regularUser = User::create([
+            'name' => 'User Pesantren',
+            'email' => 'user@pondok.test',
             'password' => bcrypt('12345678'),
         ]);
-        $santriUser->assignRole('santri');
+        $regularUser->assignRole('user');
     }
 }

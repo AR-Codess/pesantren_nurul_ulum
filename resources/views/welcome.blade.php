@@ -9,10 +9,10 @@
             <!-- Card Info -->
             <div class="col-md-3">
                 <div class="card text-white bg-primary mb-3">
-                    <div class="card-header">Jumlah Santri</div>
+                    <div class="card-header">Jumlah Pengguna</div>
                     <div class="card-body">
                         <h5 class="card-title">120</h5>
-                        <p class="card-text">Total santri terdaftar saat ini.</p>
+                        <p class="card-text">Total pengguna terdaftar saat ini.</p>
                     </div>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                     <div class="card-header">Pembayaran Lunas</div>
                     <div class="card-body">
                         <h5 class="card-title">100</h5>
-                        <p class="card-text">Santri sudah lunas pembayaran.</p>
+                        <p class="card-text">Pengguna sudah lunas pembayaran.</p>
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Nama Santri</th>
+                            <th>Nama Pengguna</th>
                             <th>Kelas</th>
                             <th>Status</th>
                             <th>Tanggal</th>

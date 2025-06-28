@@ -1,14 +1,30 @@
 <?php
 
 //use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SantriController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\GuruController;
+use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\PembayaranController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 
+// Admin routes
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::resource('/santri', SantriController::class);
+    Route::resource('/users', UserController::class);
+    Route::resource('/guru', GuruController::class);
+    Route::resource('/pembayaran', PembayaranController::class);
+});
+
+// Guru routes
+Route::middleware(['auth', 'role:guru'])->group(function () {
+    Route::resource('/absensi', AbsensiController::class);
+});
+
+// User routes
+Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::get('/absensi/check', [AbsensiController::class, 'check'])->name('absensi.check');
+    Route::get('/pembayaran/user', [PembayaranController::class, 'userIndex'])->name('pembayaran.user');
 });
 
 Route::view('dashboard', 'dashboard')

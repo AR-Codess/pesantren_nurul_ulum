@@ -68,8 +68,9 @@ new class extends Component
                 @else
                 <div class="flex space-x-4">
                     <a href="{{ route('login') }}" class="text-sm font-medium text-gray-500 hover:text-gray-700">{{ __('Log in') }}</a>
+                    {{-- Register link is not being used in this application --}}
                     @if (Route::has('register'))
-                    <a href="{{ route('register') }}" class="text-sm font-medium text-gray-500 hover:text-gray-700">{{ __('Register') }}</a>
+                    {{-- <a href="{{ route('register') }}" class="text-sm font-medium text-gray-500 hover:text-gray-700">{{ __('Register') }}</a> --}}
                     @endif
                 </div>
                 @endif
@@ -122,10 +123,11 @@ new class extends Component
                 <x-responsive-nav-link :href="route('login')" wire:navigate>
                     {{ __('Log in') }}
                 </x-responsive-nav-link>
+                {{-- Register link is not being used in this application --}}
                 @if (Route::has('register'))
-                <x-responsive-nav-link :href="route('register')" wire:navigate>
+                {{-- <x-responsive-nav-link :href="route('register')" wire:navigate>
                     {{ __('Register') }}
-                </x-responsive-nav-link>
+                </x-responsive-nav-link> --}}
                 @endif
             </div>
         </div>

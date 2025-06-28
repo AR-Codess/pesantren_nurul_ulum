@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('absensis', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('santri_id')->constrained('santris')->onDelete('cascade');
+        $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
         $table->date('tanggal');
         $table->enum('status', ['hadir', 'izin', 'sakit', 'alpha']);
         $table->timestamps();

@@ -13,8 +13,8 @@
                         <h1 class="text-3xl font-bold mb-6 text-red-600">Admin Dashboard</h1>
                     @elseif(auth()->user()->hasRole('guru'))
                         <h1 class="text-3xl font-bold mb-6 text-blue-600">Guru Dashboard</h1>
-                    @elseif(auth()->user()->hasRole('santri'))
-                        <h1 class="text-3xl font-bold mb-6 text-green-600">Santri Dashboard</h1>
+                    @elseif(auth()->user()->hasRole('user'))
+                        <h1 class="text-3xl font-bold mb-6 text-green-600">User Dashboard</h1>
                     @else
                         <h1 class="text-3xl font-bold mb-6 text-gray-600">User Dashboard</h1>
                     @endif
@@ -37,8 +37,8 @@
                                 <span class="px-3 py-1 text-xs text-white bg-red-500 rounded-full">Admin</span>
                             @elseif(auth()->user()->hasRole('guru'))
                                 <span class="px-3 py-1 text-xs text-white bg-blue-500 rounded-full">Guru</span>
-                            @elseif(auth()->user()->hasRole('santri'))
-                                <span class="px-3 py-1 text-xs text-white bg-green-500 rounded-full">Santri</span>
+                            @elseif(auth()->user()->hasRole('user'))
+                                <span class="px-3 py-1 text-xs text-white bg-green-500 rounded-full">User</span>
                             @else
                                 <span class="px-3 py-1 text-xs text-white bg-gray-500 rounded-full">User</span>
                             @endif
@@ -49,9 +49,9 @@
                     @if(auth()->user()->hasRole('admin'))
                         <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div class="bg-white p-4 border rounded-lg shadow-sm">
-                                <h3 class="font-bold text-lg mb-2">Kelola Santri</h3>
-                                <p class="text-gray-600 mb-4">Tambah, edit, dan hapus data santri.</p>
-                                <a href="{{ route('santri.index') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Data Santri</a>
+                                <h3 class="font-bold text-lg mb-2">Kelola Pengguna</h3>
+                                <p class="text-gray-600 mb-4">Tambah, edit, dan hapus data pengguna.</p>
+                                <a href="{{ route('users.index') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Data Pengguna</a>
                             </div>
                             
                             <div class="bg-white p-4 border rounded-lg shadow-sm">
@@ -62,7 +62,7 @@
                             
                             <div class="bg-white p-4 border rounded-lg shadow-sm">
                                 <h3 class="font-bold text-lg mb-2">Konfirmasi Pembayaran</h3>
-                                <p class="text-gray-600 mb-4">Lihat dan konfirmasi pembayaran santri.</p>
+                                <p class="text-gray-600 mb-4">Lihat dan konfirmasi pembayaran pengguna.</p>
                                 <a href="{{ route('pembayaran.index') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Data Pembayaran</a>
                             </div>
                         </div>
@@ -70,22 +70,22 @@
                         <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="bg-white p-4 border rounded-lg shadow-sm">
                                 <h3 class="font-bold text-lg mb-2">Kelola Absensi</h3>
-                                <p class="text-gray-600 mb-4">Catat kehadiran santri.</p>
+                                <p class="text-gray-600 mb-4">Catat kehadiran pengguna.</p>
                                 <a href="{{ route('absensi.index') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Data Absensi</a>
                             </div>
                             
                             <div class="bg-white p-4 border rounded-lg shadow-sm">
                                 <h3 class="font-bold text-lg mb-2">Buat Absensi Baru</h3>
-                                <p class="text-gray-600 mb-4">Tambah data absensi santri hari ini.</p>
+                                <p class="text-gray-600 mb-4">Tambah data absensi pengguna hari ini.</p>
                                 <a href="{{ route('absensi.create') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Buat Absensi Baru</a>
                             </div>
                         </div>
-                    @elseif(auth()->user()->hasRole('santri'))
+                    @elseif(auth()->user()->hasRole('user'))
                         <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="bg-white p-4 border rounded-lg shadow-sm">
                                 <h3 class="font-bold text-lg mb-2">Pembayaran</h3>
                                 <p class="text-gray-600 mb-4">Lakukan pembayaran bulanan.</p>
-                                <a href="{{ route('pembayaran.index') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Riwayat Pembayaran</a>
+                                <a href="{{ route('pembayaran.user') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Riwayat Pembayaran</a>
                             </div>
                             
                             <div class="bg-white p-4 border rounded-lg shadow-sm">
