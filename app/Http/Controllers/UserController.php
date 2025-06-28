@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -11,7 +15,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        // Get all santri users with the 'user' role
+        $users = User::role('user')->latest()->get();
+        return view('admin.users.index', compact('users'));
     }
 
     /**
@@ -19,7 +25,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.users.create');
     }
 
     /**
@@ -27,7 +33,29 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'nis' => ['required', 'string', 'max:20', 'unique:users'],
+            'alamat' => ['nullable', 'string'],
+            'no_hp' => ['nullable', 'string', 'max:15'],
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'nis' => $request->nis,
+            'alamat' => $request->alamat,
+            'no_hp' => $request->no_hp,
+        ]);
+
+        // Assign the 'user' role to the new santri
+        $user->assignRole('user');
+
+        return redirect()->route('users.index')
+            ->with('success', 'Data santri berhasil ditambahkan.');
     }
 
     /**
@@ -35,7 +63,8 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        return view('admin.users.show', compact('user'));
     }
 
     /**
@@ -43,7 +72,8 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        return view('admin.users.edit', compact('user'));
     }
 
     /**
@@ -51,7 +81,39 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        
+        $rules = [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$id],
+            'nis' => ['required', 'string', 'max:20', 'unique:users,nis,'.$id],
+            'alamat' => ['nullable', 'string'],
+            'no_hp' => ['nullable', 'string', 'max:15'],
+        ];
+
+        // Only validate password if it's provided
+        if ($request->filled('password')) {
+            $rules['password'] = ['confirmed', Rules\Password::defaults()];
+        }
+
+        $request->validate($rules);
+
+        // Update user data
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->nis = $request->nis;
+        $user->alamat = $request->alamat;
+        $user->no_hp = $request->no_hp;
+        
+        // Update password if provided
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->route('users.index')
+            ->with('success', 'Data santri berhasil diperbarui.');
     }
 
     /**
@@ -59,6 +121,10 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('users.index')
+            ->with('success', 'Data santri berhasil dihapus.');
     }
 }

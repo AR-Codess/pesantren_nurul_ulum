@@ -16,12 +16,9 @@ class DatabaseSeeder extends Seeder
         // Jalankan RoleSeeder untuk membuat users dengan roles
         $this->call([
             RoleSeeder::class,
+            // Tambahkan seeder baru kita
+            UserSeeder::class,
+            GuruSeeder::class,
         ]);
-        
-        // Ini dinonaktifkan karena kita sudah membuat user di RoleSeeder
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
 }

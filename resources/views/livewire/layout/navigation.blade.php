@@ -33,6 +33,18 @@ new class extends Component
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    
+                    @if(auth()->check() && auth()->user()->hasRole('admin'))
+                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                        {{ __('Kelola Santri') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('guru.index')" :active="request()->routeIs('guru.*')">
+                        {{ __('Kelola Guru') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('pembayaran.index')" :active="request()->routeIs('pembayaran.*')">
+                        {{ __('Pembayaran') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -94,6 +106,18 @@ new class extends Component
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            
+            @if(auth()->check() && auth()->user()->hasRole('admin'))
+            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                {{ __('Kelola Santri') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('guru.index')" :active="request()->routeIs('guru.*')">
+                {{ __('Kelola Guru') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('pembayaran.index')" :active="request()->routeIs('pembayaran.*')">
+                {{ __('Pembayaran') }}
+            </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
