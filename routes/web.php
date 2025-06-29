@@ -39,6 +39,11 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/pembayaran/user', [PembayaranController::class, 'userIndex'])->name('pembayaran.user');
 });
 
+// Export Absensi (PDF/Excel) - akses untuk admin dan guru
+Route::middleware(['auth', 'role:admin,guru'])->group(function () {
+    Route::get('/absensi/export/{format}', [AbsensiController::class, 'export'])->name('absensi.export');
+});
+
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
@@ -47,4 +52,4 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

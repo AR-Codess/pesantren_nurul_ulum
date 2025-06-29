@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
+use illmunate\Support\Facades\Hash;
 
 class RoleSeeder extends Seeder
 {
@@ -21,39 +22,45 @@ class RoleSeeder extends Seeder
 
         // Check if admin user exists
         $adminUser = User::where('email', 'admin@pondok.test')->first();
-        
+
         if (!$adminUser) {
             // Create admin user if it doesn't exist
             $adminUser = User::create([
                 'name' => 'Admin Pesantren',
                 'email' => 'admin@pondok.test',
                 'password' => bcrypt('12345678'),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
             $adminUser->assignRole('admin');
         }
 
         // Check if guru user exists
         $guruUser = User::where('email', 'guru@pondok.test')->first();
-        
+
         if (!$guruUser) {
             // Create guru user if it doesn't exist
             $guruUser = User::create([
                 'name' => 'Guru Pesantren',
                 'email' => 'guru@pondok.test',
                 'password' => bcrypt('12345678'),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
             $guruUser->assignRole('guru');
         }
 
         // Check if regular user exists
         $regularUser = User::where('email', 'user@pondok.test')->first();
-        
+
         if (!$regularUser) {
             // Create regular user if it doesn't exist
             $regularUser = User::create([
                 'name' => 'User Pesantren',
                 'email' => 'user@pondok.test',
                 'password' => bcrypt('12345678'),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
             $regularUser->assignRole('user');
         }
