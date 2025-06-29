@@ -125,10 +125,25 @@
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            height: 200px; /* Fixed height for uniformity */
+            object-fit: cover; /* Ensures images maintain aspect ratio */
+            object-position: center; /* Centers the image */
         }
         .gallery-img:hover {
             transform: scale(1.05);
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .gallery-image-wrapper {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        .gallery-item {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Footer */
@@ -223,10 +238,20 @@
         <div class="container">
             <h2 class="text-center mb-5">Galeri Kegiatan Santri</h2>
             <div class="row g-4">
-                <div class="col-md-3"><img src="https://drive.google.com/file/d/16NlgNczyKz23AuN6WCd7wgkstlegWIqv/view?usp=drive_link" class="img-fluid gallery-img" alt="Kegiatan Belajar"></div>
-                <div class="col-md-3"><img src="https://images.unsplash.com/photo-1627917482322-a96b150c7635?q=80&w=300&auto=format&fit=crop" class="img-fluid gallery-img" alt="Olahraga Pagi"></div>
-                <div class="col-md-3"><img src="https://images.unsplash.com/photo-1594411753713-b5a452136e9c?q=80&w=300&auto=format&fit=crop" class="img-fluid gallery-img" alt="Kajian Sore"></div>
-                <div class="col-md-3"><img src="https://images.unsplash.com/photo-1619472322301-73f458693c13?q=80&w=300&auto=format&fit=crop" class="img-fluid gallery-img" alt="Ekstrakurikuler"></div>
+                @forelse($galleryItems as $item)
+                    <div class="col-md-3 mb-4">
+                        <div class="gallery-item">
+                            <div class="gallery-image-wrapper">
+                                <img src="{{ $item->image_url }}" class="img-fluid gallery-img" alt="{{ $item->alt_text }}">
+                            </div>
+                            <p class="text-center mt-2 small">{{ $item->title }}</p>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-12 text-center">
+                        <p>Belum ada foto dalam galeri.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>

@@ -44,6 +44,9 @@ new class extends Component
                     <x-nav-link :href="route('pembayaran.index')" :active="request()->routeIs('pembayaran.*')">
                         {{ __('Pembayaran') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('admin.gallery.index')" :active="request()->routeIs('admin.gallery.*')">
+                        {{ __('Galeri') }}
+                    </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -116,6 +119,9 @@ new class extends Component
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('pembayaran.index')" :active="request()->routeIs('pembayaran.*')">
                 {{ __('Pembayaran') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.gallery.index')" :active="request()->routeIs('admin.gallery.*')">
+                {{ __('Galeri') }}
             </x-responsive-nav-link>
             @endif
         </div>

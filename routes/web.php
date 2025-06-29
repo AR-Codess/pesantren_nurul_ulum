@@ -6,15 +6,22 @@ use App\Http\Controllers\GuruController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome');
+// Replace static welcome page with dynamic content from HomeController
+Route::get('/', [HomeController::class, 'index'])->name('welcome');
 
 // Admin routes
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/financial-report', [AdminController::class, 'financialReport'])->name('admin.financial-report');
     Route::put('/admin/payment/{id}/update-status', [AdminController::class, 'updatePaymentStatus'])->name('admin.update-payment-status');
+    
+    // Gallery management routes
+    Route::resource('/admin/gallery', GalleryController::class)->names('admin.gallery');
+    Route::post('/admin/gallery/update-order', [GalleryController::class, 'updateOrder'])->name('admin.gallery.update-order');
     
     Route::resource('/users', UserController::class);
     Route::resource('/guru', GuruController::class);
