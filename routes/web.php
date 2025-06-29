@@ -15,7 +15,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/financial-report', [AdminController::class, 'financialReport'])->name('admin.financial-report');
     Route::put('/admin/payment/{id}/update-status', [AdminController::class, 'updatePaymentStatus'])->name('admin.update-payment-status');
-    
+
     Route::resource('/users', UserController::class);
     Route::resource('/guru', GuruController::class);
     Route::resource('/pembayaran', PembayaranController::class);
@@ -32,6 +32,11 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/pembayaran/user', [PembayaranController::class, 'userIndex'])->name('pembayaran.user');
 });
 
+// Export Absensi (PDF/Excel) - akses untuk admin dan guru
+Route::middleware(['auth', 'role:admin,guru'])->group(function () {
+    Route::get('/absensi/export/{format}', [AbsensiController::class, 'export'])->name('absensi.export');
+});
+
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
@@ -40,4 +45,4 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

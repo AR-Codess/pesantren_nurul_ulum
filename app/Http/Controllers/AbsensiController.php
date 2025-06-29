@@ -6,6 +6,9 @@ use App\Models\User;
 use App\Models\Absensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AbsensiExport;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class AbsensiController extends Controller
 {
@@ -32,16 +35,29 @@ class AbsensiController extends Controller
      */
     public function store(Request $request)
     {
+        // Validasi input absensi harian (banyak santri sekaligus)
         $request->validate([
-            'user_id' => 'required|exists:users,id',
             'tanggal' => 'required|date',
-            'status' => 'required|in:hadir,izin,sakit,alpha',
+            'absensi' => 'required|array',
         ]);
 
-        Absensi::create($request->all());
+        $tanggal = $request->tanggal;
+        $absensiData = $request->absensi;
+
+        foreach ($absensiData as $userId => $data) {
+            Absensi::updateOrCreate(
+                [
+                    'user_id' => $userId,
+                    'tanggal' => $tanggal,
+                ],
+                [
+                    'status' => $data['status'] ?? 'hadir',
+                ]
+            );
+        }
 
         return redirect()->route('absensi.index')
-            ->with('success', 'Absensi berhasil ditambahkan.');
+            ->with('success', 'Absensi harian berhasil disimpan.');
     }
 
     /**
@@ -97,7 +113,25 @@ class AbsensiController extends Controller
         $absensis = Absensi::where('user_id', Auth::id())
             ->latest()
             ->get();
-            
+
         return view('absensi.check', compact('absensis'));
+    }
+
+    /**
+     * Export absensi to PDF or Excel
+     */
+    public function export(Request $request, $format)
+    {
+        $tanggal = $request->tanggal ?? date('Y-m-d');
+        $absensis = Absensi::with('user')->where('tanggal', $tanggal)->get();
+
+        if ($format === 'excel') {
+            return Excel::download(new AbsensiExport($tanggal), 'absensi_' . $tanggal . '.xlsx');
+        } elseif ($format === 'pdf') {
+            $pdf = PDF::loadView('absensi.export-pdf', compact('absensis', 'tanggal'));
+            return $pdf->download('absensi_' . $tanggal . '.pdf');
+        } else {
+            abort(404);
+        }
     }
 }

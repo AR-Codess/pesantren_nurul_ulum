@@ -77,7 +77,7 @@
                         
                         <div class="mb-4">
                             <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal Pembayaran</label>
-                            <input type="date" id="tanggal" name="tanggal" value="{{ old('tanggal', $pembayaran->tanggal->format('Y-m-d')) }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                            <input type="date" id="tanggal" name="tanggal" value="{{ old('tanggal', \Carbon\Carbon::parse($pembayaran->tanggal)->format('Y-m-d')) }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                         </div>
                         
                         <div class="mb-4">
