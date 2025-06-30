@@ -26,7 +26,7 @@ class GuruSeeder extends Seeder
                 'nama_pendidik' => 'KH. Abdullah Hakim',
                 'email' => 'abdullah@pondok.test',
                 'password' => '12345678',
-                'nik' => 'G2025001', // Will be used for login
+                'nik' => '2025001', // Diubah ke integer string
                 'jenis_kelamin' => true, // Male
                 'tempat_lahir' => 'Surabaya',
                 'tanggal_lahir' => '1975-05-15',
@@ -41,7 +41,7 @@ class GuruSeeder extends Seeder
                 'nama_pendidik' => 'Ustadz Muhammad Yusuf',
                 'email' => 'yusuf@pondok.test',
                 'password' => '12345678',
-                'nik' => 'G2025002',
+                'nik' => '2025002',
                 'jenis_kelamin' => true, // Male
                 'tempat_lahir' => 'Sidoarjo',
                 'tanggal_lahir' => '1980-07-20',
@@ -56,7 +56,7 @@ class GuruSeeder extends Seeder
                 'nama_pendidik' => 'Ustadzah Siti Aminah',
                 'email' => 'aminah@pondok.test',
                 'password' => '12345678',
-                'nik' => 'G2025003',
+                'nik' => '2025003',
                 'jenis_kelamin' => false, // Female
                 'tempat_lahir' => 'Sidoarjo',
                 'tanggal_lahir' => '1985-03-10',
@@ -71,7 +71,7 @@ class GuruSeeder extends Seeder
                 'nama_pendidik' => 'Ustadz Ahmad Husaini',
                 'email' => 'husaini@pondok.test',
                 'password' => '12345678',
-                'nik' => 'G2025004',
+                'nik' => '2025004',
                 'jenis_kelamin' => true, // Male
                 'tempat_lahir' => 'Surabaya',
                 'tanggal_lahir' => '1978-11-25',
@@ -86,7 +86,7 @@ class GuruSeeder extends Seeder
                 'nama_pendidik' => 'Ustadzah Fatimah Zahra',
                 'email' => 'fatimahz@pondok.test',
                 'password' => '12345678',
-                'nik' => 'G2025005',
+                'nik' => '2025005',
                 'jenis_kelamin' => false, // Female
                 'tempat_lahir' => 'Gresik',
                 'tanggal_lahir' => '1982-09-05',
