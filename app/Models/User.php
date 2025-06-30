@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -18,12 +20,18 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'nis',
+        'nik',
+        'nama_santri',
+        'spp_bulanan',
+        'jenis_kelamin',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'provinsi',
+        'kabupaten',
         'alamat',
         'no_hp',
+        'email',
+        'password',
     ];
 
     /**
@@ -44,8 +52,34 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            'tanggal_lahir' => 'date',
+            'jenis_kelamin' => 'boolean',
+            'spp_bulanan' => 'integer',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * The kelas that the santri belongs to.
+     */
+    public function kelas(): BelongsToMany
+    {
+        return $this->belongsToMany(Kelas::class, 'kelas_user');
+    }
+
+    /**
+     * The absensi records for the santri.
+     */
+    public function absensi(): HasMany
+    {
+        return $this->hasMany(Absensi::class);
+    }
+
+    /**
+     * The pembayaran records for the santri.
+     */
+    public function pembayaran(): HasMany
+    {
+        return $this->hasMany(Pembayaran::class);
     }
 }

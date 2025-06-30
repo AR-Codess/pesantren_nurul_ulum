@@ -11,15 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pembayarans', function (Blueprint $table) {
+        Schema::create('pembayaran', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('bulan');
-            $table->decimal('jumlah', 10, 2);
-            $table->enum('status', ['pending', 'confirmed', 'rejected'])->default('pending');
-            $table->date('tanggal');
-            $table->string('metode_pembayaran');
-            $table->text('catatan')->nullable();
+            $table->integer('total_tagihan');
+            $table->date('periode_pembayaran');
+            $table->string('status', 50); // 'Belum Bayar', 'Menunggu Pembayaran', 'Belum Lunas', 'Lunas'
+            $table->boolean('is_cicilan')->default(false);
+            $table->foreignId('admin_id_pembuat')->constrained('admin')->onDelete('cascade');
+            $table->timestamps();
+        });
+
+        // Create detail_pembayaran table
+        Schema::create('detail_pembayaran', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('pembayaran_id')->constrained('pembayaran')->onDelete('cascade');
+            $table->integer('jumlah_dibayar');
+            $table->dateTime('tanggal_bayar');
+            $table->string('metode_pembayaran', 50);
+            $table->string('bukti_pembayaran')->nullable();
+            $table->foreignId('admin_id_pencatat')->constrained('admin')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -29,6 +40,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pembayarans');
+        Schema::dropIfExists('detail_pembayaran');
+        Schema::dropIfExists('pembayaran');
     }
 };

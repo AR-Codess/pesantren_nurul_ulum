@@ -41,28 +41,12 @@
                             <input type="file" name="image" id="image" required
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIF. Ukuran maks: 2MB.</p>
-                            {{-- <p class="text-xs text-red-600 font-semibold mt-1">Rekomendasi ukuran: 600×400 piksel (landscape) untuk tampilan yang seragam di galeri.</p> --}}
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="alt_text" class="block text-sm font-medium text-gray-700">Teks Alternatif</label>
-                            <input type="text" name="alt_text" id="alt_text" value="{{ old('alt_text') }}" 
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
-                            <p class="text-xs text-gray-500 mt-1">Deskripsi singkat untuk aksesibilitas dan SEO.</p>
                         </div>
 
                         <div class="mb-4">
                             <label for="description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
                             <textarea name="description" id="description" rows="3" 
                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('description') }}</textarea>
-                        </div>
-
-                        <div class="mb-4">
-                            <div class="flex items-center">
-                                <input type="checkbox" name="active" id="active" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" {{ old('active') ? 'checked' : 'checked' }}>
-                                <label for="active" class="ml-2 block text-sm text-gray-700">Aktif</label>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">Jika dicentang, foto akan ditampilkan di galeri.</p>
                         </div>
 
                         <div class="flex items-center justify-end">

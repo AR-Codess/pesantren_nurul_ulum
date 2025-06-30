@@ -19,7 +19,7 @@ class AdminController extends Controller
     {
         // Count statistics for dashboard
         $totalUsers = User::role('user')->count();
-        $totalGurus = User::role('guru')->count();
+        $totalGuru = User::role('guru')->count();
         
         // Get payment summary for the current month
         $currentMonth = Carbon::now()->format('Y-m');
@@ -37,7 +37,7 @@ class AdminController extends Controller
         
         return view('admin.index', compact(
             'totalUsers', 
-            'totalGurus', 
+            'totalGuru', 
             'confirmedPayments', 
             'pendingPayments', 
             'rejectedPayments'

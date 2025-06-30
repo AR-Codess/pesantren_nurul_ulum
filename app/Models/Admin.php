@@ -2,12 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Admin extends Model
+class Admin extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable, HasRoles;
+    
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'admin';
+
+    /**
+     * The guard name that this model uses.
+     *
+     * @var string
+     */
+    protected $guard_name = 'admin';
     
     /**
      * The attributes that are mass assignable.
@@ -15,17 +32,62 @@ class Admin extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id',
-        'department',
-        'employee_id',
-        'office_location',
+        'name',
+        'email',
+        'password',
     ];
 
     /**
-     * Get the user associated with the admin.
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
      */
-    public function user()
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        return $this->belongsTo(User::class);
+        return [
+            'password' => 'hashed',
+        ];
+    }
+
+    /**
+     * Get the galeri created by this admin.
+     */
+    public function galeri(): HasMany
+    {
+        return $this->hasMany(Gallery::class);
+    }
+
+    /**
+     * Get the news articles created by this admin.
+     */
+    public function beritas(): HasMany
+    {
+        return $this->hasMany(Berita::class);
+    }
+
+    /**
+     * Get the payment records created by this admin.
+     */
+    public function pembayaranCreate(): HasMany
+    {
+        return $this->hasMany(Pembayaran::class, 'admin_id_pembuat');
+    }
+
+    /**
+     * Get the payment detail records recorded by this admin.
+     */
+    public function detailPembayaran(): HasMany
+    {
+        return $this->hasMany(DetailPembayaran::class, 'admin_id_pencatat');
     }
 }

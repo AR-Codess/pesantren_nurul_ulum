@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Guru;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class GuruSeeder extends Seeder
 {
@@ -15,124 +14,105 @@ class GuruSeeder extends Seeder
      */
     public function run(): void
     {
+        // Create guru role for the guru guard if it doesn't exist
+        $guruRole = Role::firstOrCreate([
+            'name' => 'guru',
+            'guard_name' => 'guru' // Using guru guard to match Guru model's guard
+        ]);
+
         // Sample data for guru (teachers)
         $guruData = [
             [
-                'name' => 'KH. Abdullah Hakim',
+                'nama_pendidik' => 'KH. Abdullah Hakim',
                 'email' => 'abdullah@pondok.test',
                 'password' => '12345678',
-                'nip' => 'G2025001',
+                'nik' => 'G2025001', // Will be used for login
+                'jenis_kelamin' => true, // Male
+                'tempat_lahir' => 'Surabaya',
+                'tanggal_lahir' => '1975-05-15',
+                'pendidikan_terakhir' => 'S2 Universitas Al-Azhar',
+                'riwayat_pendidikan_keagamaan' => 'Pondok Pesantren Tebuireng, Pondok Pesantren Gontor',
+                'no_telepon' => '081234567001',
+                'provinsi' => 'Jawa Timur',
+                'kabupaten' => 'Surabaya',
                 'alamat' => 'Jl. Pesantren No. 1, Surabaya',
-                'no_hp' => '081234567001',
-                'bidang' => 'Tahfidz Al-Quran',
             ],
             [
-                'name' => 'Ustadz Muhammad Yusuf',
+                'nama_pendidik' => 'Ustadz Muhammad Yusuf',
                 'email' => 'yusuf@pondok.test',
                 'password' => '12345678',
-                'nip' => 'G2025002',
+                'nik' => 'G2025002',
+                'jenis_kelamin' => true, // Male
+                'tempat_lahir' => 'Sidoarjo',
+                'tanggal_lahir' => '1980-07-20',
+                'pendidikan_terakhir' => 'S1 IAIN Surabaya',
+                'riwayat_pendidikan_keagamaan' => 'Pondok Pesantren Sidogiri',
+                'no_telepon' => '081234567002',
+                'provinsi' => 'Jawa Timur',
+                'kabupaten' => 'Surabaya',
                 'alamat' => 'Jl. Masjid No. 15, Surabaya',
-                'no_hp' => '081234567002',
-                'bidang' => 'Fiqih',
             ],
             [
-                'name' => 'Ustadzah Siti Aminah',
+                'nama_pendidik' => 'Ustadzah Siti Aminah',
                 'email' => 'aminah@pondok.test',
                 'password' => '12345678',
-                'nip' => 'G2025003',
+                'nik' => 'G2025003',
+                'jenis_kelamin' => false, // Female
+                'tempat_lahir' => 'Sidoarjo',
+                'tanggal_lahir' => '1985-03-10',
+                'pendidikan_terakhir' => 'S1 UIN Sunan Ampel',
+                'riwayat_pendidikan_keagamaan' => 'Pondok Pesantren Langitan',
+                'no_telepon' => '081234567003',
+                'provinsi' => 'Jawa Timur',
+                'kabupaten' => 'Sidoarjo',
                 'alamat' => 'Jl. Santri No. 23, Sidoarjo',
-                'no_hp' => '081234567003',
-                'bidang' => 'Bahasa Arab',
             ],
             [
-                'name' => 'Ustadz Ahmad Husaini',
+                'nama_pendidik' => 'Ustadz Ahmad Husaini',
                 'email' => 'husaini@pondok.test',
                 'password' => '12345678',
-                'nip' => 'G2025004',
+                'nik' => 'G2025004',
+                'jenis_kelamin' => true, // Male
+                'tempat_lahir' => 'Surabaya',
+                'tanggal_lahir' => '1978-11-25',
+                'pendidikan_terakhir' => 'S2 Universitas Al-Azhar',
+                'riwayat_pendidikan_keagamaan' => 'Pondok Pesantren Lirboyo',
+                'no_telepon' => '081234567004',
+                'provinsi' => 'Jawa Timur',
+                'kabupaten' => 'Surabaya',
                 'alamat' => 'Jl. Kyai No. 45, Surabaya',
-                'no_hp' => '081234567004',
-                'bidang' => 'Hadits',
             ],
             [
-                'name' => 'Ustadzah Fatimah Zahra',
+                'nama_pendidik' => 'Ustadzah Fatimah Zahra',
                 'email' => 'fatimahz@pondok.test',
                 'password' => '12345678',
-                'nip' => 'G2025005',
+                'nik' => 'G2025005',
+                'jenis_kelamin' => false, // Female
+                'tempat_lahir' => 'Gresik',
+                'tanggal_lahir' => '1982-09-05',
+                'pendidikan_terakhir' => 'S1 IAIN Surabaya',
+                'riwayat_pendidikan_keagamaan' => 'Pondok Pesantren Mambaul Ulum',
+                'no_telepon' => '081234567005',
+                'provinsi' => 'Jawa Timur',
+                'kabupaten' => 'Gresik',
                 'alamat' => 'Jl. Al-Hikmah No. 56, Gresik',
-                'no_hp' => '081234567005',
-                'bidang' => 'Aqidah',
-            ],
-            [
-                'name' => 'Ustadz Ibrahim Hasan',
-                'email' => 'ibrahim@pondok.test',
-                'password' => '12345678',
-                'nip' => 'G2025006',
-                'alamat' => 'Jl. Nurul Iman No. 67, Surabaya',
-                'no_hp' => '081234567006',
-                'bidang' => 'Tafsir',
-            ],
-            [
-                'name' => 'Ustadz Ali Zainal',
-                'email' => 'alizainal@pondok.test',
-                'password' => '12345678',
-                'nip' => 'G2025007',
-                'alamat' => 'Jl. Al-Ikhlas No. 78, Jombang',
-                'no_hp' => '081234567007',
-                'bidang' => 'Matematika',
-            ],
-            [
-                'name' => 'Ustadzah Khadijah Putri',
-                'email' => 'khadijah@pondok.test',
-                'password' => '12345678',
-                'nip' => 'G2025008',
-                'alamat' => 'Jl. Barokah No. 89, Surabaya',
-                'no_hp' => '081234567008',
-                'bidang' => 'IPA',
             ],
         ];
 
-        // Create users with guru role and their related guru profile
+        // Create guru records
         foreach ($guruData as $data) {
-            // Check if user with this email already exists
-            $existingUser = User::where('email', $data['email'])->first();
-            if ($existingUser) {
-                // Skip creating this user
+            // Check if guru with this NIK already exists
+            $existingGuru = Guru::where('nik', $data['nik'])->first();
+            if ($existingGuru) {
+                // Skip creating this guru
                 continue;
             }
             
-            // Store bidang (subject) temporarily, we'll need to remove it since it's not in the gurus table
-            $bidang = $data['bidang'];
-            unset($data['bidang']);
+            $password = $data['password']; // Store temporarily
+            $data['password'] = Hash::make($password); // Hash the password
             
-            $nip = $data['nip']; // Store NIP temporarily
-            unset($data['nip']);  // Remove from user data
-            
-            // Extract guru-specific data
-            $alamat = $data['alamat'];
-            $no_hp = $data['no_hp'];
-            
-            // Remove guru-specific data from user array
-            unset($data['alamat']);
-            unset($data['no_hp']);
-            
-            // Set NIP as NIS in User model
-            $data['nis'] = $nip;
-            
-            // Hash the password
-            $password = $data['password'];
-            $data['password'] = Hash::make($password);
-            
-            // Create user
-            $user = User::create($data);
-            $user->assignRole('guru');
-            
-            // Create related guru profile with the fields that exist in the table
-            Guru::create([
-                'user_id' => $user->id,
-                'nip' => $nip,
-                'alamat' => $alamat,
-                'no_hp' => $no_hp
-            ]);
+            $guru = Guru::create($data);
+            $guru->assignRole($guruRole);
         }
     }
 }

@@ -17,8 +17,8 @@ class GuruController extends Controller
     public function index()
     {
         // Get all guru users with the 'guru' role
-        $gurus = User::role('guru')->latest()->get();
-        return view('admin.guru.index', compact('gurus'));
+        $guru = User::role('guru')->latest()->get();
+        return view('admin.guru.index', compact('guru'));
     }
 
     /**
