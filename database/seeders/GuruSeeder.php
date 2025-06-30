@@ -26,7 +26,7 @@ class GuruSeeder extends Seeder
                 'nama_pendidik' => 'KH. Abdullah Hakim',
                 'email' => 'abdullah@pondok.test',
                 'password' => '12345678',
-                'nik' => '2025001', // Diubah ke integer string
+                'nik' => '3201011505750001', // 16 digit NIK unik
                 'jenis_kelamin' => true, // Male
                 'tempat_lahir' => 'Surabaya',
                 'tanggal_lahir' => '1975-05-15',
@@ -41,7 +41,7 @@ class GuruSeeder extends Seeder
                 'nama_pendidik' => 'Ustadz Muhammad Yusuf',
                 'email' => 'yusuf@pondok.test',
                 'password' => '12345678',
-                'nik' => '2025002',
+                'nik' => '3201012007800002', // 16 digit NIK unik
                 'jenis_kelamin' => true, // Male
                 'tempat_lahir' => 'Sidoarjo',
                 'tanggal_lahir' => '1980-07-20',
@@ -56,7 +56,7 @@ class GuruSeeder extends Seeder
                 'nama_pendidik' => 'Ustadzah Siti Aminah',
                 'email' => 'aminah@pondok.test',
                 'password' => '12345678',
-                'nik' => '2025003',
+                'nik' => '3201011003850003', // 16 digit NIK unik
                 'jenis_kelamin' => false, // Female
                 'tempat_lahir' => 'Sidoarjo',
                 'tanggal_lahir' => '1985-03-10',
@@ -71,7 +71,7 @@ class GuruSeeder extends Seeder
                 'nama_pendidik' => 'Ustadz Ahmad Husaini',
                 'email' => 'husaini@pondok.test',
                 'password' => '12345678',
-                'nik' => '2025004',
+                'nik' => '3201012511780004', // 16 digit NIK unik
                 'jenis_kelamin' => true, // Male
                 'tempat_lahir' => 'Surabaya',
                 'tanggal_lahir' => '1978-11-25',
@@ -86,7 +86,7 @@ class GuruSeeder extends Seeder
                 'nama_pendidik' => 'Ustadzah Fatimah Zahra',
                 'email' => 'fatimahz@pondok.test',
                 'password' => '12345678',
-                'nik' => '2025005',
+                'nik' => '3201010509820005', // 16 digit NIK unik
                 'jenis_kelamin' => false, // Female
                 'tempat_lahir' => 'Gresik',
                 'tanggal_lahir' => '1982-09-05',

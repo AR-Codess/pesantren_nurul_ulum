@@ -12,8 +12,8 @@ use Livewire\Form;
 
 class LoginForm extends Form
 {
-    #[Validate('required|string|email')]
-    public string $email = '';
+    #[Validate('required|string')]
+    public string $login = '';
 
     #[Validate('required|string')]
     public string $password = '';
@@ -30,11 +30,33 @@ class LoginForm extends Form
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only(['email', 'password']), $this->remember)) {
-            RateLimiter::hit($this->throttleKey());
+        $login = $this->login;
+        $password = $this->password;
+        $remember = $this->remember;
 
+        // Deteksi tipe login
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            // Login sebagai admin
+            $guard = 'admin';
+            $credentials = ['email' => $login, 'password' => $password];
+        } elseif (preg_match('/^\d{16}$/', $login)) {
+            // Login sebagai guru (NIK 16 digit)
+            $guard = 'guru';
+            $credentials = ['nik' => $login, 'password' => $password];
+        } elseif (preg_match('/^\d+$/', $login)) {
+            // Login sebagai user/santri (NIS)
+            $guard = 'web';
+            $credentials = ['nis' => $login, 'password' => $password];
+        } else {
             throw ValidationException::withMessages([
-                'form.email' => trans('auth.failed'),
+                'form.login' => 'Format login tidak valid. Masukkan email, NIS, atau NIK.'
+            ]);
+        }
+
+        if (!Auth::guard($guard)->attempt($credentials, $remember)) {
+            RateLimiter::hit($this->throttleKey());
+            throw ValidationException::withMessages([
+                'form.login' => trans('auth.failed'),
             ]);
         }
 
@@ -55,7 +77,7 @@ class LoginForm extends Form
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'form.email' => trans('auth.throttle', [
+            'form.login' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -67,6 +89,6 @@ class LoginForm extends Form
      */
     protected function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+        return Str::transliterate(Str::lower($this->login).'|'.request()->ip());
     }
 }
