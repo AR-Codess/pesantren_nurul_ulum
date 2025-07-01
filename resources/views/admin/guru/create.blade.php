@@ -30,22 +30,81 @@
                     <form action="{{ route('guru.store') }}" method="POST">
                         @csrf
 
-                        <div class="mb-4">
-                            <label for="name" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
-                            <input type="text" name="name" id="name" value="{{ old('name') }}" required 
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="mb-4">
+                                <label for="nama_pendidik" class="block text-sm font-medium text-gray-700">Nama Lengkap <span class="text-red-600">*</span></label>
+                                <input type="text" name="nama_pendidik" id="nama_pendidik" value="{{ old('nama_pendidik') }}" required 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="nik" class="block text-sm font-medium text-gray-700">NIK <span class="text-red-600">*</span></label>
+                                <input type="text" name="nik" id="nik" value="{{ old('nik') }}" required
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="email" class="block text-sm font-medium text-gray-700">Email <span class="text-red-600">*</span></label>
+                                <input type="email" name="email" id="email" value="{{ old('email') }}" required 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700">Jenis Kelamin</label>
+                                <select name="jenis_kelamin" id="jenis_kelamin" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                                    <option value="1" {{ old('jenis_kelamin') === '1' ? 'selected' : '' }}>Laki-laki</option>
+                                    <option value="0" {{ old('jenis_kelamin') === '0' ? 'selected' : '' }}>Perempuan</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="tempat_lahir" class="block text-sm font-medium text-gray-700">Tempat Lahir</label>
+                                <input type="text" name="tempat_lahir" id="tempat_lahir" value="{{ old('tempat_lahir') }}" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
+                                <input type="date" name="tanggal_lahir" id="tanggal_lahir" value="{{ old('tanggal_lahir') }}" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="pendidikan_terakhir" class="block text-sm font-medium text-gray-700">Pendidikan Terakhir</label>
+                                <input type="text" name="pendidikan_terakhir" id="pendidikan_terakhir" value="{{ old('pendidikan_terakhir') }}" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="bidang" class="block text-sm font-medium text-gray-700">Bidang/Mata Pelajaran</label>
+                                <input type="text" name="bidang" id="bidang" value="{{ old('bidang') }}" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="no_telepon" class="block text-sm font-medium text-gray-700">Nomor HP</label>
+                                <input type="text" name="no_telepon" id="no_telepon" value="{{ old('no_telepon') }}" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="provinsi" class="block text-sm font-medium text-gray-700">Provinsi</label>
+                                <input type="text" name="provinsi" id="provinsi" value="{{ old('provinsi') }}" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="kabupaten" class="block text-sm font-medium text-gray-700">Kabupaten</label>
+                                <input type="text" name="kabupaten" id="kabupaten" value="{{ old('kabupaten') }}" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            </div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" name="email" id="email" value="{{ old('email') }}" required 
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="nip" class="block text-sm font-medium text-gray-700">Nomor Induk Pengajar (NIP)</label>
-                            <input type="text" name="nip" id="nip" value="{{ old('nip') }}" required 
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            <label for="riwayat_pendidikan_keagamaan" class="block text-sm font-medium text-gray-700">Riwayat Pendidikan Keagamaan</label>
+                            <textarea name="riwayat_pendidikan_keagamaan" id="riwayat_pendidikan_keagamaan" rows="3" 
+                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('riwayat_pendidikan_keagamaan') }}</textarea>
                         </div>
 
                         <div class="mb-4">
@@ -55,25 +114,13 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="no_hp" class="block text-sm font-medium text-gray-700">Nomor HP</label>
-                            <input type="text" name="no_hp" id="no_hp" value="{{ old('no_hp') }}" 
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="bidang" class="block text-sm font-medium text-gray-700">Bidang/Mata Pelajaran</label>
-                            <input type="text" name="bidang" id="bidang" value="{{ old('bidang') }}" 
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                            <label for="password" class="block text-sm font-medium text-gray-700">Password <span class="text-red-600">*</span></label>
                             <input type="password" name="password" id="password" required 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                         </div>
 
                         <div class="mb-4">
-                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Konfirmasi Password</label>
+                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Konfirmasi Password <span class="text-red-600">*</span></label>
                             <input type="password" name="password_confirmation" id="password_confirmation" required 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                         </div>

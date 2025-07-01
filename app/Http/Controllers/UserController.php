@@ -13,11 +13,25 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->input('search');
+        $perPage = $request->input('per_page', 4); // Changed from 10 to 4 records per page
+
         // Get all santri users with the 'user' role
-        $users = User::role('user')->latest()->get();
-        return view('admin.users.index', compact('users'));
+        $users = User::role('user')
+            ->when($search, function ($query, $search) {
+                return $query->where(function ($q) use ($search) {
+                    $q->where('nama_santri', 'like', '%' . $search . '%')
+                      ->orWhere('nis', 'like', '%' . $search . '%')
+                      ->orWhere('email', 'like', '%' . $search . '%');
+                });
+            })
+            ->latest()
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return view('admin.users.index', compact('users', 'search', 'perPage'));
     }
 
     /**

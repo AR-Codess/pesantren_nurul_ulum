@@ -21,36 +21,86 @@
                             <p class="mt-1 max-w-2xl text-sm text-gray-500">Detail data personal dan akademik.</p>
                         </div>
                         <div class="border-t border-gray-200">
-                            <dl>
-                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Nama Lengkap</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->nama_pendidik }}</dd>
-                                </div>
-                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Email</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->email }}</dd>
-                                </div>
-                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Nomor Induk Pengajar (NIK)</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->nik }}</dd>
-                                </div>
-                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Alamat</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->alamat ?? '-' }}</dd>
-                                </div>
-                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Nomor HP</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->no_telepon ?? '-' }}</dd>
-                                </div>
-                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Bidang/Mata Pelajaran</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->bidang ?? '-' }}</dd>
-                                </div>
-                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Tanggal Bergabung</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->created_at->format('d F Y') }}</dd>
-                                </div>
-                            </dl>
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Field
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Value
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">ID</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $guru->id }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Nomor Induk Pengajar (NIK)</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $guru->nik ?: '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Nama Lengkap</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $guru->nama_pendidik ?: '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Jenis Kelamin</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ isset($guru->jenis_kelamin) ? ($guru->jenis_kelamin ? 'Laki-laki' : 'Perempuan') : '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Tempat Lahir</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $guru->tempat_lahir ?: '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Tanggal Lahir</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $guru->tanggal_lahir ? $guru->tanggal_lahir->format('d F Y') : '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Pendidikan Terakhir</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $guru->pendidikan_terakhir ?: '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Riwayat Pendidikan Keagamaan</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $guru->riwayat_pendidikan_keagamaan ?: '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Email</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $guru->email ?: '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Nomor HP</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $guru->no_telepon ?: '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Provinsi</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $guru->provinsi ?: '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Kabupaten</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $guru->kabupaten ?: '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Alamat</td>
+                                        <td class="px-6 py-4 text-sm text-gray-900">{{ $guru->alamat ?: '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Bidang/Mata Pelajaran</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {{ $guru->bidang ?? '-' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Tanggal Bergabung</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $guru->created_at ? $guru->created_at->format('d F Y') : '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Terakhir Diperbarui</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $guru->updated_at ? $guru->updated_at->format('d F Y') : '-' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     

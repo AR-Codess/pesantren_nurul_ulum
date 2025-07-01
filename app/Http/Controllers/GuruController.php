@@ -14,11 +14,24 @@ class GuruController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Get all guru records from the guru table directly
-        $guru = Guru::latest()->get();
-        return view('admin.guru.index', compact('guru'));
+        $search = $request->input('search');
+        $perPage = $request->input('per_page', 4); // Changed from 10 to 4 records per page
+
+        // Get guru records with search and pagination
+        $guru = Guru::when($search, function ($query, $search) {
+                return $query->where(function ($q) use ($search) {
+                    $q->where('nama_pendidik', 'like', '%' . $search . '%')
+                      ->orWhere('nik', 'like', '%' . $search . '%')
+                      ->orWhere('email', 'like', '%' . $search . '%');
+                });
+            })
+            ->latest()
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return view('admin.guru.index', compact('guru', 'search', 'perPage'));
     }
 
     /**
@@ -35,34 +48,38 @@ class GuruController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'nama_pendidik' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:guru'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'nip' => ['required', 'string', 'max:20', 'unique:users,nis'], // Using NIS field for NIP
+            'nik' => ['required', 'string', 'max:20', 'unique:guru'], // Changed from nullable to required
             'alamat' => ['nullable', 'string'],
-            'no_hp' => ['nullable', 'string', 'max:15'],
+            'no_telepon' => ['nullable', 'string', 'max:15'],
+            'jenis_kelamin' => ['nullable'],
+            'tempat_lahir' => ['nullable', 'string'],
+            'tanggal_lahir' => ['nullable', 'date'],
+            'pendidikan_terakhir' => ['nullable', 'string'],
+            'riwayat_pendidikan_keagamaan' => ['nullable', 'string'],
+            'provinsi' => ['nullable', 'string'],
+            'kabupaten' => ['nullable', 'string'],
             'bidang' => ['nullable', 'string', 'max:100'],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
+        Guru::create([
+            'nama_pendidik' => $request->nama_pendidik,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'nis' => $request->nip, // Using NIS field for NIP
+            'nik' => $request->nik,
             'alamat' => $request->alamat,
-            'no_hp' => $request->no_hp,
+            'no_telepon' => $request->no_telepon,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'pendidikan_terakhir' => $request->pendidikan_terakhir,
+            'riwayat_pendidikan_keagamaan' => $request->riwayat_pendidikan_keagamaan,
+            'provinsi' => $request->provinsi,
+            'kabupaten' => $request->kabupaten,
+            'bidang' => $request->bidang,
         ]);
-
-        // Create guru details if we have a Guru model with additional fields
-        if ($request->filled('bidang')) {
-            Guru::create([
-                'user_id' => $user->id,
-                'bidang' => $request->bidang
-            ]);
-        }
-
-        // Assign the 'guru' role
-        $user->assignRole('guru');
 
         return redirect()->route('guru.index')
             ->with('success', 'Data guru berhasil ditambahkan.');
@@ -73,8 +90,8 @@ class GuruController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::findOrFail($id);
-        return view('admin.guru.show', compact('user'));
+        $guru = Guru::findOrFail($id);
+        return view('admin.guru.show', compact('guru'));
     }
 
     /**
@@ -82,9 +99,8 @@ class GuruController extends Controller
      */
     public function edit(string $id)
     {
-        $user = User::findOrFail($id);
-        $guru = Guru::where('user_id', $user->id)->first();
-        return view('admin.guru.edit', compact('user', 'guru'));
+        $guru = Guru::findOrFail($id);
+        return view('admin.guru.edit', compact('guru'));
     }
 
     /**
@@ -92,14 +108,20 @@ class GuruController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $user = User::findOrFail($id);
+        $guru = Guru::findOrFail($id);
         
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$id],
-            'nip' => ['required', 'string', 'max:20', 'unique:users,nis,'.$id], // Using NIS field for NIP
+            'nama_pendidik' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:guru,email,'.$id],
             'alamat' => ['nullable', 'string'],
-            'no_hp' => ['nullable', 'string', 'max:15'],
+            'no_telepon' => ['nullable', 'string', 'max:15'],
+            'jenis_kelamin' => ['nullable'],
+            'tempat_lahir' => ['nullable', 'string'],
+            'tanggal_lahir' => ['nullable', 'date'],
+            'pendidikan_terakhir' => ['nullable', 'string'],
+            'riwayat_pendidikan_keagamaan' => ['nullable', 'string'],
+            'provinsi' => ['nullable', 'string'],
+            'kabupaten' => ['nullable', 'string'],
             'bidang' => ['nullable', 'string', 'max:100'],
         ];
 
@@ -110,26 +132,26 @@ class GuruController extends Controller
 
         $request->validate($rules);
 
-        // Update user data
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->nis = $request->nip; // Using NIS field for NIP
-        $user->alamat = $request->alamat;
-        $user->no_hp = $request->no_hp;
+        // Update guru data
+        $guru->nama_pendidik = $request->nama_pendidik;
+        $guru->email = $request->email;
+        $guru->alamat = $request->alamat;
+        $guru->no_telepon = $request->no_telepon;
+        $guru->jenis_kelamin = $request->jenis_kelamin;
+        $guru->tempat_lahir = $request->tempat_lahir;
+        $guru->tanggal_lahir = $request->tanggal_lahir;
+        $guru->pendidikan_terakhir = $request->pendidikan_terakhir;
+        $guru->riwayat_pendidikan_keagamaan = $request->riwayat_pendidikan_keagamaan;
+        $guru->provinsi = $request->provinsi;
+        $guru->kabupaten = $request->kabupaten;
+        $guru->bidang = $request->bidang;
         
         // Update password if provided
         if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+            $guru->password = Hash::make($request->password);
         }
 
-        $user->save();
-        
-        // Update guru details
-        if ($request->filled('bidang')) {
-            $guru = Guru::firstOrCreate(['user_id' => $user->id]);
-            $guru->bidang = $request->bidang;
-            $guru->save();
-        }
+        $guru->save();
 
         return redirect()->route('guru.index')
             ->with('success', 'Data guru berhasil diperbarui.');
@@ -140,13 +162,8 @@ class GuruController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = User::findOrFail($id);
-        
-        // Delete guru details if exists
-        Guru::where('user_id', $user->id)->delete();
-        
-        // Delete user
-        $user->delete();
+        $guru = Guru::findOrFail($id);
+        $guru->delete();
 
         return redirect()->route('guru.index')
             ->with('success', 'Data guru berhasil dihapus.');
