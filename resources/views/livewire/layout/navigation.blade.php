@@ -2,6 +2,7 @@
 
 use App\Livewire\Actions\Logout;
 use Livewire\Volt\Component;
+use Illuminate\Support\Facades\Auth;
 
 new class extends Component
 {
@@ -12,7 +13,47 @@ new class extends Component
     {
         $logout();
 
-        $this->redirect('/', navigate: true);
+        $this->redirect(route('login'), navigate: true);
+    }
+    
+    /**
+     * Check if the user is authenticated in any guard
+     */
+    public function isLoggedIn(): bool
+    {
+        return Auth::guard('web')->check() || Auth::guard('admin')->check() || Auth::guard('guru')->check();
+    }
+    
+    /**
+     * Get the current authenticated user's name across all guards
+     */
+    public function getUserName(): string
+    {
+        if (Auth::guard('admin')->check()) {
+            return Auth::guard('admin')->user()->name;
+        } elseif (Auth::guard('guru')->check()) {
+            return Auth::guard('guru')->user()->nama_pendidik;
+        } elseif (Auth::guard('web')->check()) {
+            return Auth::guard('web')->user()->nama_santri ?? Auth::guard('web')->user()->name;
+        }
+        
+        return '';
+    }
+    
+    /**
+     * Get the current authenticated user's email across all guards
+     */
+    public function getUserEmail(): string
+    {
+        if (Auth::guard('admin')->check()) {
+            return Auth::guard('admin')->user()->email;
+        } elseif (Auth::guard('guru')->check()) {
+            return Auth::guard('guru')->user()->email;
+        } elseif (Auth::guard('web')->check()) {
+            return Auth::guard('web')->user()->email;
+        }
+        
+        return '';
     }
 }; ?>
 
@@ -23,7 +64,7 @@ new class extends Component
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ url('/') }}" wire:navigate>
+                    <a href="{{ url('/') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
@@ -34,7 +75,7 @@ new class extends Component
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     
-                    @if(auth()->check() && auth()->user()->hasRole('admin'))
+                    @if(Auth::guard('admin')->check() || (Auth::guard('web')->check() && Auth::guard('web')->user()->hasRole('admin')))
                     <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                         {{ __('Kelola Santri') }}
                     </x-nav-link>
@@ -53,11 +94,11 @@ new class extends Component
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                @if (auth()->check())
+                @if ($this->isLoggedIn())
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
+                            <div x-data="{{ json_encode(['name' => $this->getUserName()]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -110,7 +151,7 @@ new class extends Component
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
             
-            @if(auth()->check() && auth()->user()->hasRole('admin'))
+            @if(Auth::guard('admin')->check() || (Auth::guard('web')->check() && Auth::guard('web')->user()->hasRole('admin')))
             <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                 {{ __('Kelola Santri') }}
             </x-responsive-nav-link>
@@ -127,11 +168,11 @@ new class extends Component
         </div>
 
         <!-- Responsive Settings Options -->
-        @if (auth()->check())
+        @if ($this->isLoggedIn())
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
-                <div class="font-medium text-base text-gray-800" x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
-                <div class="font-medium text-sm text-gray-500">{{ auth()->user()->email }}</div>
+                <div class="font-medium text-base text-gray-800" x-data="{{ json_encode(['name' => $this->getUserName()]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
+                <div class="font-medium text-sm text-gray-500">{{ $this->getUserEmail() }}</div>
             </div>
 
             <div class="mt-3 space-y-1">

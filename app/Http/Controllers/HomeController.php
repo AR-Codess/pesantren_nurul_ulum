@@ -12,16 +12,19 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Get active gallery items ordered by the order field
-        $galleryItems = Gallery::where('active', true)
-                              ->orderBy('order', 'asc')
-                              ->get();
+        // Get gallery items ordered by newest first
+        $galleryItems = Gallery::orderBy('id', 'desc')->get();
         
         // Add image display information
         $galleryItems->each(function($item) {
-            $item->image_url = filter_var($item->image_path, FILTER_VALIDATE_URL) 
-                ? $item->image_path 
-                : asset('storage/' . $item->image_path);
+            // Menggunakan nama kolom yang benar yaitu path_gambar
+            $item->image_url = filter_var($item->path_gambar, FILTER_VALIDATE_URL)
+                ? $item->path_gambar
+                : asset('storage/' . $item->path_gambar);
+            
+            // Tambahkan property untuk kompatibilitas dengan view
+            $item->title = $item->judul;
+            $item->description = $item->deskripsi;
         });
         
         return view('welcome', compact('galleryItems'));

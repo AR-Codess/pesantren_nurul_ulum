@@ -14,7 +14,7 @@ class GalleryController extends Controller
      */
     public function index()
     {
-        $galleries = Gallery::orderBy('order', 'asc')->get();
+        $galleries = Gallery::orderBy('id', 'desc')->get();
         return view('admin.gallery.index', compact('galleries'));
     }
 
@@ -39,18 +39,13 @@ class GalleryController extends Controller
         ]);
 
         // Handle image upload
-        $path = $request->file('image')->store('galleries', 'public');
-
-        // Find the highest order value
-        $maxOrder = Gallery::max('order');
+        $path = $request->file('image')->store('galeri', 'public');
 
         Gallery::create([
-            'title' => $request->title,
-            'image_path' => $path,
-            'alt_text' => $request->alt_text ?? $request->title,
-            'description' => $request->description,
-            'active' => $request->has('active') ? 1 : 0,
-            'order' => $maxOrder + 1,
+            'judul' => $request->title,
+            'path_gambar' => $path,
+            'deskripsi' => $request->description,
+            'admin_id' => auth()->id(), // Pastikan admin_id terisi
         ]);
 
         return redirect()->route('admin.gallery.index')->with('success', 'Gambar berhasil ditambahkan.');
@@ -89,20 +84,18 @@ class GalleryController extends Controller
         ]);
 
         $data = [
-            'title' => $request->title,
-            'alt_text' => $request->alt_text ?? $request->title,
-            'description' => $request->description,
-            'active' => $request->has('active') ? 1 : 0,
+            'judul' => $request->title,
+            'deskripsi' => $request->description,
         ];
 
         // Handle image upload if a new image is provided
         if ($request->hasFile('image')) {
             // Delete the old image if it exists and is not a URL
-            if ($gallery->image_path && !filter_var($gallery->image_path, FILTER_VALIDATE_URL)) {
-                Storage::disk('public')->delete($gallery->image_path);
+            if ($gallery->path_gambar && !filter_var($gallery->path_gambar, FILTER_VALIDATE_URL)) {
+                Storage::disk('public')->delete($gallery->path_gambar);
             }
             
-            $data['image_path'] = $request->file('image')->store('galleries', 'public');
+            $data['path_gambar'] = $request->file('image')->store('galeri', 'public');
         }
 
         $gallery->update($data);
@@ -118,8 +111,8 @@ class GalleryController extends Controller
         $gallery = Gallery::findOrFail($id);
         
         // Delete the image file if it's not a URL
-        if (!filter_var($gallery->image_path, FILTER_VALIDATE_URL)) {
-            Storage::disk('public')->delete($gallery->image_path);
+        if (!filter_var($gallery->path_gambar, FILTER_VALIDATE_URL)) {
+            Storage::disk('public')->delete($gallery->path_gambar);
         }
         
         $gallery->delete();
@@ -129,14 +122,14 @@ class GalleryController extends Controller
 
     /**
      * Update the order of gallery items.
+     * 
+     * Catatan: Karena tabel galeri tidak memiliki kolom 'order',
+     * fungsi ini telah disesuaikan untuk tidak melakukan update.
      */
     public function updateOrder(Request $request)
     {
-        $items = $request->items;
-        
-        foreach ($items as $item) {
-            Gallery::find($item['id'])->update(['order' => $item['order']]);
-        }
+        // Fungsi ini dipertahankan untuk kompatibilitas dengan frontend yang mungkin masih memanggil endpoint ini
+        // tetapi tidak melakukan update karena kolom order tidak ada
         
         return response()->json(['success' => true]);
     }

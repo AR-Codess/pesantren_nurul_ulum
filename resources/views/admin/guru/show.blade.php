@@ -24,43 +24,41 @@
                             <dl>
                                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Nama Lengkap</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $user->name }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->nama_pendidik }}</dd>
                                 </div>
                                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Email</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $user->email }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->email }}</dd>
                                 </div>
                                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Nomor Induk Pengajar (NIP)</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $user->nis }}</dd>
+                                    <dt class="text-sm font-medium text-gray-500">Nomor Induk Pengajar (NIK)</dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->nik }}</dd>
                                 </div>
                                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Alamat</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $user->alamat ?? '-' }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->alamat ?? '-' }}</dd>
                                 </div>
                                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Nomor HP</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $user->no_hp ?? '-' }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->no_telepon ?? '-' }}</dd>
                                 </div>
                                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Bidang/Mata Pelajaran</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        {{ App\Models\Guru::where('user_id', $user->id)->first()->bidang ?? '-' }}
-                                    </dd>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->bidang ?? '-' }}</dd>
                                 </div>
                                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Tanggal Bergabung</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $user->created_at->format('d F Y') }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $guru->created_at->format('d F Y') }}</dd>
                                 </div>
                             </dl>
                         </div>
                     </div>
                     
                     <div class="mt-6 flex space-x-4">
-                        <a href="{{ route('guru.edit', $user->id) }}" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">
+                        <a href="{{ route('guru.edit', $guru->id) }}" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">
                             Edit Data
                         </a>
-                        <form action="{{ route('guru.destroy', $user->id) }}" method="POST" 
+                        <form action="{{ route('guru.destroy', $guru->id) }}" method="POST" 
                               onsubmit="return confirm('Apakah Anda yakin ingin menghapus data guru ini?');">
                             @csrf
                             @method('DELETE')

@@ -28,7 +28,7 @@
                         <table class="w-full text-sm text-left text-gray-500">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-100">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3">NIP</th>
+                                    <th scope="col" class="px-6 py-3">NIK</th>
                                     <th scope="col" class="px-6 py-3">Nama</th>
                                     <th scope="col" class="px-6 py-3">Email</th>
                                     <th scope="col" class="px-6 py-3">Bidang</th>
@@ -37,19 +37,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($gurus as $guru)
+                                @forelse($guru as $g)
                                     <tr class="bg-white border-b hover:bg-gray-50">
-                                        <td class="px-6 py-4">{{ $guru->nis }}</td>
-                                        <td class="px-6 py-4">{{ $guru->name }}</td>
-                                        <td class="px-6 py-4">{{ $guru->email }}</td>
-                                        <td class="px-6 py-4">
-                                            {{ App\Models\Guru::where('user_id', $guru->id)->first()->bidang ?? '-' }}
-                                        </td>
-                                        <td class="px-6 py-4">{{ $guru->no_hp ?? '-' }}</td>
+                                        <td class="px-6 py-4">{{ $g->nik }}</td>
+                                        <td class="px-6 py-4">{{ $g->nama_pendidik }}</td>
+                                        <td class="px-6 py-4">{{ $g->email }}</td>
+                                        <td class="px-6 py-4">{{ $g->bidang ?? '-' }}</td>
+                                        <td class="px-6 py-4">{{ $g->no_telepon ?? '-' }}</td>
                                         <td class="px-6 py-4 flex space-x-2">
-                                            <a href="{{ route('guru.show', $guru->id) }}" class="font-medium text-blue-600 hover:underline">Lihat</a>
-                                            <a href="{{ route('guru.edit', $guru->id) }}" class="font-medium text-green-600 hover:underline">Edit</a>
-                                            <form action="{{ route('guru.destroy', $guru->id) }}" method="POST" class="inline"
+                                            <a href="{{ route('guru.show', $g->id) }}" class="font-medium text-blue-600 hover:underline">Lihat</a>
+                                            <a href="{{ route('guru.edit', $g->id) }}" class="font-medium text-green-600 hover:underline">Edit</a>
+                                            <form action="{{ route('guru.destroy', $g->id) }}" method="POST" class="inline"
                                                   onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                                 @csrf
                                                 @method('DELETE')

@@ -20,7 +20,7 @@
                         </div>
                         <div class="bg-green-100 p-4 rounded-lg shadow">
                             <h3 class="font-bold text-lg text-green-800">Total Guru</h3>
-                            <p class="text-3xl font-bold">{{ $totalGurus }}</p>
+                            <p class="text-3xl font-bold">{{ $totalGuru }}</p>
                         </div>
                         <div class="bg-yellow-100 p-4 rounded-lg shadow">
                             <h3 class="font-bold text-lg text-yellow-800">Pembayaran Pending</h3>

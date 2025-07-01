@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Pembayaran extends Model
 {
@@ -14,7 +16,7 @@ class Pembayaran extends Model
      *
      * @var string
      */
-    protected $table = 'pembayarans';
+    protected $table = 'pembayaran';
 
     /**
      * The attributes that are mass assignable.
@@ -23,18 +25,45 @@ class Pembayaran extends Model
      */
     protected $fillable = [
         'user_id',
-        'bulan',
-        'jumlah',
+        'total_tagihan',
+        'periode_pembayaran',
         'status',
-        'tanggal',
-        'metode_pembayaran',
+        'is_cicilan',
+        'admin_id_pembuat',
     ];
 
     /**
-     * Get the user that owns the payment.
+     * The attributes that should be cast.
+     *
+     * @var array
      */
-    public function user()
+    protected $casts = [
+        'periode_pembayaran' => 'date',
+        'is_cicilan' => 'boolean',
+        'total_tagihan' => 'integer',
+    ];
+
+    /**
+     * Get the santri (user) that owns the payment.
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the admin who created this payment record.
+     */
+    public function adminPembuat(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'admin_id_pembuat');
+    }
+
+    /**
+     * Get the payment details for this payment.
+     */
+    public function detailPembayaran(): HasMany
+    {
+        return $this->hasMany(DetailPembayaran::class);
     }
 }

@@ -12,7 +12,10 @@ class Logout
      */
     public function __invoke(): void
     {
+        // Logout from all possible guards
         Auth::guard('web')->logout();
+        Auth::guard('admin')->logout();
+        Auth::guard('guru')->logout();
 
         Session::invalidate();
         Session::regenerateToken();

@@ -19,12 +19,12 @@ class AdminController extends Controller
     {
         // Count statistics for dashboard
         $totalUsers = User::role('user')->count();
-        $totalGurus = User::role('guru')->count();
+        $totalGuru = User::role('guru')->count();
         
         // Get payment summary for the current month
         $currentMonth = Carbon::now()->format('Y-m');
         $paymentStats = Pembayaran::selectRaw('status, COUNT(*) as count')
-                        ->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$currentMonth])
+                        ->whereRaw("DATE_FORMAT(periode_pembayaran, '%Y-%m') = ?", [$currentMonth])
                         ->groupBy('status')
                         ->get()
                         ->pluck('count', 'status')
@@ -37,7 +37,7 @@ class AdminController extends Controller
         
         return view('admin.index', compact(
             'totalUsers', 
-            'totalGurus', 
+            'totalGuru', 
             'confirmedPayments', 
             'pendingPayments', 
             'rejectedPayments'
@@ -55,12 +55,12 @@ class AdminController extends Controller
         
         if ($period === 'monthly') {
             // Get monthly report for selected year and month
-            $payments = Pembayaran::whereYear('tanggal', $year)
-                        ->whereMonth('tanggal', $month)
+            $payments = Pembayaran::whereYear('periode_pembayaran', $year)
+                        ->whereMonth('periode_pembayaran', $month)
                         ->get();
                         
-            $totalAmount = $payments->where('status', 'confirmed')->sum('jumlah');
-            $pendingAmount = $payments->where('status', 'pending')->sum('jumlah');
+            $totalAmount = $payments->where('status', 'confirmed')->sum('total_tagihan');
+            $pendingAmount = $payments->where('status', 'pending')->sum('total_tagihan');
             
             return view('admin.financial-report', compact(
                 'payments', 
@@ -72,15 +72,15 @@ class AdminController extends Controller
             ));
         } else {
             // Get yearly report for selected year
-            $monthlyData = Pembayaran::selectRaw('MONTH(tanggal) as month, SUM(CASE WHEN status = "confirmed" THEN jumlah ELSE 0 END) as confirmed_amount')
-                        ->whereYear('tanggal', $year)
-                        ->groupBy(DB::raw('MONTH(tanggal)'))
+            $monthlyData = Pembayaran::selectRaw('MONTH(periode_pembayaran) as month, SUM(CASE WHEN status = "confirmed" THEN total_tagihan ELSE 0 END) as confirmed_amount')
+                        ->whereYear('periode_pembayaran', $year)
+                        ->groupBy(DB::raw('MONTH(periode_pembayaran)'))
                         ->orderBy('month')
                         ->get();
             
-            $totalYearlyAmount = Pembayaran::whereYear('tanggal', $year)
+            $totalYearlyAmount = Pembayaran::whereYear('periode_pembayaran', $year)
                                ->where('status', 'confirmed')
-                               ->sum('jumlah');
+                               ->sum('total_tagihan');
             
             return view('admin.financial-report', compact(
                 'monthlyData', 

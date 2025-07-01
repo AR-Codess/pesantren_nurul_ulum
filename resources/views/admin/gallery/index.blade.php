@@ -39,25 +39,19 @@
                     
                     <div id="gallery-items" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                         @forelse($galleries as $gallery)
-                            <div class="bg-white border rounded-lg overflow-hidden shadow-md cursor-move gallery-item" data-id="{{ $gallery->id }}" data-order="{{ $gallery->order }}">
+                            <div class="bg-white border rounded-lg overflow-hidden shadow-md cursor-move gallery-item" data-id="{{ $gallery->id }}">
                                 <div class="relative pb-60 overflow-hidden">
-                                    <img src="{{ filter_var($gallery->image_path, FILTER_VALIDATE_URL) ? $gallery->image_path : asset('storage/' . $gallery->image_path) }}" 
-                                         alt="{{ $gallery->alt_text }}"
+                                    <img src="{{ filter_var($gallery->path_gambar, FILTER_VALIDATE_URL) ? $gallery->path_gambar : asset('storage/' . $gallery->path_gambar) }}" 
+                                         alt="{{ $gallery->judul }}"
                                          class="absolute inset-0 h-full w-full object-cover object-center">
-                                    
-                                    @if(!$gallery->active)
-                                        <div class="absolute inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-                                            <span class="text-white text-lg font-bold bg-red-500 px-3 py-1 rounded">Tidak Aktif</span>
-                                        </div>
-                                    @endif
                                 </div>
                                 <div class="p-4">
-                                    <h3 class="font-bold text-lg mb-2">{{ $gallery->title }}</h3>
-                                    @if($gallery->description)
-                                        <p class="text-gray-700 text-sm mb-3">{{ Str::limit($gallery->description, 100) }}</p>
+                                    <h3 class="font-bold text-lg mb-2">{{ $gallery->judul }}</h3>
+                                    @if($gallery->deskripsi)
+                                        <p class="text-gray-700 text-sm mb-3">{{ Str::limit($gallery->deskripsi, 100) }}</p>
                                     @endif
                                     <div class="flex justify-between items-center mt-4">
-                                        <span class="text-gray-500 text-sm order-label">Urutan: {{ $gallery->order }}</span>
+                                        <span class="text-gray-500 text-sm">ID: {{ $gallery->id }}</span>
                                         <div class="flex space-x-2">
                                             <a href="{{ route('admin.gallery.edit', $gallery->id) }}" class="font-medium text-green-600 hover:underline">Edit</a>
                                             <form action="{{ route('admin.gallery.destroy', $gallery->id) }}" method="POST" class="inline"

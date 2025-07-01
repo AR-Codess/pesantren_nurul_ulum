@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Absensi extends Model
 {
@@ -14,7 +15,7 @@ class Absensi extends Model
      *
      * @var string
      */
-    protected $table = 'absensis';
+    protected $table = 'absensi';
 
     /**
      * The attributes that are mass assignable.
@@ -23,15 +24,42 @@ class Absensi extends Model
      */
     protected $fillable = [
         'user_id',
+        'kelas_id',
+        'guru_id',
         'tanggal',
         'status',
     ];
 
     /**
-     * Get the user that owns the attendance record.
+     * The attributes that should be cast.
+     *
+     * @var array
      */
-    public function user()
+    protected $casts = [
+        'tanggal' => 'date'
+    ];
+
+    /**
+     * Get the santri (user) that owns the attendance record.
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the kelas associated with this attendance record.
+     */
+    public function kelas(): BelongsTo
+    {
+        return $this->belongsTo(Kelas::class);
+    }
+
+    /**
+     * Get the guru who recorded this attendance.
+     */
+    public function guru(): BelongsTo
+    {
+        return $this->belongsTo(Guru::class);
     }
 }

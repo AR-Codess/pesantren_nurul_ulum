@@ -17,8 +17,8 @@ class AbsensiController extends Controller
      */
     public function index()
     {
-        $absensis = Absensi::with('user')->latest()->get();
-        return view('absensi.index', compact('absensis'));
+        $absensi = Absensi::with('user')->latest()->get();
+        return view('absensi.index', compact('absensi'));
     }
 
     /**
@@ -110,11 +110,11 @@ class AbsensiController extends Controller
      */
     public function check()
     {
-        $absensis = Absensi::where('user_id', Auth::id())
+        $absensi = Absensi::where('user_id', Auth::id())
             ->latest()
             ->get();
 
-        return view('absensi.check', compact('absensis'));
+        return view('absensi.check', compact('absensi'));
     }
 
     /**
@@ -123,12 +123,12 @@ class AbsensiController extends Controller
     public function export(Request $request, $format)
     {
         $tanggal = $request->tanggal ?? date('Y-m-d');
-        $absensis = Absensi::with('user')->where('tanggal', $tanggal)->get();
+        $absensi = Absensi::with('user')->where('tanggal', $tanggal)->get();
 
         if ($format === 'excel') {
             return Excel::download(new AbsensiExport($tanggal), 'absensi_' . $tanggal . '.xlsx');
         } elseif ($format === 'pdf') {
-            $pdf = PDF::loadView('absensi.export-pdf', compact('absensis', 'tanggal'));
+            $pdf = PDF::loadView('absensi.export-pdf', compact('absensi', 'tanggal'));
             return $pdf->download('absensi_' . $tanggal . '.pdf');
         } else {
             abort(404);

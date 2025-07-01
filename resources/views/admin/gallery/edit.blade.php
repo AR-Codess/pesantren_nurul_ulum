@@ -32,42 +32,27 @@
 
                         <div class="mb-4">
                             <label for="title" class="block text-sm font-medium text-gray-700">Judul Foto</label>
-                            <input type="text" name="title" id="title" value="{{ old('title', $gallery->title) }}" required 
+                            <input type="text" name="title" id="title" value="{{ old('title', $gallery->judul) }}" required 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                         </div>
 
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">Foto Saat Ini</label>
                             <div class="mt-2 mb-4">
-                                <img src="{{ filter_var($gallery->image_path, FILTER_VALIDATE_URL) ? $gallery->image_path : asset('storage/' . $gallery->image_path) }}" 
-                                     alt="{{ $gallery->alt_text }}" 
+                                <img src="{{ filter_var($gallery->path_gambar, FILTER_VALIDATE_URL) ? $gallery->path_gambar : asset('storage/' . $gallery->path_gambar) }}" 
+                                     alt="{{ $gallery->judul }}" 
                                      class="w-60 h-auto object-cover border rounded">
                             </div>
                             <label for="image" class="block text-sm font-medium text-gray-700">Ganti Foto (opsional)</label>
                             <input type="file" name="image" id="image"
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             <p class="text-xs text-gray-500 mt-1">Biarkan kosong jika tidak ingin mengganti foto.</p>
-                            {{-- <p class="text-xs text-red-600 font-semibold mt-1">Rekomendasi ukuran: 600×400 piksel (landscape) untuk tampilan yang seragam di galeri.</p> --}}
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="alt_text" class="block text-sm font-medium text-gray-700">Teks Alternatif</label>
-                            <input type="text" name="alt_text" id="alt_text" value="{{ old('alt_text', $gallery->alt_text) }}" 
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                         </div>
 
                         <div class="mb-4">
                             <label for="description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
                             <textarea name="description" id="description" rows="3" 
-                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('description', $gallery->description) }}</textarea>
-                        </div>
-
-                        <div class="mb-4">
-                            <div class="flex items-center">
-                                <input type="checkbox" name="active" id="active" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" {{ old('active', $gallery->active) ? 'checked' : '' }}>
-                                <label for="active" class="ml-2 block text-sm text-gray-700">Aktif</label>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">Jika dicentang, foto akan ditampilkan di galeri.</p>
+                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('description', $gallery->deskripsi) }}</textarea>
                         </div>
 
                         <div class="flex items-center justify-end">

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('welcome');
 
 // Admin routes
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth:admin', 'role:admin|admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/financial-report', [AdminController::class, 'financialReport'])->name('admin.financial-report');
     Route::put('/admin/payment/{id}/update-status', [AdminController::class, 'updatePaymentStatus'])->name('admin.update-payment-status');
@@ -29,27 +29,29 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 });
 
 // Guru routes
-Route::middleware(['auth', 'role:guru'])->group(function () {
+Route::middleware(['auth:guru', 'role:guru|guru'])->group(function () {
     Route::resource('/absensi', AbsensiController::class);
 });
 
 // User routes
-Route::middleware(['auth', 'role:user'])->group(function () {
+Route::middleware(['auth:web', 'role:user|web'])->group(function () {
     Route::get('/absensi/check', [AbsensiController::class, 'check'])->name('absensi.check');
     Route::get('/pembayaran/user', [PembayaranController::class, 'userIndex'])->name('pembayaran.user');
 });
 
 // Export Absensi (PDF/Excel) - akses untuk admin dan guru
-Route::middleware(['auth', 'role:admin,guru'])->group(function () {
+Route::middleware(['auth:admin,guru', 'role:admin|admin,guru|guru'])->group(function () {
     Route::get('/absensi/export/{format}', [AbsensiController::class, 'export'])->name('absensi.export');
 });
 
+// Dashboard route accessible by any authenticated user
 Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth:web,admin,guru', 'verified'])
     ->name('dashboard');
 
+// Profile route accessible by any authenticated user
 Route::view('profile', 'profile')
-    ->middleware(['auth'])
+    ->middleware(['auth:web,admin,guru'])
     ->name('profile');
 
 require __DIR__ . '/auth.php';
