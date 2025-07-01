@@ -48,25 +48,7 @@
 
                     <!-- Role-specific dashboard content -->
                     @if(auth()->user()->hasRole('admin'))
-                        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="bg-white p-4 border rounded-lg shadow-sm">
-                                <h3 class="font-bold text-lg mb-2">Kelola Pengguna</h3>
-                                <p class="text-gray-600 mb-4">Tambah, edit, dan hapus data pengguna.</p>
-                                <a href="{{ route('users.index') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Data Pengguna</a>
-                            </div>
-                            
-                            <div class="bg-white p-4 border rounded-lg shadow-sm">
-                                <h3 class="font-bold text-lg mb-2">Kelola Guru</h3>
-                                <p class="text-gray-600 mb-4">Tambah, edit, dan hapus data guru.</p>
-                                <a href="{{ route('guru.index') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Data Guru</a>
-                            </div>
-                            
-                            <div class="bg-white p-4 border rounded-lg shadow-sm">
-                                <h3 class="font-bold text-lg mb-2">Konfirmasi Pembayaran</h3>
-                                <p class="text-gray-600 mb-4">Lihat dan konfirmasi pembayaran pengguna.</p>
-                                <a href="{{ route('pembayaran.index') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Data Pembayaran</a>
-                            </div>
-                        </div>
+                        <livewire:admin-dashboard />
                     @elseif(auth()->user()->hasRole('guru'))
                         <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="bg-white p-4 border rounded-lg shadow-sm">

@@ -34,21 +34,33 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'nama_santri' => ['required', 'string', 'max:255'],
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'nis' => ['required', 'string', 'max:20', 'unique:users'],
+            'nis' => ['required', 'string', 'max:20', 'unique:users'], // NIS is required and must be unique
+            'jenis_kelamin' => ['required', 'boolean'],
+            'tempat_lahir' => ['nullable', 'string', 'max:100'],
+            'tanggal_lahir' => ['nullable', 'date'],
+            'provinsi' => ['nullable', 'string', 'max:100'],
+            'kabupaten' => ['nullable', 'string', 'max:100'],
             'alamat' => ['nullable', 'string'],
-            'no_hp' => ['nullable', 'string', 'max:15'],
+            'no_hp' => ['nullable', 'digits_between:10,15'],
+            'spp_bulanan' => ['nullable', 'integer', 'min:0'],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
+            'nama_santri' => $request->nama_santri,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'nis' => $request->nis,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'provinsi' => $request->provinsi,
+            'kabupaten' => $request->kabupaten,
             'alamat' => $request->alamat,
             'no_hp' => $request->no_hp,
+            'spp_bulanan' => $request->spp_bulanan,
         ]);
 
         // Assign the 'user' role to the new santri
@@ -84,11 +96,16 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$id],
-            'nis' => ['required', 'string', 'max:20', 'unique:users,nis,'.$id],
+            'nama_santri' => ['required', 'string', 'max:255'],
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users,email,'.$id],
+            'jenis_kelamin' => ['required', 'boolean'],
+            'tempat_lahir' => ['nullable', 'string', 'max:100'],
+            'tanggal_lahir' => ['nullable', 'date'],
+            'provinsi' => ['nullable', 'string', 'max:100'],
+            'kabupaten' => ['nullable', 'string', 'max:100'],
             'alamat' => ['nullable', 'string'],
-            'no_hp' => ['nullable', 'string', 'max:15'],
+            'no_hp' => ['nullable', 'digits_between:10,15'],
+            'spp_bulanan' => ['nullable', 'integer', 'min:0'],
         ];
 
         // Only validate password if it's provided
@@ -99,11 +116,17 @@ class UserController extends Controller
         $request->validate($rules);
 
         // Update user data
-        $user->name = $request->name;
+        $user->nama_santri = $request->nama_santri;
         $user->email = $request->email;
-        $user->nis = $request->nis;
+        // NIS is not updated as it should not be changed
+        $user->jenis_kelamin = $request->jenis_kelamin;
+        $user->tempat_lahir = $request->tempat_lahir;
+        $user->tanggal_lahir = $request->tanggal_lahir;
+        $user->provinsi = $request->provinsi;
+        $user->kabupaten = $request->kabupaten;
         $user->alamat = $request->alamat;
         $user->no_hp = $request->no_hp;
+        $user->spp_bulanan = $request->spp_bulanan;
         
         // Update password if provided
         if ($request->filled('password')) {

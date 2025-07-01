@@ -37,10 +37,10 @@
                             <tbody>
                                 @forelse($users as $user)
                                     <tr class="bg-white border-b hover:bg-gray-50">
-                                        <td class="px-6 py-4">{{ $user->nis }}</td>
-                                        <td class="px-6 py-4">{{ $user->name }}</td>
-                                        <td class="px-6 py-4">{{ $user->email }}</td>
-                                        <td class="px-6 py-4">{{ $user->no_hp ?? '-' }}</td>
+                                        <td class="px-6 py-4">{{ $user->nis ?: '-' }}</td>
+                                        <td class="px-6 py-4">{{ $user->nama_santri ?: '-' }}</td>
+                                        <td class="px-6 py-4">{{ $user->email ?: '-' }}</td>
+                                        <td class="px-6 py-4">{{ $user->no_hp ?: '-' }}</td>
                                         <td class="px-6 py-4 flex space-x-2">
                                             <a href="{{ route('users.show', $user->id) }}" class="font-medium text-blue-600 hover:underline">Lihat</a>
                                             <a href="{{ route('users.edit', $user->id) }}" class="font-medium text-green-600 hover:underline">Edit</a>

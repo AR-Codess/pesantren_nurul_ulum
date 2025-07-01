@@ -31,20 +31,54 @@
                         @method('PUT')
 
                         <div class="mb-4">
-                            <label for="name" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
-                            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required 
+                            <label for="nama_santri" class="block text-sm font-medium text-gray-700">Nama Lengkap <span class="text-red-500">*</span></label>
+                            <input type="text" name="nama_santri" id="nama_santri" value="{{ old('nama_santri', $user->nama_santri) }}" required 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="nis" class="block text-sm font-medium text-gray-700">Nomor Induk Santri (NIS) <span class="text-red-500">*</span></label>
+                            <input type="text" id="nis" value="{{ $user->nis }}" readonly 
+                                   class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            <input type="hidden" name="nis" value="{{ $user->nis }}">
+                            <p class="mt-1 text-xs text-gray-500">NIS tidak dapat diubah</p>
                         </div>
 
                         <div class="mb-4">
                             <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required 
+                            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                         </div>
 
                         <div class="mb-4">
-                            <label for="nis" class="block text-sm font-medium text-gray-700">Nomor Induk Santri (NIS)</label>
-                            <input type="text" name="nis" id="nis" value="{{ old('nis', $user->nis) }}" required 
+                            <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700">Jenis Kelamin <span class="text-red-500">*</span></label>
+                            <select name="jenis_kelamin" id="jenis_kelamin" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                                <option value="1" {{ old('jenis_kelamin', $user->jenis_kelamin) == 1 ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="0" {{ old('jenis_kelamin', $user->jenis_kelamin) == 0 ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="tempat_lahir" class="block text-sm font-medium text-gray-700">Tempat Lahir</label>
+                            <input type="text" name="tempat_lahir" id="tempat_lahir" value="{{ old('tempat_lahir', $user->tempat_lahir) }}" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
+                            <input type="date" name="tanggal_lahir" id="tanggal_lahir" value="{{ old('tanggal_lahir', $user->tanggal_lahir ? $user->tanggal_lahir->format('Y-m-d') : '') }}" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="provinsi" class="block text-sm font-medium text-gray-700">Provinsi</label>
+                            <input type="text" name="provinsi" id="provinsi" value="{{ old('provinsi', $user->provinsi) }}" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="kabupaten" class="block text-sm font-medium text-gray-700">Kabupaten</label>
+                            <input type="text" name="kabupaten" id="kabupaten" value="{{ old('kabupaten', $user->kabupaten) }}" 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                         </div>
 
@@ -56,8 +90,21 @@
 
                         <div class="mb-4">
                             <label for="no_hp" class="block text-sm font-medium text-gray-700">Nomor HP</label>
-                            <input type="text" name="no_hp" id="no_hp" value="{{ old('no_hp', $user->no_hp) }}" 
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            <input type="text" name="no_hp" id="no_hp" value="{{ old('no_hp', $user->no_hp) }}" pattern="[0-9]*" inputmode="numeric"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                   placeholder="Masukkan angka saja">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="spp_bulanan" class="block text-sm font-medium text-gray-700">SPP Bulanan</label>
+                            <div class="relative mt-1 rounded-md shadow-sm">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <span class="text-gray-500 sm:text-sm">Rp</span>
+                                </div>
+                                <input type="number" name="spp_bulanan" id="spp_bulanan" value="{{ old('spp_bulanan', $user->spp_bulanan) }}" 
+                                       class="pl-12 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                       placeholder="0">
+                            </div>
                         </div>
 
                         <div class="mb-4">
@@ -74,7 +121,7 @@
 
                         <div class="flex items-center justify-end">
                             <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-                                Update Data Santri
+                                Perbarui Data Santri
                             </button>
                         </div>
                     </form>

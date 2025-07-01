@@ -21,32 +21,72 @@
                             <p class="mt-1 max-w-2xl text-sm text-gray-500">Detail data personal dan akademik.</p>
                         </div>
                         <div class="border-t border-gray-200">
-                            <dl>
-                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Nama Lengkap</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $user->name }}</dd>
-                                </div>
-                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Email</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $user->email }}</dd>
-                                </div>
-                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Nomor Induk Santri (NIS)</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $user->nis }}</dd>
-                                </div>
-                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Alamat</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $user->alamat ?? '-' }}</dd>
-                                </div>
-                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Nomor HP</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $user->no_hp ?? '-' }}</dd>
-                                </div>
-                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Tanggal Bergabung</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $user->created_at->format('d F Y') }}</dd>
-                                </div>
-                            </dl>
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Field
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Value
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Nama Lengkap</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->nama_santri ?: '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Nomor Induk Santri (NIS)</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->nis ?: '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Email</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->email ?: '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Jenis Kelamin</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ isset($user->jenis_kelamin) ? ($user->jenis_kelamin ? 'Laki-laki' : 'Perempuan') : '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Tempat Lahir</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->tempat_lahir ?: '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Tanggal Lahir</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->tanggal_lahir ? $user->tanggal_lahir->format('d F Y') : '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Provinsi</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->provinsi ?: '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Kabupaten</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->kabupaten ?: '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Alamat</td>
+                                        <td class="px-6 py-4 text-sm text-gray-900">{{ $user->alamat ?: '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Nomor HP</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->no_hp ?: '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">SPP Bulanan</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->spp_bulanan ? 'Rp ' . number_format($user->spp_bulanan, 0, ',', '.') : '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Tanggal Bergabung</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->created_at ? $user->created_at->format('d F Y H:i:s') : '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Terakhir Diperbarui</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->updated_at ? $user->updated_at->format('d F Y H:i:s') : '-' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     
