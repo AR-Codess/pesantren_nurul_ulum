@@ -54,4 +54,15 @@ Route::view('profile', 'profile')
     ->middleware(['auth:web,admin,guru'])
     ->name('profile');
 
+// Installment payment routes
+Route::get('/pembayaran/{id}/cicilan', [PembayaranController::class, 'showInstallmentPage'])
+    ->name('pembayaran.installment.show');
+Route::post('/pembayaran/cicilan/store', [PembayaranController::class, 'storeInstallment'])
+    ->name('pembayaran.installment.store');
+Route::get('/pembayaran/{id}/cicilan/history', [PembayaranController::class, 'getInstallmentHistory'])
+    ->name('pembayaran.installment.history');
+
+// API endpoints for payment status checking
+Route::get('/api/check-payment-status/{userId}/{month}', [PembayaranController::class, 'checkPaymentStatus']);
+
 require __DIR__ . '/auth.php';

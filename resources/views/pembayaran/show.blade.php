@@ -32,11 +32,66 @@
                                 </div>
                                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Bulan Pembayaran</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $pembayaran->bulan }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        @php
+                                            $bulanNames = [
+                                                '01' => 'Januari',
+                                                '02' => 'Februari',
+                                                '03' => 'Maret',
+                                                '04' => 'April',
+                                                '05' => 'Mei',
+                                                '06' => 'Juni',
+                                                '07' => 'Juli',
+                                                '08' => 'Agustus',
+                                                '09' => 'September',
+                                                '10' => 'Oktober',
+                                                '11' => 'November',
+                                                '12' => 'Desember'
+                                            ];
+                                            $bulanNum = \Carbon\Carbon::parse($pembayaran->periode_pembayaran)->format('m');
+                                            $bulanName = $bulanNames[$bulanNum] ?? 'Unknown';
+                                        @endphp
+                                        {{ $bulanName }}
+                                    </dd>
                                 </div>
                                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Jumlah</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Rp {{ number_format($pembayaran->jumlah, 0, ',', '.') }}</dd>
+                                    <dt class="text-sm font-medium text-gray-500">Total SPP</dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Rp {{ number_format($pembayaran->user->spp_bulanan, 0, ',', '.') }}</dd>
+                                </div>
+                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">Total Dibayar</dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        @if($pembayaran->is_cicilan)
+                                            @php
+                                                $totalPaid = $pembayaran->detailPembayaran->sum('jumlah_dibayar');
+                                            @endphp
+                                            Rp {{ number_format($totalPaid, 0, ',', '.') }}
+                                            <span class="ml-1 text-sm text-gray-500">({{ round(($totalPaid / $pembayaran->user->spp_bulanan) * 100) }}%)</span>
+                                        @else
+                                            Rp {{ number_format($pembayaran->jumlah, 0, ',', '.') }}
+                                        @endif
+                                    </dd>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">Sisa Pembayaran</dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        @if($pembayaran->is_cicilan)
+                                            @php
+                                                $totalPaid = $pembayaran->detailPembayaran->sum('jumlah_dibayar');
+                                                $remaining = max(0, $pembayaran->user->spp_bulanan - $totalPaid);
+                                            @endphp
+                                            <span class="{{ $remaining > 0 ? 'text-red-600' : 'text-green-600' }} font-medium">
+                                                Rp {{ number_format($remaining, 0, ',', '.') }}
+                                            </span>
+                                        @else
+                                            @php
+                                                $remaining = max(0, $pembayaran->user->spp_bulanan - $pembayaran->jumlah);
+                                            @endphp
+                                            <span class="{{ $remaining > 0 ? 'text-red-600' : 'text-green-600' }} font-medium">
+                                                Rp {{ number_format($remaining, 0, ',', '.') }}
+                                            </span>
+                                        @endif
+                                    </dd>
                                 </div>
                                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Metode Pembayaran</dt>
@@ -53,8 +108,17 @@
                                             <span class="px-2 py-1 text-xs text-white bg-green-500 rounded">Dikonfirmasi</span>
                                         @elseif($pembayaran->status == 'pending')
                                             <span class="px-2 py-1 text-xs text-white bg-yellow-500 rounded">Menunggu</span>
+                                        @elseif($pembayaran->status == 'lunas')
+                                            <span class="px-2 py-1 text-xs text-white bg-green-600 rounded">Lunas</span>
+                                        @elseif($pembayaran->status == 'belum_lunas')
+                                            <span class="px-2 py-1 text-xs text-white bg-yellow-600 rounded">Belum Lunas</span>
+                                        @elseif($pembayaran->status == 'belum_bayar')
+                                            <span class="px-2 py-1 text-xs text-white bg-red-600 rounded">Belum Bayar</span>
                                         @else
                                             <span class="px-2 py-1 text-xs text-white bg-red-500 rounded">Ditolak</span>
+                                        @endif
+                                        @if($pembayaran->is_cicilan)
+                                            <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded ml-1">Cicilan</span>
                                         @endif
                                     </dd>
                                 </div>
@@ -68,6 +132,13 @@
                                 </div>
                             </dl>
                         </div>
+                    </div>
+                    
+                    <!-- Tambahkan link ke halaman cicilan -->
+                    <div class="mt-6 mb-6">
+                        <a href="{{ route('pembayaran.installment.show', $pembayaran->id) }}" class="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-700">
+                            Kelola Pembayaran Cicilan
+                        </a>
                     </div>
                     
                     <div class="mt-6 flex space-x-4">

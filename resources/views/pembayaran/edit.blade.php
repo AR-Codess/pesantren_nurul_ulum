@@ -67,12 +67,17 @@
                         
                         <div class="mb-4">
                             <label for="metode_pembayaran" class="block text-sm font-medium text-gray-700">Metode Pembayaran</label>
-                            <select id="metode_pembayaran" name="metode_pembayaran" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="Tunai" {{ old('metode_pembayaran', $pembayaran->metode_pembayaran) == 'Tunai' ? 'selected' : '' }}>Tunai</option>
-                                <option value="Transfer Bank" {{ old('metode_pembayaran', $pembayaran->metode_pembayaran) == 'Transfer Bank' ? 'selected' : '' }}>Transfer Bank</option>
-                                <option value="QRIS" {{ old('metode_pembayaran', $pembayaran->metode_pembayaran) == 'QRIS' ? 'selected' : '' }}>QRIS</option>
-                                <option value="Lainnya" {{ old('metode_pembayaran', $pembayaran->metode_pembayaran) == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
-                            </select>
+                            @if(Auth::guard('admin')->check())
+                                <input type="text" id="metode_pembayaran" name="metode_pembayaran" value="Tunai" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-100" readonly>
+                                <p class="mt-1 text-xs text-gray-500">Admin hanya dapat menggunakan metode pembayaran Tunai</p>
+                            @else
+                                <select id="metode_pembayaran" name="metode_pembayaran" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <option value="Tunai" {{ old('metode_pembayaran', $pembayaran->metode_pembayaran) == 'Tunai' ? 'selected' : '' }}>Tunai</option>
+                                    <option value="Transfer Bank" {{ old('metode_pembayaran', $pembayaran->metode_pembayaran) == 'Transfer Bank' ? 'selected' : '' }}>Transfer Bank</option>
+                                    <option value="QRIS" {{ old('metode_pembayaran', $pembayaran->metode_pembayaran) == 'QRIS' ? 'selected' : '' }}>QRIS</option>
+                                    <option value="Lainnya" {{ old('metode_pembayaran', $pembayaran->metode_pembayaran) == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                                </select>
+                            @endif
                         </div>
                         
                         <div class="mb-4">
@@ -80,13 +85,27 @@
                             <input type="date" id="tanggal" name="tanggal" value="{{ old('tanggal', \Carbon\Carbon::parse($pembayaran->tanggal)->format('Y-m-d')) }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                         </div>
                         
+                        <!-- Status pembayaran -->
                         <div class="mb-4">
-                            <label for="status" class="block text-sm font-medium text-gray-700">Status Pembayaran</label>
-                            <select id="status" name="status" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="pending" {{ old('status', $pembayaran->status) == 'pending' ? 'selected' : '' }}>Menunggu</option>
-                                <option value="confirmed" {{ old('status', $pembayaran->status) == 'confirmed' ? 'selected' : '' }}>Dikonfirmasi</option>
-                                <option value="rejected" {{ old('status', $pembayaran->status) == 'rejected' ? 'selected' : '' }}>Ditolak</option>
-                            </select>
+                            <label class="block text-sm font-medium text-gray-700">Status Pembayaran</label>
+                            <div class="mt-1">
+                                @if($pembayaran->status == 'lunas')
+                                    <span class="px-2 py-1 text-xs text-white bg-green-600 rounded">Lunas</span>
+                                @elseif($pembayaran->status == 'belum_lunas')
+                                    <span class="px-2 py-1 text-xs text-white bg-yellow-600 rounded">Belum Lunas</span>
+                                @elseif($pembayaran->status == 'menunggu_pembayaran')
+                                    <span class="px-2 py-1 text-xs text-white bg-blue-600 rounded">Menunggu Pembayaran</span>
+                                @else
+                                    <span class="px-2 py-1 text-xs text-white bg-red-600 rounded">Belum Bayar</span>
+                                @endif
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500">Status akan diperbarui secara otomatis setelah pembayaran diproses</p>
+                            <input type="hidden" name="status" value="{{ $pembayaran->status }}">
+                        </div>
+                        
+                        <div class="mb-4 flex items-center">
+                            <input type="checkbox" id="is_cicilan" name="is_cicilan" value="1" {{ old('is_cicilan', $pembayaran->is_cicilan) ? 'checked' : '' }} class="mr-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                            <label for="is_cicilan" class="text-sm font-medium text-gray-700">Pembayaran Cicilan</label>
                         </div>
                         
                         <div class="mt-6">

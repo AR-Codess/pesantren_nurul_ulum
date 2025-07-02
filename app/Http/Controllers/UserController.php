@@ -16,6 +16,8 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $bulan = $request->input('bulan');
+        $status = $request->input('status');
         $perPage = $request->input('per_page', 4); // Changed from 10 to 4 records per page
 
         // Get all santri users with the 'user' role
@@ -27,11 +29,21 @@ class UserController extends Controller
                       ->orWhere('email', 'like', '%' . $search . '%');
                 });
             })
+            ->when($bulan, function ($query, $bulan) {
+                return $query->whereHas('pembayaran', function ($q) use ($bulan) {
+                    $q->where('bulan', $bulan);
+                });
+            })
+            ->when($status, function ($query, $status) {
+                return $query->whereHas('pembayaran', function ($q) use ($status) {
+                    $q->where('status', $status);
+                });
+            })
             ->latest()
             ->paginate($perPage)
             ->withQueryString();
 
-        return view('admin.users.index', compact('users', 'search', 'perPage'));
+        return view('admin.users.index', compact('users', 'search', 'bulan', 'status', 'perPage'));
     }
 
     /**
