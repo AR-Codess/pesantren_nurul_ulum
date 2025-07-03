@@ -7,12 +7,17 @@ use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\BeritaController;
+use App\Http\Controllers\CKEditorController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KelolaSppController;
 
 // Replace static welcome page with dynamic content from HomeController
 Route::get('/', [HomeController::class, 'index'])->name('welcome');
+
+// Public berita (news) routes
+Route::get('/berita', [App\Http\Controllers\BeritaController::class, 'index'])->name('berita.index');
+Route::get('/berita/{id}/{slug?}', [App\Http\Controllers\BeritaController::class, 'show'])->name('berita.show');
 
 // Admin routes
 Route::middleware(['auth:admin', 'role:admin|admin'])->group(function () {
@@ -28,7 +33,11 @@ Route::middleware(['auth:admin', 'role:admin|admin'])->group(function () {
     // berita management routes
     Route::resource('/admin/berita', BeritaController::class)->names('admin.berita');
     Route::post('/admin/berita/update-order', [BeritaController::class, 'updateOrder'])->name('admin.berita.update-order');
-
+    
+    // CKEditor image upload dan browse routes
+    Route::post('/ckeditor/upload', [CKEditorController::class, 'upload'])->name('ckeditor.upload');
+    Route::get('/ckeditor/browse', [CKEditorController::class, 'browse'])->name('ckeditor.browse');
+    
     Route::resource('/users', UserController::class);
     Route::resource('/guru', GuruController::class);
     Route::resource('/pembayaran', PembayaranController::class);

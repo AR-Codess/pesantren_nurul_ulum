@@ -37,22 +37,8 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700">Gambar Saat Ini</label>
-                            <div class="mt-2 mb-4">
-                                <img src="{{ filter_var($berita->path_gambar, FILTER_VALIDATE_URL) ? $berita->path_gambar : asset('storage/' . $berita->path_gambar) }}" 
-                                     alt="{{ $berita->judul }}" 
-                                     class="w-60 h-auto object-cover border rounded">
-                            </div>
-                            <label for="image" class="block text-sm font-medium text-gray-700">Ganti Gambar (opsional)</label>
-                            <input type="file" name="image" id="image"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
-                            <p class="text-xs text-gray-500 mt-1">Biarkan kosong jika tidak ingin mengganti gambar.</p>
-                        </div>
-
-                        <div class="mb-4">
                             <label for="description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
-                            <textarea name="description" id="description" rows="3" 
-                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('description', $berita->deskripsi) }}</textarea>
+                            <textarea name="description" id="description" class="ckeditor mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('description', $berita->deskripsi) }}</textarea>
                         </div>
 
                         <div class="flex items-center justify-end">
@@ -65,4 +51,25 @@
             </div>
         </div>
     </div>
+
+    <!-- CKEditor Scripts -->
+    <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tambahkan meta CSRF token jika belum ada
+            if (!document.querySelector('meta[name="csrf-token"]')) {
+                var meta = document.createElement('meta');
+                meta.name = "csrf-token";
+                meta.content = "{{ csrf_token() }}";
+                document.head.appendChild(meta);
+            }
+            
+            CKEDITOR.replace('description', {
+                customConfig: "{{ asset('ckeditor/config.js') }}",
+                extraPlugins: 'uploadimage,image2',
+                removePlugins: 'exportpdf',
+                height: 300
+            });
+        });
+    </script>
 </x-app-layout>
