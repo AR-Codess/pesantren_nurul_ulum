@@ -6,7 +6,7 @@ use App\Http\Controllers\GuruController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,9 +19,9 @@ Route::middleware(['auth:admin', 'role:admin|admin'])->group(function () {
     Route::get('/admin/financial-report', [AdminController::class, 'financialReport'])->name('admin.financial-report');
     Route::put('/admin/payment/{id}/update-status', [AdminController::class, 'updatePaymentStatus'])->name('admin.update-payment-status');
     
-    // Gallery management routes
-    Route::resource('/admin/gallery', GalleryController::class)->names('admin.gallery');
-    Route::post('/admin/gallery/update-order', [GalleryController::class, 'updateOrder'])->name('admin.gallery.update-order');
+    // berita management routes
+    Route::resource('/admin/berita', BeritaController::class)->names('admin.berita');
+    Route::post('/admin/berita/update-order', [BeritaController::class, 'updateOrder'])->name('admin.berita.update-order');
     
     Route::resource('/users', UserController::class);
     Route::resource('/guru', GuruController::class);

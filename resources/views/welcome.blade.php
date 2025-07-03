@@ -120,8 +120,8 @@
             margin-bottom: 15px;
         }
 
-        /* Galeri */
-        .gallery-img {
+        /* Berita */
+        .berita-img {
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -130,17 +130,17 @@
             object-fit: cover; /* Ensures images maintain aspect ratio */
             object-position: center; /* Centers the image */
         }
-        .gallery-img:hover {
+        .berita-img:hover {
             transform: scale(1.05);
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-        .gallery-image-wrapper {
+        .berita-image-wrapper {
             width: 100%;
             height: 200px;
             overflow: hidden;
             border-radius: 10px;
         }
-        .gallery-item {
+        .berita-item {
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -222,7 +222,7 @@
                 <div class="col-md-4">
                     <div class="card program-card p-4">
                         <div class="icon-box">
-                           <i class="bi bi-person-video3"></i>
+                            <i class="bi bi-person-video3"></i>
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">Pendidikan Formal</h5>
@@ -236,20 +236,20 @@
 
     <section class="section-padding">
         <div class="container">
-            <h2 class="text-center mb-5">Galeri Kegiatan Santri</h2>
+            <h2 class="text-center mb-5">Kegiatan Santri</h2>
             <div class="row g-4">
-                @forelse($galleryItems as $item)
+                @forelse($beritaItems as $item)
                     <div class="col-md-3 mb-4">
-                        <div class="gallery-item">
-                            <div class="gallery-image-wrapper">
-                                <img src="{{ $item->image_url }}" class="img-fluid gallery-img" alt="{{ $item->alt_text }}">
+                        <div class="berita-item">
+                            <div class="berita-image-wrapper">
+                                <img src="{{ $item->image_url }}" class="img-fluid berita-img" alt="{{ $item->alt_text }}">
                             </div>
                             <p class="text-center mt-2 small">{{ $item->title }}</p>
                         </div>
                     </div>
                 @empty
                     <div class="col-12 text-center">
-                        <p>Belum ada foto dalam galeri.</p>
+                        <p>Belum ada foto dalam berita.</p>
                     </div>
                 @endforelse
             </div>

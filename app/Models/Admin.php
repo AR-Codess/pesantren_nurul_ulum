@@ -60,14 +60,6 @@ class Admin extends Authenticatable
     }
 
     /**
-     * Get the galeri created by this admin.
-     */
-    public function galeri(): HasMany
-    {
-        return $this->hasMany(Gallery::class);
-    }
-
-    /**
      * Get the news articles created by this admin.
      */
     public function beritas(): HasMany

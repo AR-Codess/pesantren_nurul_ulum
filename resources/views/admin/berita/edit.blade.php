@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tambah Foto Galeri') }}
+            {{ __('Edit Berita') }}
         </h2>
     </x-slot>
 
@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="mb-4">
-                        <a href="{{ route('admin.gallery.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700">
+                        <a href="{{ route('admin.berita.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700">
                             &laquo; Kembali
                         </a>
                     </div>
@@ -26,32 +26,38 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('admin.gallery.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.berita.update', $berita->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
+                        @method('PUT')
 
                         <div class="mb-4">
-                            <label for="title" class="block text-sm font-medium text-gray-700">Judul Foto</label>
-                            <input type="text" name="title" id="title" value="{{ old('title') }}" required 
+                            <label for="title" class="block text-sm font-medium text-gray-700">Judul Berita</label>
+                            <input type="text" name="title" id="title" value="{{ old('title', $berita->judul) }}" required 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
-                            <p class="text-xs text-gray-500 mt-1">Nama atau judul untuk foto ini.</p>
                         </div>
 
                         <div class="mb-4">
-                            <label for="image" class="block text-sm font-medium text-gray-700">Pilih Foto</label>
-                            <input type="file" name="image" id="image" required
+                            <label class="block text-sm font-medium text-gray-700">Gambar Saat Ini</label>
+                            <div class="mt-2 mb-4">
+                                <img src="{{ filter_var($berita->path_gambar, FILTER_VALIDATE_URL) ? $berita->path_gambar : asset('storage/' . $berita->path_gambar) }}" 
+                                     alt="{{ $berita->judul }}" 
+                                     class="w-60 h-auto object-cover border rounded">
+                            </div>
+                            <label for="image" class="block text-sm font-medium text-gray-700">Ganti Gambar (opsional)</label>
+                            <input type="file" name="image" id="image"
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
-                            <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIF. Ukuran maks: 2MB.</p>
+                            <p class="text-xs text-gray-500 mt-1">Biarkan kosong jika tidak ingin mengganti gambar.</p>
                         </div>
 
                         <div class="mb-4">
                             <label for="description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
                             <textarea name="description" id="description" rows="3" 
-                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('description') }}</textarea>
+                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('description', $berita->deskripsi) }}</textarea>
                         </div>
 
                         <div class="flex items-center justify-end">
                             <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-                                Simpan Foto
+                                Update Berita
                             </button>
                         </div>
                     </form>

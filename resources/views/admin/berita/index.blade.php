@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Manajemen Galeri') }}
+            {{ __('Manajemen Berita') }}
         </h2>
     </x-slot>
 
@@ -11,8 +11,8 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold">Daftar Foto Galeri</h2>
-                        <a href="{{ route('admin.gallery.create') }}" 
+                        <h2 class="text-xl font-bold">Daftar Foto Berita</h2>
+                        <a href="{{ route('admin.berita.create') }}" 
                            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
                             + Tambah Foto Baru
                         </a>
@@ -37,24 +37,23 @@
                         </div>
                     </div>
                     
-                    <div id="gallery-items" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-                        @forelse($galleries as $gallery)
-                            <div class="bg-white border rounded-lg overflow-hidden shadow-md cursor-move gallery-item" data-id="{{ $gallery->id }}">
+                    <div id="berita-items" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                        @forelse($berita as $item)
+                            <div class="bg-white border rounded-lg overflow-hidden shadow-md cursor-move berita-item" data-id="{{ $item->id }}">
                                 <div class="relative pb-60 overflow-hidden">
-                                    <img src="{{ filter_var($gallery->path_gambar, FILTER_VALIDATE_URL) ? $gallery->path_gambar : asset('storage/' . $gallery->path_gambar) }}" 
-                                         alt="{{ $gallery->judul }}"
+                                    <img src="{{ filter_var($item->path_gambar, FILTER_VALIDATE_URL) ? $item->path_gambar : asset('storage/' . $item->path_gambar) }}" 
+                                         alt="{{ $item->judul }}"
                                          class="absolute inset-0 h-full w-full object-cover object-center">
                                 </div>
                                 <div class="p-4">
-                                    <h3 class="font-bold text-lg mb-2">{{ $gallery->judul }}</h3>
-                                    @if($gallery->deskripsi)
-                                        <p class="text-gray-700 text-sm mb-3">{{ Str::limit($gallery->deskripsi, 100) }}</p>
+                                    <h3 class="font-bold text-lg mb-2">{{ $item->judul }}</h3>
+                                    @if($item->deskripsi)
+                                        <p class="text-gray-700 text-sm mb-3">{{ Str::limit($item->deskripsi, 100) }}</p>
                                     @endif
-                                    <div class="flex justify-between items-center mt-4">
-                                        <span class="text-gray-500 text-sm">ID: {{ $gallery->id }}</span>
+                                    <div class="flex justify-end items-center mt-4">
                                         <div class="flex space-x-2">
-                                            <a href="{{ route('admin.gallery.edit', $gallery->id) }}" class="font-medium text-green-600 hover:underline">Edit</a>
-                                            <form action="{{ route('admin.gallery.destroy', $gallery->id) }}" method="POST" class="inline"
+                                            <a href="{{ route('admin.berita.edit', $item->id) }}" class="font-medium text-green-600 hover:underline">Edit</a>
+                                            <form action="{{ route('admin.berita.destroy', $item->id) }}" method="POST" class="inline"
                                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus foto ini?');">
                                                 @csrf
                                                 @method('DELETE')
@@ -66,7 +65,7 @@
                             </div>
                         @empty
                             <div class="col-span-full text-center py-10">
-                                <p class="text-gray-500">Belum ada foto di galeri. Tambahkan foto pertama anda.</p>
+                                <p class="text-gray-500">Belum ada foto di berita. Tambahkan foto pertama anda.</p>
                             </div>
                         @endforelse
                     </div>
@@ -86,12 +85,12 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const galleryContainer = document.getElementById('gallery-items');
+            const beritaContainer = document.getElementById('berita-items');
             const saveStatus = document.getElementById('save-status');
             
-            if (galleryContainer) {
+            if (beritaContainer) {
                 // Initialize Sortable
-                const sortable = Sortable.create(galleryContainer, {
+                const sortable = Sortable.create(beritaContainer, {
                     animation: 150,
                     ghostClass: 'bg-gray-100',
                     onEnd: function() {
@@ -103,8 +102,8 @@
                 function saveNewOrder() {
                     const items = [];
                     
-                    // Get all gallery items
-                    document.querySelectorAll('.gallery-item').forEach((item, index) => {
+                    // Get all berita items
+                    document.querySelectorAll('.berita-item').forEach((item, index) => {
                         items.push({
                             id: item.dataset.id,
                             order: index + 1
@@ -118,7 +117,7 @@
                     });
                     
                     // Send the updated order to the server
-                    fetch('{{ route('admin.gallery.update-order') }}', {
+                    fetch('{{ route('admin.berita.update-order') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

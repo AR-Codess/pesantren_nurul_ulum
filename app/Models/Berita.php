@@ -11,31 +11,21 @@ class Berita extends Model
     use HasFactory;
     
     /**
-     * The attributes that are mass assignable.
+     * Nama tabel yang digunakan model ini.
      *
-     * @var array
+     * @var string
      */
+    protected $table = 'berita';
+    
     protected $fillable = [
         'judul',
-        'slug',
-        'isi_berita',
-        'gambar_utama',
-        'status',
-        'admin_id',
-        'published_at'
+        'path_gambar',
+        'deskripsi',
+        'admin_id'
     ];
     
     /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'published_at' => 'datetime'
-    ];
-    
-    /**
-     * Get the admin who created this news article.
+     * Get the admin who created this berita item.
      */
     public function admin(): BelongsTo
     {
@@ -43,12 +33,16 @@ class Berita extends Model
     }
     
     /**
-     * Scope a query to only include published news.
+     * Get the full image URL
      */
-    public function scopePublished($query)
+    public function getImageUrlAttribute()
     {
-        return $query->where('status', 'Published')
-                    ->whereNotNull('published_at')
-                    ->where('published_at', '<=', now());
+        // If the image path starts with http/https, it's an external URL
+        if (filter_var($this->path_gambar, FILTER_VALIDATE_URL)) {
+            return $this->path_gambar;
+        }
+        
+        // Otherwise, it's a local file path
+        return asset('storage/' . $this->path_gambar);
     }
 }
