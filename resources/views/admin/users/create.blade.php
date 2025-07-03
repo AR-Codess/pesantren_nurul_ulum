@@ -42,6 +42,20 @@
                         </div>
 
                         <div class="mb-4">
+                            <label for="class_level_id" class="block text-sm font-medium text-gray-700">Kelas <span class="text-red-500">*</span></label>
+                            <select name="class_level_id" id="class_level_id" required 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    onchange="updateSpp(this.value)">
+                                <option value="">Pilih Kelas</option>
+                                @foreach($classLevels as $classLevel)
+                                    <option value="{{ $classLevel->id }}" data-spp="{{ $classLevel->spp }}" {{ old('class_level_id') == $classLevel->id ? 'selected' : '' }}>
+                                        {{ $classLevel->level }} - SPP Rp {{ number_format($classLevel->spp, 0, ',', '.') }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
                             <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
                             <input type="email" name="email" id="email" value="{{ old('email') }}" 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
@@ -103,6 +117,14 @@
                                        placeholder="0">
                             </div>
                         </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="is_beasiswa" id="is_beasiswa" value="1" {{ old('is_beasiswa') ? 'checked' : '' }}
+                                       class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                <label for="is_beasiswa" class="ml-2 block text-sm text-gray-700">Penerima Beasiswa</label>
+                            </div>
+                        </div>
 
                         <div class="mb-4">
                             <label for="password" class="block text-sm font-medium text-gray-700">Password <span class="text-red-500">*</span></label>
@@ -126,4 +148,33 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Function to update SPP field based on class level selection
+        function updateSpp(classLevelId) {
+            if (!classLevelId) return;
+            
+            // Get the selected option
+            const selectedOption = document.querySelector(`#class_level_id option[value="${classLevelId}"]`);
+            
+            if (selectedOption) {
+                // Get the spp value from data attribute
+                const sppValue = selectedOption.getAttribute('data-spp');
+                
+                // Update the spp_bulanan input field if it's not already set by the user
+                const sppBulananField = document.getElementById('spp_bulanan');
+                if (!sppBulananField.value || sppBulananField.value == 0) {
+                    sppBulananField.value = sppValue;
+                }
+            }
+        }
+
+        // Initialize on page load if there's already a selected class level
+        document.addEventListener('DOMContentLoaded', function() {
+            const classLevelField = document.getElementById('class_level_id');
+            if (classLevelField && classLevelField.value) {
+                updateSpp(classLevelField.value);
+            }
+        });
+    </script>
 </x-app-layout>

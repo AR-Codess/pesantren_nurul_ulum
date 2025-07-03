@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\ClassLevel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -51,7 +52,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('admin.users.create');
+        $classLevels = ClassLevel::all();
+        return view('admin.users.create', compact('classLevels'));
     }
 
     /**
@@ -64,6 +66,7 @@ class UserController extends Controller
             'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'nis' => ['required', 'string', 'max:20', 'unique:users'], // NIS is required and must be unique
+            'class_level_id' => ['required', 'exists:class_level,id'],
             'jenis_kelamin' => ['required', 'boolean'],
             'tempat_lahir' => ['nullable', 'string', 'max:100'],
             'tanggal_lahir' => ['nullable', 'date'],
@@ -72,6 +75,7 @@ class UserController extends Controller
             'alamat' => ['nullable', 'string'],
             'no_hp' => ['nullable', 'digits_between:10,15'],
             'spp_bulanan' => ['nullable', 'integer', 'min:0'],
+            'is_beasiswa' => ['nullable', 'boolean'],
         ]);
 
         $user = User::create([
@@ -79,6 +83,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'nis' => $request->nis,
+            'class_level_id' => $request->class_level_id,
             'jenis_kelamin' => $request->jenis_kelamin,
             'tempat_lahir' => $request->tempat_lahir,
             'tanggal_lahir' => $request->tanggal_lahir,
@@ -87,6 +92,7 @@ class UserController extends Controller
             'alamat' => $request->alamat,
             'no_hp' => $request->no_hp,
             'spp_bulanan' => $request->spp_bulanan,
+            'is_beasiswa' => $request->has('is_beasiswa'),
         ]);
 
         // Assign the 'user' role to the new santri
@@ -101,7 +107,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('classLevel')->findOrFail($id);
         return view('admin.users.show', compact('user'));
     }
 
@@ -111,7 +117,8 @@ class UserController extends Controller
     public function edit(string $id)
     {
         $user = User::findOrFail($id);
-        return view('admin.users.edit', compact('user'));
+        $classLevels = ClassLevel::all();
+        return view('admin.users.edit', compact('user', 'classLevels'));
     }
 
     /**
@@ -124,6 +131,7 @@ class UserController extends Controller
         $rules = [
             'nama_santri' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users,email,'.$id],
+            'class_level_id' => ['required', 'exists:class_level,id'],
             'jenis_kelamin' => ['required', 'boolean'],
             'tempat_lahir' => ['nullable', 'string', 'max:100'],
             'tanggal_lahir' => ['nullable', 'date'],
@@ -132,6 +140,7 @@ class UserController extends Controller
             'alamat' => ['nullable', 'string'],
             'no_hp' => ['nullable', 'digits_between:10,15'],
             'spp_bulanan' => ['nullable', 'integer', 'min:0'],
+            'is_beasiswa' => ['nullable', 'boolean'],
         ];
 
         // Only validate password if it's provided
@@ -145,6 +154,7 @@ class UserController extends Controller
         $user->nama_santri = $request->nama_santri;
         $user->email = $request->email;
         // NIS is not updated as it should not be changed
+        $user->class_level_id = $request->class_level_id;
         $user->jenis_kelamin = $request->jenis_kelamin;
         $user->tempat_lahir = $request->tempat_lahir;
         $user->tanggal_lahir = $request->tanggal_lahir;
@@ -153,6 +163,7 @@ class UserController extends Controller
         $user->alamat = $request->alamat;
         $user->no_hp = $request->no_hp;
         $user->spp_bulanan = $request->spp_bulanan;
+        $user->is_beasiswa = $request->has('is_beasiswa');
         
         // Update password if provided
         if ($request->filled('password')) {

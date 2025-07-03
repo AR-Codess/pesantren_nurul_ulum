@@ -42,49 +42,57 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->nis ?: '-' }}</td>
                                     </tr>
                                     <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Kelas</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->classLevel->level ?? '-' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">SPP</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->classLevel ? 'Rp ' . number_format($user->classLevel->spp, 0, ',', '.') : '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Status Beasiswa</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->is_beasiswa ? 'Ya' : 'Tidak' }}</td>
+                                    </tr>
+                                    <tr class="bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Email</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->email ?: '-' }}</td>
                                     </tr>
-                                    <tr class="bg-gray-50">
+                                    <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Jenis Kelamin</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ isset($user->jenis_kelamin) ? ($user->jenis_kelamin ? 'Laki-laki' : 'Perempuan') : '-' }}</td>
                                     </tr>
-                                    <tr>
+                                    <tr class="bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Tempat Lahir</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->tempat_lahir ?: '-' }}</td>
                                     </tr>
-                                    <tr class="bg-gray-50">
+                                    <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Tanggal Lahir</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->tanggal_lahir ? $user->tanggal_lahir->format('d F Y') : '-' }}</td>
                                     </tr>
-                                    <tr>
+                                    <tr class="bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Provinsi</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->provinsi ?: '-' }}</td>
                                     </tr>
-                                    <tr class="bg-gray-50">
+                                    <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Kabupaten</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->kabupaten ?: '-' }}</td>
                                     </tr>
-                                    <tr>
+                                    <tr class="bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Alamat</td>
                                         <td class="px-6 py-4 text-sm text-gray-900">{{ $user->alamat ?: '-' }}</td>
                                     </tr>
-                                    <tr class="bg-gray-50">
+                                    <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Nomor HP</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->no_hp ?: '-' }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">SPP Bulanan</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->spp_bulanan ? 'Rp ' . number_format($user->spp_bulanan, 0, ',', '.') : '-' }}</td>
-                                    </tr>
-                                    <tr class="bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Tanggal Bergabung</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->created_at ? $user->created_at->format('d F Y H:i:s') : '-' }}</td>
                                     </tr>
-                                    <tr>
+                                    {{-- <tr class="bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Terakhir Diperbarui</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->updated_at ? $user->updated_at->format('d F Y H:i:s') : '-' }}</td>
-                                    </tr>
+                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>

@@ -43,6 +43,7 @@
                                     <th scope="col" class="px-6 py-3">No</th>
                                     <th scope="col" class="px-6 py-3">NIS</th>
                                     <th scope="col" class="px-6 py-3">Nama</th>
+                                    <th scope="col" class="px-6 py-3">Kelas</th>
                                     <th scope="col" class="px-6 py-3">Aksi</th>
                                 </tr>
                             </thead>
@@ -52,6 +53,7 @@
                                         <td class="px-6 py-4">{{ $index + $users->firstItem() }}</td>
                                         <td class="px-6 py-4">{{ $user->nis ?? 'Belum diatur' }}</td>
                                         <td class="px-6 py-4">{{ $user->nama_santri ?? $user->name }}</td>
+                                        <td class="px-6 py-4">{{ $user->classLevel->level ?? 'Belum diatur' }}</td>
                                         <td class="px-6 py-4 space-x-2">
                                             <a href="{{ route('users.show', $user->id) }}" class="text-blue-500 hover:underline">Lihat</a>
                                             <a href="{{ route('users.edit', $user->id) }}" class="text-yellow-500 hover:underline">Edit</a>
