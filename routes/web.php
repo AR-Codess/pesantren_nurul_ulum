@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\CKEditorController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\KelolaSppController;
 
 // Replace static welcome page with dynamic content from HomeController
 Route::get('/', [HomeController::class, 'index'])->name('welcome');
@@ -23,7 +24,12 @@ Route::middleware(['auth:admin', 'role:admin|admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/financial-report', [AdminController::class, 'financialReport'])->name('admin.financial-report');
     Route::put('/admin/payment/{id}/update-status', [AdminController::class, 'updatePaymentStatus'])->name('admin.update-payment-status');
-    
+    // CRUD Kelola SPP
+    Route::get('/kelola-spp', [KelolaSppController::class, 'index'])->name('kelola-spp');
+    Route::post('/kelola-spp', [KelolaSppController::class, 'store'])->name('kelola-spp.store');
+    Route::post('/kelola-spp/{id}/update', [KelolaSppController::class, 'update'])->name('kelola-spp.update');
+    Route::delete('/kelola-spp/{id}', [KelolaSppController::class, 'destroy'])->name('kelola-spp.destroy');
+
     // berita management routes
     Route::resource('/admin/berita', BeritaController::class)->names('admin.berita');
     Route::post('/admin/berita/update-order', [BeritaController::class, 'updateOrder'])->name('admin.berita.update-order');
