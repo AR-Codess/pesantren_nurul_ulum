@@ -218,6 +218,171 @@
             background-color: var(--primary-color);
             color: white;
         }
+
+        /* Unit Pendidikan Section */
+        .education-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .education-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        .img-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px 15px 0 0;
+        }
+        .img-wrapper img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s ease;
+        }
+        .img-wrapper:hover img {
+            transform: scale(1.1);
+        }
+        .overlay-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 100%;
+        }
+        .akreditasi-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: var(--primary-color);
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .program-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        /* Facilities Section Styling */
+        .heading-line {
+            width: 80px;
+            height: 4px;
+            background-color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+        
+        .facilities-section {
+            position: relative;
+            background-color: var(--light-bg);
+        }
+        
+        .facilities-container {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+        }
+        
+        .facilities-image {
+            height: 100%;
+            min-height: 400px;
+            object-fit: cover;
+        }
+        
+        .facilities-content {
+            background-color: white;
+            padding: 40px;
+            height: 100%;
+        }
+        
+        .facilities-list {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 30px;
+        }
+        
+        .facilities-list li {
+            padding: 12px 0 12px 45px;
+            position: relative;
+            font-size: 1.1rem;
+            border-bottom: 1px dashed #eee;
+            transition: all 0.3s ease;
+        }
+        
+        .facilities-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .facilities-list li:hover {
+            transform: translateX(10px);
+            color: var(--primary-color);
+        }
+        
+        .facilities-list li .facility-icon {
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 35px;
+            height: 35px;
+            background-color: rgba(10, 104, 71, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+        
+        .facility-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            padding: 20px;
+            height: 100%;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .facility-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+        
+        .facility-card .icon-container {
+            width: 70px;
+            height: 70px;
+            background-color: rgba(122, 186, 120, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .facility-card .icon-container i {
+            font-size: 30px;
+            color: var(--primary-color);
+        }
+        
+        .facility-card h5 {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .facility-card p {
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -278,6 +443,103 @@
         </div>
     </section>
 
+    <section class="section-padding" id="unit-pendidikan">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6 text-center">
+                    <h2 class="mb-2">Unit Pendidikan Unggulan Kami</h2>
+                    <div class="heading-line mx-auto mb-4"></div>
+                    <p class="text-muted mb-5">Menyediakan beragam jenjang pendidikan formal dan keagamaan untuk membentuk generasi Qur'ani dan berakhlak mulia</p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <!-- SMP Nurul Ulum -->
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="education-card h-100">
+                        <div class="img-wrapper">
+                            <img src="{{ asset('images/hero-bg.jpg') }}" class="img-fluid" alt="SMP Nurul Ulum">
+                            <div class="overlay-content">
+                                <a href="#" class="btn btn-light rounded-pill px-4">Selengkapnya</a>
+                            </div>
+                            <span class="akreditasi-badge">Akreditasi B</span>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="card-title">SMP Nurul Ulum</h5>
+                            <p class="card-text">Pendidikan menengah pertama dengan kurikulum nasional yang diperkaya dengan nilai-nilai keislaman.</p>
+                            <div class="d-flex align-items-center mt-3">
+                                <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                                <small class="text-muted">Jl. RS. Prawiro No. 1A</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SMK Kesehatan -->
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="education-card h-100">
+                        <div class="img-wrapper">
+                            <img src="{{ asset('images/hero-bg.jpg') }}" class="img-fluid" alt="SMK Kesehatan">
+                            <div class="overlay-content">
+                                <a href="#" class="btn btn-light rounded-pill px-4">Selengkapnya</a>
+                            </div>
+                            <span class="akreditasi-badge">Akreditasi B</span>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="card-title">SMK Kesehatan Bina Mitra Husada</h5>
+                            <span class="program-badge d-inline-block mb-2">Program Studi: Keperawatan</span>
+                            <p class="card-text">Mempersiapkan santri dengan keahlian profesional di bidang kesehatan.</p>
+                            <div class="d-flex align-items-center mt-3">
+                                <i class="bi bi-buildings-fill text-primary me-2"></i>
+                                <small class="text-muted">Fasilitas Lab Modern</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tahfidz Qur'an -->
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="education-card h-100">
+                        <div class="img-wrapper">
+                            <img src="{{ asset('images/hero-bg.jpg') }}" class="img-fluid" alt="Tahfidz Qur'an">
+                            <div class="overlay-content">
+                                <a href="#" class="btn btn-light rounded-pill px-4">Selengkapnya</a>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="card-title">Tahfidz Qur'an</h5>
+                            <p class="card-text">Program intensif untuk menghafal Al-Qur'an dengan bimbingan ahli dan metode modern.</p>
+                            <div class="d-flex align-items-center mt-3">
+                                <i class="bi bi-book-half text-primary me-2"></i>
+                                <small class="text-muted">Pembimbing Berpengalaman</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Madrasah Diniyah -->
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="education-card h-100">
+                        <div class="img-wrapper">
+                            <img src="{{ asset('images/hero-bg.jpg') }}" class="img-fluid" alt="Madrasah Diniyah">
+                            <div class="overlay-content">
+                                <a href="#" class="btn btn-light rounded-pill px-4">Selengkapnya</a>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="card-title">Madrasah Diniyah</h5>
+                            <p class="card-text">Pendidikan agama Islam komprehensif untuk membentuk karakter santri berakhlak mulia.</p>
+                            <div class="d-flex align-items-center mt-3">
+                                <i class="bi bi-journal-bookmark text-primary me-2"></i>
+                                <small class="text-muted">Kajian Kitab Kuning</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="section-padding">
         <div class="container">
             <h2 class="text-center mb-5">Berita & Kegiatan Santri</h2>
@@ -311,6 +573,101 @@
             
             <div class="text-center mt-4">
                 <a href="{{ route('berita.index') }}" class="btn btn-primary">Lihat Semua Berita</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="facilities-section section-padding section-bg">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6 text-center">
+                    <h2 class="mb-2">Fasilitas Lengkap untuk Mendukung Santri</h2>
+                    <div class="heading-line mx-auto mb-4"></div>
+                    <p class="text-muted mb-5">Pesantren Nurul Ulum menyediakan berbagai fasilitas modern untuk mendukung kegiatan belajar dan kehidupan santri</p>
+                </div>
+            </div>
+            
+            <div class="facilities-container">
+                <div class="row g-0">
+                    <div class="col-lg-6">
+                        <img src="{{ asset('images/hero-bg.jpg') }}" alt="Fasilitas Pondok Pesantren" class="facilities-image w-100">
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="facilities-content">
+                            <h3 class="mb-4">Fasilitas Unggulan</h3>
+                            <p>Kami menyediakan beragam fasilitas untuk menunjang kenyamanan dan keberhasilan pendidikan santri di Pesantren Nurul Ulum Wirowongso.</p>
+                            
+                            <ul class="facilities-list">
+                                <li>
+                                    <div class="facility-icon">
+                                        <i class="bi bi-house-door-fill"></i>
+                                    </div>
+                                    <strong>Asrama Pondok yang Nyaman</strong>
+                                </li>
+                                <li>
+                                    <div class="facility-icon">
+                                        <i class="bi bi-building"></i>
+                                    </div>
+                                    <strong>Mushola</strong>
+                                </li>
+                                <li>
+                                    <div class="facility-icon">
+                                        <i class="bi bi-flask"></i>
+                                    </div>
+                                    <strong>Laboratorium Keperawatan Modern</strong>
+                                </li>
+                                <li>
+                                    <div class="facility-icon">
+                                        <i class="bi bi-heart-pulse"></i>
+                                    </div>
+                                    <strong>Klinik Insan Medika</strong>
+                                </li>
+                                <li>
+                                    <div class="facility-icon">
+                                        <i class="bi bi-shield-plus"></i>
+                                    </div>
+                                    <strong>Jaminan Kesehatan Santri</strong>
+                                </li>
+                                <li>
+                                    <div class="facility-icon">
+                                        <i class="bi bi-laptop"></i>
+                                    </div>
+                                    <strong>Lab Komputer</strong>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-5 g-4">
+                <div class="col-md-4">
+                    <div class="facility-card text-center">
+                        <div class="icon-container mx-auto">
+                            <i class="bi bi-book"></i>
+                        </div>
+                        <h5>Perpustakaan</h5>
+                        <p>Koleksi buku ilmu pengetahuan dan kitab-kitab untuk memperdalam wawasan santri.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="facility-card text-center">
+                        <div class="icon-container mx-auto">
+                            <i class="bi bi-hospital"></i>
+                        </div>
+                        <h5>Klinik Kesehatan</h5>
+                        <p>Layanan kesehatan dengan dokter berpengalaman untuk menjaga kesehatan santri.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="facility-card text-center">
+                        <div class="icon-container mx-auto">
+                            <i class="bi bi-dribbble"></i>
+                        </div>
+                        <h5>Sarana Olahraga</h5>
+                        <p>Fasilitas olahraga lengkap untuk mendukung aktivitas fisik dan rekreasi santri.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
