@@ -30,10 +30,10 @@
                         @csrf
 
                         <div class="mb-4">
-                            <label for="title" class="block text-sm font-medium text-gray-700">Judul Foto</label>
+                            <label for="title" class="block text-sm font-medium text-gray-700">Judul Berita</label>
                             <input type="text" name="title" id="title" value="{{ old('title') }}" required 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
-                            <p class="text-xs text-gray-500 mt-1">Nama atau judul untuk foto ini.</p>
+                            <p class="text-xs text-gray-500 mt-1">Judul untuk berita ini.</p>
                         </div>
 
                         <div class="mb-4">
@@ -42,16 +42,15 @@
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIF. Ukuran maks: 2MB.</p>
                         </div>
-
+                        
                         <div class="mb-4">
                             <label for="description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
-                            <textarea name="description" id="description" rows="3" 
-                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('description') }}</textarea>
+                            <textarea name="description" id="description" class="ckeditor mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('description') }}</textarea>
                         </div>
 
                         <div class="flex items-center justify-end">
                             <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-                                Simpan Foto
+                                Simpan Berita
                             </button>
                         </div>
                     </form>
@@ -59,4 +58,25 @@
             </div>
         </div>
     </div>
+
+    <!-- CKEditor Scripts -->
+    <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tambahkan meta CSRF token jika belum ada
+            if (!document.querySelector('meta[name="csrf-token"]')) {
+                var meta = document.createElement('meta');
+                meta.name = "csrf-token";
+                meta.content = "{{ csrf_token() }}";
+                document.head.appendChild(meta);
+            }
+            
+            CKEDITOR.replace('description', {
+                customConfig: "{{ asset('ckeditor/config.js') }}",
+                extraPlugins: 'uploadimage,image2',
+                removePlugins: 'exportpdf',
+                height: 300
+            });
+        });
+    </script>
 </x-app-layout>

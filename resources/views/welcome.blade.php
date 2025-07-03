@@ -174,6 +174,50 @@
             background-color: rgba(0, 0, 0, 0.2);
         }
 
+        /* Additional Berita Card styling */
+        .berita-item {
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .berita-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+        }
+        
+        .berita-item .card-title {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .berita-image-wrapper {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .berita-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s ease;
+        }
+        
+        .berita-item:hover .berita-img {
+            transform: scale(1.08);
+        }
+        
+        .btn-outline-success {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-success:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -236,22 +280,37 @@
 
     <section class="section-padding">
         <div class="container">
-            <h2 class="text-center mb-5">Kegiatan Santri</h2>
+            <h2 class="text-center mb-5">Berita & Kegiatan Santri</h2>
             <div class="row g-4">
                 @forelse($beritaItems as $item)
-                    <div class="col-md-3 mb-4">
-                        <div class="berita-item">
+                    <div class="col-md-4 mb-4">
+                        <div class="card berita-item h-100 border-0 shadow-sm">
                             <div class="berita-image-wrapper">
-                                <img src="{{ $item->image_url }}" class="img-fluid berita-img" alt="{{ $item->alt_text }}">
+                                <img src="{{ $item->image_url }}" class="img-fluid berita-img" alt="{{ $item->alt_text ?? $item->title }}">
                             </div>
-                            <p class="text-center mt-2 small">{{ $item->title }}</p>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title fw-bold">{{ $item->title }}</h5>
+                                @if(isset($item->description))
+                                    <p class="card-text text-muted mb-3">{{ Str::limit(strip_tags($item->description), 100) }}</p>
+                                @endif
+                                <div class="mt-auto text-end">
+                                    <a href="{{ route('berita.show', ['id' => $item->id, 'slug' => Str::slug($item->title)]) }}" class="btn btn-sm btn-outline-success">Baca selengkapnya</a>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white border-0 text-muted">
+                                <small><i class="bi bi-calendar-event me-2"></i>{{ $item->created_at ? $item->created_at->format('d M Y') : date('d M Y') }}</small>
+                            </div>
                         </div>
                     </div>
                 @empty
                     <div class="col-12 text-center">
-                        <p>Belum ada foto dalam berita.</p>
+                        <p>Belum ada berita atau kegiatan yang ditampilkan.</p>
                     </div>
                 @endforelse
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{{ route('berita.index') }}" class="btn btn-primary">Lihat Semua Berita</a>
             </div>
         </div>
     </section>
