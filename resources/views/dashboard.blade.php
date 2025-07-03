@@ -20,12 +20,31 @@
                     <h1 class="text-3xl font-bold mb-6 text-gray-600">User Dashboard</h1>
                     @endif
 
+                    @if(auth()->user()->hasRole('user'))
                     <div class="mb-8">
                         <span class="text-xl md:text-2xl font-semibold text-green-700">Selamat datang di Website Pondok Pesantren Nurul Ulum</span>
                         <p class="mt-2 text-gray-700 text-base md:text-lg">Pantau status tagihan dan absensi Anda setiap bulan dengan mudah dan nyaman.</p>
                     </div>
+                    @endif
 
-                    <!-- Informasi Akun UI Baru -->
+                    @if(auth()->user()->hasRole('admin'))
+                    <div class="mt-4 p-4 bg-gray-50 rounded-lg border mb-8">
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Informasi Akun</h3>
+                        <div class="flex items-center mb-2">
+                            <span class="font-medium mr-2">Nama:</span>
+                            <span>{{ auth()->user()->name ?? '-' }}</span>
+                        </div>
+                        <div class="flex items-center mb-2">
+                            <span class="font-medium mr-2">Email:</span>
+                            <span>{{ auth()->user()->email }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium mr-2">Role:</span>
+                            <span class="px-3 py-1 text-xs text-white bg-red-500 rounded-full">Admin</span>
+                        </div>
+                    </div>
+                    @elseif(auth()->user()->hasRole('user'))
+                    <!-- Informasi Akun UI Baru untuk User -->
                     <div class="bg-gradient-to-br from-green-400 to-blue-500 p-6 rounded-xl shadow-lg mb-8">
                         <div class="flex items-center mb-4">
                             <svg class="w-10 h-10 text-white mr-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
@@ -57,6 +76,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
 
                     <!-- Role-specific dashboard content -->
                     @if(auth()->user()->hasRole('admin'))
