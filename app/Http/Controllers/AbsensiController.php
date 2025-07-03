@@ -52,6 +52,8 @@ class AbsensiController extends Controller
                 ],
                 [
                     'status' => $data['status'] ?? 'hadir',
+                    'kelas_id' => $data['kelas_id'] ?? null,
+                    'guru_id' => $data['guru_id'] ?? null,
                 ]
             );
         }
