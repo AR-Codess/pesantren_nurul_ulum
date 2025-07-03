@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
@@ -22,6 +23,7 @@ class User extends Authenticatable
     protected $fillable = [
         'nis',
         'nama_santri',
+        'class_level_id',
         'spp_bulanan',
         'jenis_kelamin',
         'tempat_lahir',
@@ -81,5 +83,13 @@ class User extends Authenticatable
     public function pembayaran(): HasMany
     {
         return $this->hasMany(Pembayaran::class);
+    }
+    
+    /**
+     * Get the class level that the santri belongs to.
+     */
+    public function classLevel(): BelongsTo
+    {
+        return $this->belongsTo(ClassLevel::class);
     }
 }

@@ -34,8 +34,12 @@
                             <select id="user_id" name="user_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" onchange="updateSppInfo(this.value)">
                                 <option value="">-- Pilih Santri --</option>
                                 @foreach($users as $user)
-                                    <option value="{{ $user->id }}" data-spp="{{ $user->spp_bulanan }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                        {{ $user->name }} ({{ $user->nis }})
+                                    <option value="{{ $user->id }}" 
+                                            data-spp="{{ $user->classLevel->spp }}" 
+                                            data-name="{{ $user->nama_santri }}"
+                                            data-level="{{ $user->classLevel->level }}"
+                                            {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                        {{ $user->nama_santri }} ({{ $user->nis }}) - Kelas {{ $user->classLevel->level }}
                                     </option>
                                 @endforeach
                             </select>
@@ -43,33 +47,21 @@
                         
                         <div id="spp-info" class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md hidden">
                             <h3 class="text-sm font-medium text-blue-800 mb-2">Informasi SPP</h3>
+                            <p class="text-sm text-blue-700">Nama Santri: <span id="santri-name">-</span></p>
+                            <p class="text-sm text-blue-700">Kelas: <span id="santri-level">-</span></p>
                             <p class="text-sm text-blue-700">Total SPP Bulanan: <span id="total-spp">Rp 0</span></p>
                             <p class="text-sm text-blue-700 mt-1">Status Pembayaran Bulan Ini: <span id="payment-status">-</span></p>
                             <p class="text-sm text-blue-700 mt-1">Sudah Dibayar: <span id="paid-amount">Rp 0</span></p>
                             <p class="text-sm text-blue-700 mt-1">Sisa Pembayaran: <span id="remaining-amount">Rp 0</span></p>
                         </div>
                         
-                        <div class="mb-4">
-                            <label for="bulan" class="block text-sm font-medium text-gray-700">Bulan Pembayaran</label>
-                            <select id="bulan" name="bulan" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="Januari" {{ old('bulan') == 'Januari' ? 'selected' : '' }}>Januari</option>
-                                <option value="Februari" {{ old('bulan') == 'Februari' ? 'selected' : '' }}>Februari</option>
-                                <option value="Maret" {{ old('bulan') == 'Maret' ? 'selected' : '' }}>Maret</option>
-                                <option value="April" {{ old('bulan') == 'April' ? 'selected' : '' }}>April</option>
-                                <option value="Mei" {{ old('bulan') == 'Mei' ? 'selected' : '' }}>Mei</option>
-                                <option value="Juni" {{ old('bulan') == 'Juni' ? 'selected' : '' }}>Juni</option>
-                                <option value="Juli" {{ old('bulan') == 'Juli' ? 'selected' : '' }}>Juli</option>
-                                <option value="Agustus" {{ old('bulan') == 'Agustus' ? 'selected' : '' }}>Agustus</option>
-                                <option value="September" {{ old('bulan') == 'September' ? 'selected' : '' }}>September</option>
-                                <option value="Oktober" {{ old('bulan') == 'Oktober' ? 'selected' : '' }}>Oktober</option>
-                                <option value="November" {{ old('bulan') == 'November' ? 'selected' : '' }}>November</option>
-                                <option value="Desember" {{ old('bulan') == 'Desember' ? 'selected' : '' }}>Desember</option>
-                            </select>
-                        </div>
+                        <!-- Hidden bulan field that will be automatically set from tanggal_bayar -->
+                        <input type="hidden" id="bulan" name="bulan" value="">
                         
                         <div class="mb-4">
                             <label for="jumlah" class="block text-sm font-medium text-gray-700">Jumlah Pembayaran (Rp)</label>
-                            <input type="number" id="jumlah" name="jumlah" value="{{ old('jumlah') }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                            <input type="number" id="jumlah" name="jumlah_dibayar" value="{{ old('jumlah_dibayar') }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                            <input type="hidden" name="total_tagihan" id="total_tagihan">
                         </div>
                         
                         <div class="mb-4">
@@ -89,7 +81,9 @@
                         
                         <div class="mb-4">
                             <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal Pembayaran</label>
-                            <input type="date" id="tanggal" name="tanggal" value="{{ old('tanggal', date('Y-m-d')) }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                            <input type="date" id="tanggal" name="tanggal_bayar" value="{{ old('tanggal_bayar', date('Y-m-d')) }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                            <!-- Hidden input for periode_pembayaran, will be set via JavaScript -->
+                            <input type="hidden" id="periode_pembayaran" name="periode_pembayaran">
                         </div>
                         
                         <!-- Status akan ditentukan secara otomatis -->
@@ -119,6 +113,9 @@
             const paidAmountSpan = document.getElementById('paid-amount');
             const remainingAmountSpan = document.getElementById('remaining-amount');
             const jumlahInput = document.getElementById('jumlah');
+            const totalTagihanInput = document.getElementById('total_tagihan');
+            const santriNameSpan = document.getElementById('santri-name');
+            const santriLevelSpan = document.getElementById('santri-level');
             
             if (!userId) {
                 sppInfoDiv.classList.add('hidden');
@@ -128,14 +125,24 @@
             // Fetch user data from the selected option
             const selectedOption = document.querySelector(`#user_id option[value="${userId}"]`);
             const sppBulanan = selectedOption.getAttribute('data-spp');
+            const santriName = selectedOption.getAttribute('data-name');
+            const santriLevel = selectedOption.getAttribute('data-level');
             
             totalSppSpan.innerText = `Rp ${parseInt(sppBulanan).toLocaleString()}`;
+            santriNameSpan.innerText = santriName;
+            santriLevelSpan.innerText = santriLevel;
             
-            // Set default values
+            // Set default values for payment
             jumlahInput.value = sppBulanan;
+            totalTagihanInput.value = sppBulanan;
+            
+            // Set periode_pembayaran and bulan based on selected date
+            updatePeriodePembayaran();
+            
+            // Get the extracted month from the bulan field
+            const bulan = document.getElementById('bulan').value;
             
             // Fetch payment data for the selected student and month
-            const bulan = document.getElementById('bulan').value;
             fetch(`/api/check-payment-status/${userId}/${bulan}`)
                 .then(response => response.json())
                 .then(data => {
@@ -152,7 +159,9 @@
                             // Check cicilan checkbox
                             document.getElementById('is_cicilan').checked = true;
                         } else {
-                            paidAmountSpan.innerText = `Rp ${parseInt(data.payment.jumlah).toLocaleString()}`;
+                            const firstPayment = data.payment.detailPembayaran && data.payment.detailPembayaran[0];
+                            const paidAmount = firstPayment ? firstPayment.jumlah_dibayar : 0;
+                            paidAmountSpan.innerText = `Rp ${parseInt(paidAmount).toLocaleString()}`;
                             remainingAmountSpan.innerText = `Rp 0`;
                         }
                     } else {
@@ -170,21 +179,57 @@
             
             sppInfoDiv.classList.remove('hidden');
         }
-
-        // Update when month changes too
-        document.getElementById('bulan').addEventListener('change', function() {
+        
+        // Get month name from month number (0-11)
+        function getMonthName(monthNumber) {
+            const monthNames = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+            return monthNames[monthNumber];
+        }
+        
+        // Function to update periode_pembayaran field based on payment date
+        function updatePeriodePembayaran() {
+            const tanggalBayar = document.getElementById('tanggal').value;
+            const paymentDate = new Date(tanggalBayar);
+            const month = paymentDate.getMonth() + 1; // JavaScript months are 0-11
+            const year = paymentDate.getFullYear();
+            const monthFormatted = month < 10 ? `0${month}` : `${month}`;
+            
+            // Set the periode_pembayaran to the first day of the month from the payment date
+            document.getElementById('periode_pembayaran').value = `${year}-${monthFormatted}-01`;
+            
+            // Update the month hidden field
+            const monthName = getMonthName(paymentDate.getMonth());
+            document.getElementById('bulan').value = monthName;
+            
+            // If a user is selected, update payment info
             const userId = document.getElementById('user_id').value;
             if (userId) {
-                updateSppInfo(userId);
+                const selectedOption = document.querySelector(`#user_id option[value="${userId}"]`);
+                if (selectedOption) {
+                    updateSppInfo(userId);
+                }
             }
-        });
+        }
 
-        // Initialize on page load if user is already selected
+        // Update when payment date changes
+        document.getElementById('tanggal').addEventListener('change', updatePeriodePembayaran);
+
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            updatePeriodePembayaran();
+            
             const userId = document.getElementById('user_id').value;
             if (userId) {
                 updateSppInfo(userId);
             }
+            
+            // Add event listener for user selection change
+            document.getElementById('user_id').addEventListener('change', function() {
+                updateSppInfo(this.value);
+            });
         });
     </script>
 </x-app-layout>

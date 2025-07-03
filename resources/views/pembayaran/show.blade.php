@@ -24,13 +24,17 @@
                             <dl>
                                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Nama Santri</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $pembayaran->user->name }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $pembayaran->user->nama_santri }}</dd>
                                 </div>
                                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">NIS</dt>
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $pembayaran->user->nis }}</dd>
                                 </div>
                                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">Kelas</dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $pembayaran->user->classLevel->level }}</dd>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Bulan Pembayaran</dt>
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                         @php
@@ -56,7 +60,7 @@
                                 </div>
                                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Total SPP</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Rp {{ number_format($pembayaran->user->spp_bulanan, 0, ',', '.') }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Rp {{ number_format($pembayaran->total_tagihan, 0, ',', '.') }}</dd>
                                 </div>
                                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Total Dibayar</dt>
@@ -66,9 +70,12 @@
                                                 $totalPaid = $pembayaran->detailPembayaran->sum('jumlah_dibayar');
                                             @endphp
                                             Rp {{ number_format($totalPaid, 0, ',', '.') }}
-                                            <span class="ml-1 text-sm text-gray-500">({{ round(($totalPaid / $pembayaran->user->spp_bulanan) * 100) }}%)</span>
                                         @else
-                                            Rp {{ number_format($pembayaran->jumlah, 0, ',', '.') }}
+                                            @php
+                                                $firstPayment = $pembayaran->detailPembayaran->first();
+                                                $totalPaid = $firstPayment ? $firstPayment->jumlah_dibayar : 0;
+                                            @endphp
+                                            Rp {{ number_format($totalPaid, 0, ',', '.') }}
                                         @endif
                                     </dd>
                                 </div>
@@ -78,14 +85,16 @@
                                         @if($pembayaran->is_cicilan)
                                             @php
                                                 $totalPaid = $pembayaran->detailPembayaran->sum('jumlah_dibayar');
-                                                $remaining = max(0, $pembayaran->user->spp_bulanan - $totalPaid);
+                                                $remaining = max(0, $pembayaran->total_tagihan - $totalPaid);
                                             @endphp
                                             <span class="{{ $remaining > 0 ? 'text-red-600' : 'text-green-600' }} font-medium">
                                                 Rp {{ number_format($remaining, 0, ',', '.') }}
                                             </span>
                                         @else
                                             @php
-                                                $remaining = max(0, $pembayaran->user->spp_bulanan - $pembayaran->jumlah);
+                                                $firstPayment = $pembayaran->detailPembayaran->first();
+                                                $totalPaid = $firstPayment ? $firstPayment->jumlah_dibayar : 0;
+                                                $remaining = max(0, $pembayaran->total_tagihan - $totalPaid);
                                             @endphp
                                             <span class="{{ $remaining > 0 ? 'text-red-600' : 'text-green-600' }} font-medium">
                                                 Rp {{ number_format($remaining, 0, ',', '.') }}
@@ -95,11 +104,23 @@
                                 </div>
                                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Metode Pembayaran</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $pembayaran->metode_pembayaran }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        @if($pembayaran->detailPembayaran->isNotEmpty())
+                                            {{ $pembayaran->detailPembayaran->first()->metode_pembayaran }}
+                                        @else
+                                            -
+                                        @endif
+                                    </dd>
                                 </div>
                                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Tanggal Pembayaran</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ \Carbon\Carbon::parse($pembayaran->tanggal)->format('d F Y') }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        @if($pembayaran->detailPembayaran->isNotEmpty())
+                                            {{ \Carbon\Carbon::parse($pembayaran->detailPembayaran->first()->tanggal_bayar)->format('d F Y') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </dd>
                                 </div>
                                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Status</dt>
