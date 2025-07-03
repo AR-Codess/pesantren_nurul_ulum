@@ -14,12 +14,9 @@ return new class extends Migration
         Schema::create('berita', function (Blueprint $table) {
             $table->id();
             $table->string('judul');
-            $table->string('slug')->unique();
-            $table->longText('isi_berita');
-            $table->string('gambar_utama');
-            $table->string('status', 50); // e.g., 'Draft', 'Published'
+            $table->string('path_gambar');
+            $table->text('deskripsi')->nullable();
             $table->foreignId('admin_id')->constrained('admin')->onDelete('cascade');
-            $table->timestamp('published_at')->nullable();
             $table->timestamps();
         });
     }

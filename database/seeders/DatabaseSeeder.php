@@ -22,9 +22,11 @@ class DatabaseSeeder extends Seeder
 
         // Menjalankan seeder lainnya
         $this->call([
+            ClassLevelSeeder::class,
             AdminSeeder::class,
             GuruSeeder::class,
             UserSeeder::class,
+            KelasSeeder::class,
         ]);
     }
 }

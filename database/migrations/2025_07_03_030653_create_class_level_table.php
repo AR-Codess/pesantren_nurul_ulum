@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('galeri', function (Blueprint $table) {
+        Schema::create('class_level', function (Blueprint $table) {
             $table->id();
-            $table->string('judul');
-            $table->string('path_gambar');
-            $table->text('deskripsi')->nullable();
-            $table->foreignId('admin_id')->constrained('admin')->onDelete('cascade');
+            $table->string('level')->notNull();
+            $table->bigInteger('spp')->notNull();
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('galeri');
+        Schema::dropIfExists('class_level');
     }
 };
