@@ -69,21 +69,23 @@
                                 <tbody>
                                     @foreach($users as $i => $user)
                                     <tr>
-                                        <td>{{ $i+1 }}</td>
-                                        <td class="text-start">{{ $user->name }}</td>
-                                        <td>{{ $user->nis ?? '-' }}</td>
-                                        <td>{{ $user->nama ?? '-' }}</td>
-                                        <td class="attendance-radio">
-                                            <input type="radio" name="absensi[{{ $user->id }}][status]" value="hadir" {{ old('absensi.'.$user->id.'.status', 'hadir') == 'hadir' ? 'checked' : '' }} required>
+                                        <td>{{ $i + 1 }}</td>
+                                        <td>{{ $user->name }}</td>
+                                        <td>{{ $user->nis }}</td>
+                                        <td>{{ $user->kelas ?? '-' }}</td>
+                                        <td>
+                                            <input type="radio" name="absensi[{{ $user->id }}][status]" value="hadir" checked>
+                                            <input type="hidden" name="absensi[{{ $user->id }}][kelas_id]" value="{{ $user->kelas_id }}">
+                                            <input type="hidden" name="absensi[{{ $user->id }}][guru_id]" value="{{ $user->guru_id }}">
                                         </td>
-                                        <td class="attendance-radio">
-                                            <input type="radio" name="absensi[{{ $user->id }}][status]" value="sakit" {{ old('absensi.'.$user->id.'.status') == 'sakit' ? 'checked' : '' }}>
+                                        <td>
+                                            <input type="radio" name="absensi[{{ $user->id }}][status]" value="sakit">
                                         </td>
-                                        <td class="attendance-radio">
-                                            <input type="radio" name="absensi[{{ $user->id }}][status]" value="izin" {{ old('absensi.'.$user->id.'.status') == 'izin' ? 'checked' : '' }}>
+                                        <td>
+                                            <input type="radio" name="absensi[{{ $user->id }}][status]" value="izin">
                                         </td>
-                                        <td class="attendance-radio">
-                                            <input type="radio" name="absensi[{{ $user->id }}][status]" value="alpha" {{ old('absensi.'.$user->id.'.status') == 'alpha' ? 'checked' : '' }}>
+                                        <td>
+                                            <input type="radio" name="absensi[{{ $user->id }}][status]" value="alpha">
                                         </td>
                                     </tr>
                                     @endforeach
@@ -94,14 +96,6 @@
                             <div>
                                 <button type="submit" class="btn btn-primary px-4">Simpan Absensi</button>
                                 <a href="{{ route('absensi.index') }}" class="btn btn-secondary px-4">Batal</a>
-                            </div>
-                            <div>
-                                <a href="{{ route('absensi.export', ['format' => 'pdf', 'tanggal' => request('tanggal', date('Y-m-d'))]) }}" class="btn btn-danger px-4 me-2" target="_blank">
-                                    <i class="bi bi-file-earmark-pdf"></i> Download PDF
-                                </a>
-                                <a href="{{ route('absensi.export', ['format' => 'excel', 'tanggal' => request('tanggal', date('Y-m-d'))]) }}" class="btn btn-success px-4" target="_blank">
-                                    <i class="bi bi-file-earmark-excel"></i> Download Excel
-                                </a>
                             </div>
                         </div>
                     </form>
