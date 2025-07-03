@@ -28,8 +28,8 @@
                             <tbody>
                                 @forelse($pembayarans as $pembayaran)
                                     <tr class="bg-white border-b">
-                                        <td class="px-6 py-4">{{ $pembayaran->bulan }}</td>
-                                        <td class="px-6 py-4">Rp {{ number_format($pembayaran->user->spp_bulanan, 0, ',', '.') }}</td>
+                                        <td class="px-6 py-4">{{ \Carbon\Carbon::parse($pembayaran->periode_pembayaran)->format('F Y') }}</td>
+                                        <td class="px-6 py-4">Rp {{ number_format($pembayaran->total_tagihan, 0, ',', '.') }}</td>
                                         <td class="px-6 py-4">
                                             @if($pembayaran->is_cicilan)
                                                 @php
@@ -37,29 +37,48 @@
                                                 @endphp
                                                 Rp {{ number_format($totalPaid, 0, ',', '.') }}
                                             @else
-                                                Rp {{ number_format($pembayaran->jumlah, 0, ',', '.') }}
+                                                @php
+                                                    // For non-installment payments, use the first detail payment if available
+                                                    $firstPayment = $pembayaran->detailPembayaran->first();
+                                                    $totalPaid = $firstPayment ? $firstPayment->jumlah_dibayar : 0;
+                                                @endphp
+                                                Rp {{ number_format($totalPaid, 0, ',', '.') }}
                                             @endif
                                         </td>
                                         <td class="px-6 py-4">
                                             @if($pembayaran->is_cicilan)
                                                 @php
                                                     $totalPaid = $pembayaran->detailPembayaran->sum('jumlah_dibayar');
-                                                    $remaining = max(0, $pembayaran->user->spp_bulanan - $totalPaid);
+                                                    $remaining = max(0, $pembayaran->total_tagihan - $totalPaid);
                                                 @endphp
                                                 <span class="{{ $remaining > 0 ? 'text-red-600' : 'text-green-600' }} font-medium">
                                                     Rp {{ number_format($remaining, 0, ',', '.') }}
                                                 </span>
                                             @else
                                                 @php
-                                                    $remaining = max(0, $pembayaran->user->spp_bulanan - $pembayaran->jumlah);
+                                                    $firstPayment = $pembayaran->detailPembayaran->first();
+                                                    $totalPaid = $firstPayment ? $firstPayment->jumlah_dibayar : 0;
+                                                    $remaining = max(0, $pembayaran->total_tagihan - $totalPaid);
                                                 @endphp
                                                 <span class="{{ $remaining > 0 ? 'text-red-600' : 'text-green-600' }} font-medium">
                                                     Rp {{ number_format($remaining, 0, ',', '.') }}
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4">{{ $pembayaran->metode_pembayaran }}</td>
-                                        <td class="px-6 py-4">{{ \Carbon\Carbon::parse($pembayaran->tanggal)->format('d M Y') }}</td>
+                                        <td class="px-6 py-4">
+                                            @if($pembayaran->detailPembayaran->isNotEmpty())
+                                                {{ $pembayaran->detailPembayaran->first()->metode_pembayaran }}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            @if($pembayaran->detailPembayaran->isNotEmpty())
+                                                {{ \Carbon\Carbon::parse($pembayaran->detailPembayaran->first()->tanggal_bayar)->format('d M Y') }}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
                                         <td class="px-6 py-4">
                                             @if($pembayaran->status == 'confirmed')
                                                 <span class="px-2 py-1 text-xs text-white bg-green-500 rounded">Dikonfirmasi</span>

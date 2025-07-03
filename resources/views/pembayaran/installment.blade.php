@@ -25,8 +25,9 @@
                     <div class="bg-gray-50 p-4 mb-6 rounded-md border">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <p><span class="font-medium">Nama Santri:</span> {{ $pembayaran->user->name }}</p>
+                                <p><span class="font-medium">Nama Santri:</span> {{ $pembayaran->user->nama_santri }}</p>
                                 <p><span class="font-medium">NIS:</span> {{ $pembayaran->user->nis }}</p>
+                                <p><span class="font-medium">Kelas:</span> {{ $pembayaran->user->classLevel->level }}</p>
                                 <p><span class="font-medium">Periode:</span> 
                                     @php
                                         $bulanNames = [

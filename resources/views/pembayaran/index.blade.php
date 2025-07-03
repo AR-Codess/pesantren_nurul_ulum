@@ -107,10 +107,7 @@
                                                 $isLunas = $totalPaid >= $totalTagihan;
                                             @endphp
                                         
-                                            {{-- 
-                                              Mengubah warna teks menjadi hijau jika lunas, dan merah jika belum.
-                                              Menampilkan format: Rp [sudah dibayar] / Rp [total tagihan]
-                                            --}}
+                                            {{-- Menampilkan format: Rp [sudah dibayar] / Rp [total tagihan] --}}
                                             <span class="{{ $isLunas ? 'text-green-600' : 'text-red-600' }} font-medium">
                                                 Rp {{ number_format($totalPaid, 0, ',', '.') }} / Rp {{ number_format($totalTagihan, 0, ',', '.') }}
                                             </span>
