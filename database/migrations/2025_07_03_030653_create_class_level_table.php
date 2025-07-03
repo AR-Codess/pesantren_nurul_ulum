@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('level')->notNull();
             $table->bigInteger('spp')->notNull();
+            $table->bigInteger('spp_beasiswa')->nullable()->comment('Nominal SPP untuk siswa penerima beasiswa');
             $table->timestamps();
         });
     }

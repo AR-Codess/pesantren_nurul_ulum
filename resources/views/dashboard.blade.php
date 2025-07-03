@@ -47,7 +47,9 @@
                     <!-- Informasi Akun UI Baru untuk User -->
                     <div class="bg-gradient-to-br from-green-400 to-blue-500 p-6 rounded-xl shadow-lg mb-8">
                         <div class="flex items-center mb-4">
-                            <svg class="w-10 h-10 text-white mr-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            <svg class="w-10 h-10 text-white mr-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
                             <div>
                                 <h3 class="text-2xl font-bold text-white mb-1">Informasi Akun</h3>
                                 <span class="px-3 py-1 text-xs text-white bg-green-600 rounded-full">User</span>
@@ -100,7 +102,9 @@
                         <!-- Tagihan Bulanan UI -->
                         <div class="bg-gradient-to-br from-green-400 to-blue-500 p-6 rounded-xl shadow-lg">
                             <div class="flex items-center mb-4">
-                                <svg class="w-8 h-8 text-white mr-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0V4m0 8v8m8-8a8 8 0 11-16 0 8 8 0 0116 0z"/></svg>
+                                <svg class="w-8 h-8 text-white mr-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0V4m0 8v8m8-8a8 8 0 11-16 0 8 8 0 0116 0z" />
+                                </svg>
                                 <h3 class="text-2xl font-bold text-white">Tagihan Bulanan</h3>
                             </div>
                             <div class="overflow-x-auto">
@@ -140,7 +144,9 @@
                         <!-- Rekap Absensi UI -->
                         <div class="bg-gradient-to-br from-blue-400 to-green-400 p-6 rounded-xl shadow-lg">
                             <div class="flex items-center mb-4">
-                                <svg class="w-8 h-8 text-white mr-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2a4 4 0 018 0v2M12 7a4 4 0 100 8 4 4 0 000-8zm0 0V3m0 8v8m8-8a8 8 0 11-16 0 8 8 0 0116 0z"/></svg>
+                                <svg class="w-8 h-8 text-white mr-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2a4 4 0 018 0v2M12 7a4 4 0 100 8 4 4 0 000-8zm0 0V3m0 8v8m8-8a8 8 0 11-16 0 8 8 0 0116 0z" />
+                                </svg>
                                 <h3 class="text-2xl font-bold text-white">Rekap Absensi Bulanan</h3>
                             </div>
                             <div class="overflow-x-auto">

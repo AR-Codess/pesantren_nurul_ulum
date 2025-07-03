@@ -15,7 +15,7 @@ new class extends Component
 
         $this->redirect(route('login'), navigate: true);
     }
-    
+
     /**
      * Check if the user is authenticated in any guard
      */
@@ -23,7 +23,7 @@ new class extends Component
     {
         return Auth::guard('web')->check() || Auth::guard('admin')->check() || Auth::guard('guru')->check();
     }
-    
+
     /**
      * Get the current authenticated user's name across all guards
      */
@@ -36,10 +36,10 @@ new class extends Component
         } elseif (Auth::guard('web')->check()) {
             return Auth::guard('web')->user()->nama_santri ?? Auth::guard('web')->user()->name;
         }
-        
+
         return '';
     }
-    
+
     /**
      * Get the current authenticated user's email across all guards
      */
@@ -52,7 +52,7 @@ new class extends Component
         } elseif (Auth::guard('web')->check()) {
             return Auth::guard('web')->user()->email;
         }
-        
+
         return '';
     }
 }; ?>
@@ -74,7 +74,7 @@ new class extends Component
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    
+
                     @if(Auth::guard('admin')->check() || (Auth::guard('web')->check() && Auth::guard('web')->user()->hasRole('admin')))
                     <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                         {{ __('Kelola Santri') }}
@@ -87,6 +87,9 @@ new class extends Component
                     </x-nav-link>
                     <x-nav-link :href="route('admin.berita.index')" :active="request()->routeIs('admin.berita.*')">
                         {{ __('Berita') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('kelola-spp')" :active="request()->routeIs('kelola-spp')">
+                        {{ __('Kelola SPP') }}
                     </x-nav-link>
                     @endif
                 </div>
@@ -150,7 +153,7 @@ new class extends Component
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            
+
             @if(Auth::guard('admin')->check() || (Auth::guard('web')->check() && Auth::guard('web')->user()->hasRole('admin')))
             <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                 {{ __('Kelola Santri') }}
@@ -163,6 +166,9 @@ new class extends Component
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.berita.index')" :active="request()->routeIs('admin.berita.*')">
                 {{ __('Berita') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('kelola-spp')" :active="request()->routeIs('kelola-spp')">
+                {{ __('Kelola SPP') }}
             </x-responsive-nav-link>
             @endif
         </div>
