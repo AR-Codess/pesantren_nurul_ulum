@@ -11,12 +11,12 @@
                 <p class="text-3xl font-bold">{{ $totalGuru }}</p>
             </div>
             <div class="bg-yellow-100 p-4 rounded-lg shadow">
-                <h3 class="font-bold text-lg text-yellow-800">Pembayaran Pending</h3>
+                <h3 class="font-bold text-lg text-yellow-800">Pembayaran Belum Lunas</h3>
                 <p class="text-3xl font-bold">{{ $pendingPayments }}</p>
             </div>
             <div class="bg-purple-100 p-4 rounded-lg shadow">
-                <h3 class="font-bold text-lg text-purple-800">Pembayaran Dikonfirmasi</h3>
+                <h3 class="font-bold text-lg text-purple-800">Pembayaran Lunas</h3>
                 <p class="text-3xl font-bold">{{ $confirmedPayments }}</p>
             </div>
         </div>
-</div>
+    </div>
