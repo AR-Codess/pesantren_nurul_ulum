@@ -74,9 +74,23 @@ class UserController extends Controller
             'kabupaten' => ['nullable', 'string', 'max:100'],
             'alamat' => ['nullable', 'string'],
             'no_hp' => ['nullable', 'digits_between:10,15'],
-            'spp_bulanan' => ['nullable', 'integer', 'min:0'],
             'is_beasiswa' => ['nullable', 'boolean'],
+            'spp_bulanan' => ['nullable', 'integer', 'min:0'],
         ]);
+
+        // Get class level to determine correct SPP amount
+        $classLevel = ClassLevel::findOrFail($request->class_level_id);
+        
+        // Check if the beasiswa checkbox is checked (value = 1)
+        $isBeasiswa = $request->input('is_beasiswa') == 1;
+        
+        // Calculate the correct SPP amount based on beasiswa status
+        $sppBulanan = 0;
+        if ($isBeasiswa && $classLevel->spp_beasiswa) {
+            $sppBulanan = $classLevel->spp_beasiswa;
+        } else {
+            $sppBulanan = $classLevel->spp;
+        }
 
         $user = User::create([
             'nama_santri' => $request->nama_santri,
@@ -91,8 +105,8 @@ class UserController extends Controller
             'kabupaten' => $request->kabupaten,
             'alamat' => $request->alamat,
             'no_hp' => $request->no_hp,
-            'spp_bulanan' => $request->spp_bulanan,
-            'is_beasiswa' => $request->has('is_beasiswa'),
+            'spp_bulanan' => $sppBulanan,
+            'is_beasiswa' => $isBeasiswa,
         ]);
 
         // Assign the 'user' role to the new santri
@@ -139,7 +153,6 @@ class UserController extends Controller
             'kabupaten' => ['nullable', 'string', 'max:100'],
             'alamat' => ['nullable', 'string'],
             'no_hp' => ['nullable', 'digits_between:10,15'],
-            'spp_bulanan' => ['nullable', 'integer', 'min:0'],
             'is_beasiswa' => ['nullable', 'boolean'],
         ];
 
@@ -149,6 +162,20 @@ class UserController extends Controller
         }
 
         $request->validate($rules);
+
+        // Get class level to determine correct SPP amount
+        $classLevel = ClassLevel::findOrFail($request->class_level_id);
+        
+        // Check if the beasiswa checkbox is checked (value = 1)
+        $isBeasiswa = $request->input('is_beasiswa') == 1;
+        
+        // Calculate the correct SPP amount based on beasiswa status
+        $sppBulanan = 0;
+        if ($isBeasiswa && $classLevel->spp_beasiswa) {
+            $sppBulanan = $classLevel->spp_beasiswa;
+        } else {
+            $sppBulanan = $classLevel->spp;
+        }
 
         // Update user data
         $user->nama_santri = $request->nama_santri;
@@ -162,8 +189,8 @@ class UserController extends Controller
         $user->kabupaten = $request->kabupaten;
         $user->alamat = $request->alamat;
         $user->no_hp = $request->no_hp;
-        $user->spp_bulanan = $request->spp_bulanan;
-        $user->is_beasiswa = $request->has('is_beasiswa');
+        $user->spp_bulanan = $sppBulanan;
+        $user->is_beasiswa = $isBeasiswa;
         
         // Update password if provided
         if ($request->filled('password')) {
