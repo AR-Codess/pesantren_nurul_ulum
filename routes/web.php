@@ -7,6 +7,7 @@ use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\BeritaController;
+use App\Http\Controllers\Admin\KelasController;
 use App\Http\Controllers\CKEditorController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,9 @@ Route::middleware(['auth:admin', 'role:admin|admin'])->group(function () {
     // berita management routes
     Route::resource('/admin/berita', BeritaController::class)->names('admin.berita');
     Route::post('/admin/berita/update-order', [BeritaController::class, 'updateOrder'])->name('admin.berita.update-order');
+    
+    // Kelas (Class) management routes
+    Route::resource('/admin/kelas', KelasController::class)->names('admin.kelas');
     
     // CKEditor image upload dan browse routes
     Route::post('/ckeditor/upload', [CKEditorController::class, 'upload'])->name('ckeditor.upload');

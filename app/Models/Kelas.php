@@ -18,9 +18,10 @@ class Kelas extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'nama_kelas',
+        'mata_pelajaran',
         'tahun_ajaran',
         'guru_id',
+        'class_level_id',
     ];
 
     /**
@@ -29,6 +30,14 @@ class Kelas extends Model
     public function guru(): BelongsTo
     {
         return $this->belongsTo(Guru::class);
+    }
+
+    /**
+     * Get the class level (jenjang kelas) this class belongs to.
+     */
+    public function classLevel(): BelongsTo
+    {
+        return $this->belongsTo(ClassLevel::class);
     }
 
     /**

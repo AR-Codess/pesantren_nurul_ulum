@@ -82,6 +82,9 @@ new class extends Component
                     <x-nav-link :href="route('guru.index')" :active="request()->routeIs('guru.*')">
                         {{ __('Kelola Guru') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('admin.kelas.index')" :active="request()->routeIs('admin.kelas.*')">
+                        {{ __('Kelola Kelas') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('pembayaran.index')" :active="request()->routeIs('pembayaran.*')">
                         {{ __('Pembayaran') }}
                     </x-nav-link>
@@ -160,6 +163,9 @@ new class extends Component
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('guru.index')" :active="request()->routeIs('guru.*')">
                 {{ __('Kelola Guru') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.kelas.index')" :active="request()->routeIs('admin.kelas.*')">
+                {{ __('Kelola Kelas') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('pembayaran.index')" :active="request()->routeIs('pembayaran.*')">
                 {{ __('Pembayaran') }}
