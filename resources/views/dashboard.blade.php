@@ -84,6 +84,40 @@
                     @if(auth()->user()->hasRole('admin'))
                     <livewire:admin-dashboard />
                     @elseif(auth()->user()->hasRole('guru'))
+                    <!-- Informasi Akun UI Baru untuk Guru -->
+                    <div class="bg-gradient-to-br from-blue-400 to-green-400 p-6 rounded-xl shadow-lg mb-8">
+                        <div class="flex items-center mb-4">
+                            <svg class="w-10 h-10 text-white mr-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <div>
+                                <h3 class="text-2xl font-bold text-white mb-1">Informasi Akun</h3>
+                                <span class="px-3 py-1 text-xs text-white bg-blue-600 rounded-full">Guru</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow flex flex-col">
+                                <span class="font-medium text-gray-700 mb-1">Nama:</span>
+                                <span class="text-gray-900">{{ auth()->user()->nama_pendidik ?? auth()->user()->name }}</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow flex flex-col">
+                                <span class="font-medium text-gray-700 mb-1">NIK:</span>
+                                <span class="text-gray-900">{{ auth()->user()->nik ?? '-' }}</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow flex flex-col">
+                                <span class="font-medium text-gray-700 mb-1">Email:</span>
+                                <span class="text-gray-900">{{ auth()->user()->email }}</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow flex flex-col">
+                                <span class="font-medium text-gray-700 mb-1">Tempat, Tanggal Lahir:</span>
+                                <span class="text-gray-900">{{ auth()->user()->tempat_lahir ?? '-' }}, {{ auth()->user()->tanggal_lahir ? (is_string(auth()->user()->tanggal_lahir) ? \Carbon\Carbon::parse(auth()->user()->tanggal_lahir)->format('d M Y') : auth()->user()->tanggal_lahir->format('d M Y')) : '-' }}</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow flex flex-col">
+                                <span class="font-medium text-gray-700 mb-1">No. HP:</span>
+                                <span class="text-gray-900">{{ auth()->user()->no_telepon ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
                     <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-white p-4 border rounded-lg shadow-sm">
                             <h3 class="font-bold text-lg mb-2">Kelola Absensi</h3>
