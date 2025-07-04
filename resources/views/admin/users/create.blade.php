@@ -48,11 +48,31 @@
                                 onchange="updateSpp(this.value)">
                                 <option value="">Pilih Kelas</option>
                                 @foreach($classLevels as $classLevel)
-                                <option value="{{ $classLevel->id }}" data-spp="{{ $classLevel->spp }}" {{ old('class_level_id') == $classLevel->id ? 'selected' : '' }}>
-                                    {{ $classLevel->level }} - SPP Rp {{ number_format($classLevel->spp, 0, ',', '.') }}
+                                <option value="{{ $classLevel->id }}" data-spp="{{ $classLevel->spp }}" data-spp-beasiswa="{{ $classLevel->spp_beasiswa ?? 0 }}" {{ old('class_level_id') == $classLevel->id ? 'selected' : '' }}>
+                                    {{ $classLevel->level }}
                                 </option>
                                 @endforeach
                             </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="spp_bulanan" class="block text-sm font-medium text-gray-700">SPP Bulanan</label>
+                            <div class="relative mt-1 rounded-md shadow-sm">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <span class="text-gray-500 sm:text-sm">Rp</span>
+                                </div>
+                                <input type="number" name="spp_bulanan" id="spp_bulanan" value="{{ old('spp_bulanan') }}"
+                                    class="pl-12 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 bg-gray-100 cursor-not-allowed"
+                                    placeholder="0" readonly tabindex="-1">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="is_beasiswa" id="is_beasiswa" value="1" {{ old('is_beasiswa') ? 'checked' : '' }}
+                                    class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                <label for="is_beasiswa" class="ml-2 block text-sm text-gray-700">Penerima Beasiswa</label>
+                            </div>
                         </div>
 
                         <div class="mb-4">
@@ -107,26 +127,6 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="spp_bulanan" class="block text-sm font-medium text-gray-700">SPP Bulanan</label>
-                            <div class="relative mt-1 rounded-md shadow-sm">
-                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                    <span class="text-gray-500 sm:text-sm">Rp</span>
-                                </div>
-                                <input type="number" name="spp_bulanan" id="spp_bulanan" value="{{ old('spp_bulanan') }}"
-                                    class="pl-12 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-                                    placeholder="0">
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <div class="flex items-center">
-                                <input type="checkbox" name="is_beasiswa" id="is_beasiswa" value="1" {{ old('is_beasiswa') ? 'checked' : '' }}
-                                    class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                                <label for="is_beasiswa" class="ml-2 block text-sm text-gray-700">Penerima Beasiswa</label>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
                             <label for="password" class="block text-sm font-medium text-gray-700">Password <span class="text-red-500">*</span></label>
                             <input type="password" name="password" id="password" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
@@ -154,20 +154,43 @@
         function updateSpp(classLevelId) {
             if (!classLevelId) return;
 
-            // Get the selected option
             const selectedOption = document.querySelector(`#class_level_id option[value="${classLevelId}"]`);
-
             if (selectedOption) {
-                // Get the spp value from data attribute
                 const sppValue = selectedOption.getAttribute('data-spp');
-
-                // Update the spp_bulanan input field if it's not already set by the user
+                let sppBeasiswaValue = selectedOption.getAttribute('data-spp-beasiswa');
                 const sppBulananField = document.getElementById('spp_bulanan');
-                if (!sppBulananField.value || sppBulananField.value == 0) {
-                    sppBulananField.value = sppValue;
+                const isBeasiswaCheckbox = document.getElementById('is_beasiswa');
+
+                // Pastikan sppBeasiswaValue tidak null/undefined/empty
+                if (!sppBeasiswaValue || sppBeasiswaValue === 'null' || sppBeasiswaValue === '') {
+                    sppBeasiswaValue = sppValue;
+                }
+
+                // Default: set SPP bulanan
+                sppBulananField.value = sppValue;
+
+                // If beasiswa checked, set SPP beasiswa
+                if (isBeasiswaCheckbox && isBeasiswaCheckbox.checked) {
+                    sppBulananField.value = sppBeasiswaValue;
                 }
             }
         }
+
+        // When beasiswa checkbox is toggled, update SPP bulanan
+        document.addEventListener('DOMContentLoaded', function() {
+            const classLevelField = document.getElementById('class_level_id');
+            const isBeasiswaCheckbox = document.getElementById('is_beasiswa');
+            if (classLevelField && classLevelField.value) {
+                updateSpp(classLevelField.value);
+            }
+            if (isBeasiswaCheckbox) {
+                isBeasiswaCheckbox.addEventListener('change', function() {
+                    if (classLevelField && classLevelField.value) {
+                        updateSpp(classLevelField.value);
+                    }
+                });
+            }
+        });
 
         // Initialize on page load if there's already a selected class level
         document.addEventListener('DOMContentLoaded', function() {
