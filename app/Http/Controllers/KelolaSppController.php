@@ -20,11 +20,6 @@ class KelolaSppController extends Controller
             'spp' => 'required|integer|min:0',
             'spp_beasiswa' => 'nullable|integer|min:0',
         ]);
-        ClassLevel::create([
-            'level' => $request->level,
-            'spp' => $request->spp,
-            'spp_beasiswa' => $request->spp_beasiswa,
-        ]);
         return redirect()->route('kelola-spp')->with('success', 'Level kelas berhasil ditambahkan!');
     }
 

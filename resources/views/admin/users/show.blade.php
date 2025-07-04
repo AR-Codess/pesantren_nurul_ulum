@@ -47,11 +47,27 @@
                                     </tr>
                                     <tr class="bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">SPP</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->classLevel ? 'Rp ' . number_format($user->classLevel->spp, 0, ',', '.') : '-' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            @if($user->classLevel)
+                                                @if($user->is_beasiswa && $user->classLevel->spp_beasiswa)
+                                                    Rp {{ number_format($user->classLevel->spp_beasiswa, 0, ',', '.') }}
+                                                @else
+                                                    Rp {{ number_format($user->classLevel->spp, 0, ',', '.') }}
+                                                @endif
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
                                     </tr>
-                                    <tr>
+                                    <tr class="bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Status Beasiswa</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->is_beasiswa ? 'Ya' : 'Tidak' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            @if($user->is_beasiswa)
+                                                <span class="px-2 py-1 text-sm text-white bg-green-600 rounded">Ya</span>
+                                            @else
+                                                <span class="px-2 py-1 text-sm bg-gray-100 text-gray-800 rounded">Tidak</span>
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr class="bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Email</td>

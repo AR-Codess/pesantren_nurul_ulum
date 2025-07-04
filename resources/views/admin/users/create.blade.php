@@ -48,7 +48,7 @@
                                 onchange="updateSpp(this.value)">
                                 <option value="">Pilih Kelas</option>
                                 @foreach($classLevels as $classLevel)
-                                <option value="{{ $classLevel->id }}" data-spp="{{ $classLevel->spp }}" data-spp-beasiswa="{{ $classLevel->spp_beasiswa ?? 0 }}" {{ old('class_level_id') == $classLevel->id ? 'selected' : '' }}>
+                                <option value="{{ $classLevel->id }}" data-spp="{{ $classLevel->spp }}" data-spp-beasiswa="{{ $classLevel->spp_beasiswa ?? $classLevel->spp }}" {{ old('class_level_id') == $classLevel->id ? 'selected' : '' }}>
                                     {{ $classLevel->level }}
                                 </option>
                                 @endforeach
@@ -69,6 +69,7 @@
 
                         <div class="mb-4">
                             <div class="flex items-center">
+                                <input type="hidden" name="is_beasiswa" value="0">
                                 <input type="checkbox" name="is_beasiswa" id="is_beasiswa" value="1" {{ old('is_beasiswa') ? 'checked' : '' }}
                                     class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                                 <label for="is_beasiswa" class="ml-2 block text-sm text-gray-700">Penerima Beasiswa</label>
@@ -180,13 +181,29 @@
         document.addEventListener('DOMContentLoaded', function() {
             const classLevelField = document.getElementById('class_level_id');
             const isBeasiswaCheckbox = document.getElementById('is_beasiswa');
+            const form = document.querySelector('form');
+            
             if (classLevelField && classLevelField.value) {
                 updateSpp(classLevelField.value);
             }
+            
             if (isBeasiswaCheckbox) {
                 isBeasiswaCheckbox.addEventListener('change', function() {
                     if (classLevelField && classLevelField.value) {
                         updateSpp(classLevelField.value);
+                    }
+                });
+            }
+
+            // Handle form submission
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Ensure is_beasiswa hidden field is added if checkbox is checked
+                    const isBeasiswaCheckbox = document.getElementById('is_beasiswa');
+                    if (isBeasiswaCheckbox && isBeasiswaCheckbox.checked) {
+                        console.log('Beasiswa checkbox is checked, submitting value: 1');
+                    } else {
+                        console.log('Beasiswa checkbox is NOT checked');
                     }
                 });
             }

@@ -25,6 +25,7 @@ class User extends Authenticatable
         'nama_santri',
         'class_level_id',
         'spp_bulanan',
+        'is_beasiswa',
         'jenis_kelamin',
         'tempat_lahir',
         'tanggal_lahir',
@@ -56,6 +57,7 @@ class User extends Authenticatable
         return [
             'tanggal_lahir' => 'date',
             'jenis_kelamin' => 'boolean',
+            'is_beasiswa' => 'boolean',
             'spp_bulanan' => 'integer',
             'password' => 'hashed',
         ];
