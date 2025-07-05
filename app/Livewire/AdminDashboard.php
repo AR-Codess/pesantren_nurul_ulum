@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\User;
 use App\Models\Pembayaran;
 use App\Models\Guru;
+use App\Models\DetailPembayaran;
 use Carbon\Carbon;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,11 @@ class AdminDashboard extends Component
 
     public function mount()
     {
+        $this->loadData();
+    }
+
+    public function loadData()
+    {
         // Count statistics for dashboard using direct queries to ensure accurate counts
         $this->totalUsers = User::role('user')->count();
         
@@ -29,29 +35,21 @@ class AdminDashboard extends Component
         if ($this->totalGuru == 0) {
             $this->totalGuru = Guru::count();
         }
-        
-        // Get payment summary for the current month
-        $currentMonth = Carbon::now()->format('Y-m');
-        
-        // Get counts for each payment status
-        $paymentStats = Pembayaran::selectRaw('status, COUNT(*) as count')
-                    ->whereRaw("DATE_FORMAT(periode_pembayaran, '%Y-%m') = ?", [$currentMonth])
-                    ->groupBy('status')
-                    ->pluck('count', 'status')
-                    ->toArray();
-        
-        // Set default values if not exists
-        $this->confirmedPayments = $paymentStats['lunas'] ?? 0;
-        $this->pendingPayments = $paymentStats['belum_lunas'] ?? 0;
-        $this->rejectedPayments = $paymentStats['rejected'] ?? 0;
-        
-        // If we still don't have data, let's query all payments regardless of date
-        if ($this->confirmedPayments == 0 && $this->pendingPayments == 0) {
-            $this->confirmedPayments = Pembayaran::where('status', 'lunas')->count();
-            $this->pendingPayments = Pembayaran::where('status', 'belum_lunas')->count();
-            $this->rejectedPayments = Pembayaran::where('status', 'rejected')->count();
-        }
-        
+
+        // Get confirmed/lunas payments count
+        $this->confirmedPayments = Pembayaran::where('status', 'lunas')->count();
+
+        // Count all payments that are not fully paid yet
+        // This includes payments with explicit status and those where the paid amount < total amount
+        $this->pendingPayments = DB::table('pembayaran as p')
+            ->leftJoin(DB::raw('(SELECT pembayaran_id, SUM(jumlah_dibayar) as total_dibayar FROM detail_pembayaran GROUP BY pembayaran_id) as dp'), 
+                'dp.pembayaran_id', '=', 'p.id')
+            ->whereRaw('(p.status IN ("belum_lunas", "belum_bayar", "pending") OR (COALESCE(dp.total_dibayar, 0) < p.total_tagihan))')
+            ->count();
+
+        // Count rejected payments
+        $this->rejectedPayments = Pembayaran::where('status', 'rejected')->count();
+
         // Make sure we have at least zero values for all stats to prevent undefined errors
         $this->totalUsers = $this->totalUsers ?: 0;
         $this->totalGuru = $this->totalGuru ?: 0;

@@ -13,10 +13,16 @@
             <div class="bg-yellow-100 p-4 rounded-lg shadow">
                 <h3 class="font-bold text-lg text-yellow-800">Pembayaran Belum Lunas</h3>
                 <p class="text-3xl font-bold">{{ $pendingPayments }}</p>
+                <div class="mt-2 text-right">
+                    <a href="{{ route('pembayaran.index', ['status' => 'belum_lunas']) }}" class="text-yellow-800 hover:underline text-sm">Lihat semua →</a>
+                </div>
             </div>
             <div class="bg-purple-100 p-4 rounded-lg shadow">
                 <h3 class="font-bold text-lg text-purple-800">Pembayaran Lunas</h3>
                 <p class="text-3xl font-bold">{{ $confirmedPayments }}</p>
+                <div class="mt-2 text-right">
+                    <a href="{{ route('pembayaran.index', ['status' => 'lunas']) }}" class="text-purple-800 hover:underline text-sm">Lihat semua →</a>
+                </div>
             </div>
         </div>
     </div>
