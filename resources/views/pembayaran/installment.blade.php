@@ -176,8 +176,8 @@
                                 <input type="hidden" name="pembayaran_id" value="{{ $pembayaran->id }}">
                                 
                                 <div class="mb-4">
-                                    <label for="jumlah_dibayar" class="block text-sm font-medium text-gray-700">Jumlah Pembayaran (Rp)</label>
-                                    <input type="number" id="jumlah_dibayar" name="jumlah_dibayar" value="{{ old('jumlah_dibayar', $sisa_tagihan) }}" max="{{ $sisa_tagihan }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <label for="jumlah_dibayar" class="block text-sm font-medium text-gray-700">Jumlah Pembayaran (Rp) <span class="text-red-500">*</span></label>
+                                    <input type="number" id="jumlah_dibayar" name="jumlah_dibayar" placeholder="0" required max="{{ $sisa_tagihan }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                                     <p class="text-sm text-gray-500 mt-1">Maksimal pembayaran: Rp {{ number_format($sisa_tagihan, 0, ',', '.') }}</p>
                                 </div>
                                 
