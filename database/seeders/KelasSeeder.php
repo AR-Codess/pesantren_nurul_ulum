@@ -27,60 +27,70 @@ class KelasSeeder extends Seeder
             [
                 'mata_pelajaran' => 'Matematika Dasar',
                 'class_level_id' => 1, // Kelas 1
+                'jadwal_hari' => 'Senin',
                 'tahun_ajaran' => '2025/2026',
                 'guru_id' => 1, // KH. Abdullah Hakim
             ],
             [
                 'mata_pelajaran' => 'Bahasa Arab',
                 'class_level_id' => 1, // Kelas 1
+                'jadwal_hari' => 'Selasa',
                 'tahun_ajaran' => '2025/2026',
                 'guru_id' => 2, // Ustadz Muhammad Yusuf
             ],
             [
                 'mata_pelajaran' => 'Fiqih',
                 'class_level_id' => 2, // Kelas 2
+                'jadwal_hari' => 'Senin',
                 'tahun_ajaran' => '2025/2026',
                 'guru_id' => 3, // Ustadzah Siti Aminah
             ],
             [
                 'mata_pelajaran' => 'Tahfidz Al-Quran',
                 'class_level_id' => 2, // Kelas 2
+                'jadwal_hari' => 'Rabu',
                 'tahun_ajaran' => '2025/2026',
                 'guru_id' => 4, // Ustadz Ahmad Husaini
             ],
             [
                 'mata_pelajaran' => 'Hadits',
                 'class_level_id' => 3, // Kelas 3
+                'jadwal_hari' => 'Kamis',
                 'tahun_ajaran' => '2025/2026',
                 'guru_id' => 5, // Ustadzah Fatimah Zahra
             ],
             [
                 'mata_pelajaran' => 'Akidah Akhlak',
                 'class_level_id' => 3, // Kelas 3
+                'jadwal_hari' => 'Sabtu',
                 'tahun_ajaran' => '2025/2026',
                 'guru_id' => 1, // KH. Abdullah Hakim
             ],
             [
                 'mata_pelajaran' => 'Matematika Lanjutan',
                 'class_level_id' => 4, // Kelas 4
+                'jadwal_hari' => 'Minggu',
                 'tahun_ajaran' => '2025/2026',
                 'guru_id' => 2, // Ustadz Muhammad Yusuf
             ],
             [
                 'mata_pelajaran' => 'Bahasa Inggris',
                 'class_level_id' => 4, // Kelas 4
+                'jadwal_hari' => 'Kamis',
                 'tahun_ajaran' => '2025/2026',
                 'guru_id' => 3, // Ustadzah Siti Aminah
             ],
             [
                 'mata_pelajaran' => 'Tafsir Al-Quran',
                 'class_level_id' => 5, // Kelas 5
+                'jadwal_hari' => 'Sabtu',
                 'tahun_ajaran' => '2025/2026',
                 'guru_id' => 4, // Ustadz Ahmad Husaini
             ],
             [
                 'mata_pelajaran' => 'Sejarah Islam',
                 'class_level_id' => 6, // Kelas 6
+                'jadwal_hari' => 'Rabu',
                 'tahun_ajaran' => '2025/2026',
                 'guru_id' => 5, // Ustadzah Fatimah Zahra
             ],

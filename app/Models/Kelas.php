@@ -22,6 +22,7 @@ class Kelas extends Model
         'tahun_ajaran',
         'guru_id',
         'class_level_id',
+        'jadwal_hari',
     ];
 
     /**

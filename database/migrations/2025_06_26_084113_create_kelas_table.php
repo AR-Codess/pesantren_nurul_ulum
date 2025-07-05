@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nama_kelas', 100);
             $table->string('tahun_ajaran', 20);
             $table->foreignId('guru_id')->constrained('guru')->onDelete('cascade');
+            $table->string('jadwal_hari', 20)->nullable()->comment('Hari jadwal kelas, contoh: Senin, Selasa, dst');
             $table->timestamps();
         });
 

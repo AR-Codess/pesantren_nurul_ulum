@@ -19,7 +19,7 @@
                             </a>
                         </div>
                     </div>
-                    
+
                     <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
                         <div class="px-4 py-5 sm:px-6 bg-gray-50">
                             <h3 class="text-lg font-medium text-gray-900">Informasi Kelas</h3>
@@ -39,10 +39,14 @@
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $kela->tahun_ajaran }}</dd>
                                 </div>
                                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">Hari Kelas</dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $kela->jadwal_hari ?? '-' }}</dd>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Guru Pengajar</dt>
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $kela->guru->nama_pendidik ?? 'Tidak diatur' }}</dd>
                                 </div>
-                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                     <dt class="text-sm font-medium text-gray-500">Jumlah Santri</dt>
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $kela->users->count() }} santri</dd>
                                 </div>
@@ -66,18 +70,18 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($kela->users as $index => $user)
-                                        <tr class="bg-white border-b hover:bg-gray-50">
-                                            <td class="px-6 py-4">{{ $index + 1 }}</td>
-                                            <td class="px-6 py-4">{{ $user->nis }}</td>
-                                            <td class="px-6 py-4">{{ $user->nama_santri }}</td>
-                                            <td class="px-6 py-4">{{ $user->jenis_kelamin ? 'Laki-laki' : 'Perempuan' }}</td>
-                                            <td class="px-6 py-4">{{ $user->tanggal_lahir ? $user->tanggal_lahir->format('d-m-Y') : '-' }}</td>
-                                            <td class="px-6 py-4">{{ $user->alamat }}</td>
-                                        </tr>
+                                    <tr class="bg-white border-b hover:bg-gray-50">
+                                        <td class="px-6 py-4">{{ $index + 1 }}</td>
+                                        <td class="px-6 py-4">{{ $user->nis }}</td>
+                                        <td class="px-6 py-4">{{ $user->nama_santri }}</td>
+                                        <td class="px-6 py-4">{{ $user->jenis_kelamin ? 'Laki-laki' : 'Perempuan' }}</td>
+                                        <td class="px-6 py-4">{{ $user->tanggal_lahir ? $user->tanggal_lahir->format('d-m-Y') : '-' }}</td>
+                                        <td class="px-6 py-4">{{ $user->alamat }}</td>
+                                    </tr>
                                     @empty
-                                        <tr class="bg-white border-b">
-                                            <td colspan="6" class="px-6 py-4 text-center">Tidak ada santri yang terdaftar di kelas ini</td>
-                                        </tr>
+                                    <tr class="bg-white border-b">
+                                        <td colspan="6" class="px-6 py-4 text-center">Tidak ada santri yang terdaftar di kelas ini</td>
+                                    </tr>
                                     @endforelse
                                 </tbody>
                             </table>

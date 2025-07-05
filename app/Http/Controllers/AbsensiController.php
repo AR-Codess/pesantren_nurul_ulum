@@ -58,7 +58,8 @@ class AbsensiController extends Controller
             );
         }
 
-        return redirect()->route('absensi.index')
+        // Redirect ke dashboard guru setelah absensi berhasil
+        return redirect()->route('dashboard')
             ->with('success', 'Absensi harian berhasil disimpan.');
     }
 

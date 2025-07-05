@@ -22,7 +22,7 @@ class KelasController extends Controller
         $classLevelFilter = $request->input('class_level_id');
         $guruFilter = $request->input('guru_id');
         $mataPelajaranFilter = $request->input('mata_pelajaran');
-        
+
         $kelas = Kelas::with(['guru', 'classLevel'])
             ->withCount('users')
             ->when($search, function ($query, $search) {
@@ -41,12 +41,12 @@ class KelasController extends Controller
             ->latest()
             ->paginate($perPage)
             ->withQueryString();
-        
+
         // Get data for filter dropdowns
         $classLevels = ClassLevel::orderBy('level')->get();
         $gurus = Guru::orderBy('nama_pendidik')->get();
         $mataPelajarans = Kelas::select('mata_pelajaran')->distinct()->orderBy('mata_pelajaran')->pluck('mata_pelajaran');
-        
+
         return view('admin.kelas.index', compact('kelas', 'classLevels', 'gurus', 'mataPelajarans'));
     }
 
@@ -57,10 +57,10 @@ class KelasController extends Controller
     {
         $gurus = Guru::orderBy('nama_pendidik')->get();
         $classLevels = ClassLevel::orderBy('level')->get();
-        
+
         // Get all students (users with role 'user')
         $users = User::role('user')->orderBy('nama_santri')->get();
-        
+
         return view('admin.kelas.create', compact('gurus', 'classLevels', 'users'));
     }
 
@@ -75,6 +75,7 @@ class KelasController extends Controller
             'tahun_ajaran' => 'required|string|max:9', // Format: 2024/2025
             'guru_id' => 'required|exists:guru,id',
             'class_level_id' => 'required|exists:class_level,id',
+            'jadwal_hari' => 'required|string|max:20',
             'users' => 'sometimes|array',
             'users.*' => 'exists:users,id'
         ], [], [
@@ -82,6 +83,7 @@ class KelasController extends Controller
             'tahun_ajaran' => 'Tahun Ajaran',
             'guru_id' => 'Guru Pengajar',
             'class_level_id' => 'Jenjang Kelas',
+            'jadwal_hari' => 'Hari Kelas',
             'users' => 'Santri',
             'users.*' => 'Santri'
         ]);
@@ -91,22 +93,23 @@ class KelasController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-        
+
         $validatedData = $validator->validated();
-        
+
         // Create the class with basic data
         $kelas = Kelas::create([
             'mata_pelajaran' => $validatedData['mata_pelajaran'],
             'tahun_ajaran' => $validatedData['tahun_ajaran'],
             'guru_id' => $validatedData['guru_id'],
             'class_level_id' => $validatedData['class_level_id'],
+            'jadwal_hari' => $validatedData['jadwal_hari'],
         ]);
-        
+
         // Add students to the class if selected
         if (isset($validatedData['users'])) {
             $kelas->users()->attach($validatedData['users']);
         }
-        
+
         return redirect()->route('admin.kelas.index')
             ->with('success', 'Kelas berhasil ditambahkan.');
     }
@@ -117,7 +120,7 @@ class KelasController extends Controller
     public function show(Kelas $kela)
     {
         $kela->load(['guru', 'classLevel', 'users']);
-        
+
         return view('admin.kelas.show', compact('kela'));
     }
 
@@ -128,13 +131,13 @@ class KelasController extends Controller
     {
         $gurus = Guru::orderBy('nama_pendidik')->get();
         $classLevels = ClassLevel::orderBy('level')->get();
-        
+
         // Get all students (users with role 'user')
         $users = User::role('user')->orderBy('nama_santri')->get();
-        
+
         // Get IDs of students already in this class
         $selectedUserIds = $kela->users->pluck('id')->toArray();
-        
+
         return view('admin.kelas.edit', compact('kela', 'gurus', 'classLevels', 'users', 'selectedUserIds'));
     }
 
@@ -149,6 +152,7 @@ class KelasController extends Controller
             'tahun_ajaran' => 'required|string|max:9', // Format: 2024/2025
             'guru_id' => 'required|exists:guru,id',
             'class_level_id' => 'required|exists:class_level,id',
+            'jadwal_hari' => 'required|string|max:20',
             'users' => 'sometimes|array',
             'users.*' => 'exists:users,id'
         ], [], [
@@ -156,6 +160,7 @@ class KelasController extends Controller
             'tahun_ajaran' => 'Tahun Ajaran',
             'guru_id' => 'Guru Pengajar',
             'class_level_id' => 'Jenjang Kelas',
+            'jadwal_hari' => 'Hari Kelas',
             'users' => 'Santri',
             'users.*' => 'Santri'
         ]);
@@ -165,17 +170,18 @@ class KelasController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-        
+
         $validatedData = $validator->validated();
-        
+
         // Update basic class data
         $kela->update([
             'mata_pelajaran' => $validatedData['mata_pelajaran'],
             'tahun_ajaran' => $validatedData['tahun_ajaran'],
             'guru_id' => $validatedData['guru_id'],
             'class_level_id' => $validatedData['class_level_id'],
+            'jadwal_hari' => $validatedData['jadwal_hari'],
         ]);
-        
+
         // Update the students in this class
         if (isset($validatedData['users'])) {
             $kela->users()->sync($validatedData['users']);
@@ -183,7 +189,7 @@ class KelasController extends Controller
             // If no users selected, detach all
             $kela->users()->sync([]);
         }
-        
+
         return redirect()->route('admin.kelas.index')
             ->with('success', 'Kelas berhasil diperbarui.');
     }
@@ -195,10 +201,10 @@ class KelasController extends Controller
     {
         // Detach all students from this class first
         $kela->users()->detach();
-        
+
         // Delete the class
         $kela->delete();
-        
+
         return redirect()->route('admin.kelas.index')
             ->with('success', 'Kelas berhasil dihapus.');
     }

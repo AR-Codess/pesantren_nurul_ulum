@@ -118,19 +118,233 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white p-4 border rounded-lg shadow-sm">
-                            <h3 class="font-bold text-lg mb-2">Kelola Absensi</h3>
-                            <p class="text-gray-600 mb-4">Catat kehadiran pengguna.</p>
-                            <a href="{{ route('absensi.index') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Data Absensi</a>
-                        </div>
 
-                        <div class="bg-white p-4 border rounded-lg shadow-sm">
-                            <h3 class="font-bold text-lg mb-2">Buat Absensi Baru</h3>
-                            <p class="text-gray-600 mb-4">Tambah data absensi pengguna hari ini.</p>
-                            <a href="{{ route('absensi.create') }}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Buat Absensi Baru</a>
+                    <!-- List Kelas yang Harus Diabsen -->
+                    <div class="bg-white p-4 rounded-lg shadow mb-8">
+                        <h3 class="font-bold text-lg mb-4 text-blue-700">Daftar Kelas yang Harus Diabsen</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full bg-white rounded-lg shadow overflow-hidden">
+                                <thead class="bg-blue-100">
+                                    <tr>
+                                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Nama Kelas</th>
+                                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Hari</th>
+                                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Jumlah Murid</th>
+                                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                    $hariIni = [
+                                    'Sunday' => 'Minggu',
+                                    'Monday' => 'Senin',
+                                    'Tuesday' => 'Selasa',
+                                    'Wednesday' => 'Rabu',
+                                    'Thursday' => 'Kamis',
+                                    'Friday' => 'Jumat',
+                                    'Saturday' => 'Sabtu',
+                                    ];
+                                    $jadwalHari = $hariIni[date('l')];
+                                    $kelasList = \App\Models\Kelas::where('guru_id', auth()->user()->id)
+                                    ->where('jadwal_hari', $jadwalHari)
+                                    ->get();
+                                    @endphp
+                                    @forelse($kelasList as $kelas)
+                                    @php
+                                    $sudahAbsen = \App\Models\Absensi::where('kelas_id', $kelas->id)
+                                    ->where('guru_id', auth()->user()->id)
+                                    ->whereDate('tanggal', date('Y-m-d'))
+                                    ->exists();
+                                    @endphp
+                                    <tr class="border-b">
+                                        <td class="py-2 px-4">{{ $kelas->nama_kelas ?? $kelas->mata_pelajaran }} - {{ optional($kelas->classLevel)->level ?? '-' }} </td>
+                                        <td class="py-2 px-4">{{ $kelas->jadwal_hari ?? '-' }}</td>
+                                        <td class="py-2 px-4">{{ $kelas->users()->count() }}</td>
+                                        <td class="py-2 px-4">
+                                            @if($sudahAbsen)
+                                            <button class="px-3 py-1 bg-gray-400 text-white rounded text-xs cursor-not-allowed" disabled>Sudah Absen</button>
+                                            @else
+                                            <a href="{{ route('absensi.index', ['kelas_id' => $kelas->id]) }}" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs">Absen Kelas</a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="3" class="py-2 px-4 text-center text-gray-500">Tidak ada kelas yang harus diabsen.</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
                     </div>
+
+                    <!-- Rekapitulasi Absensi Kelas Hari Ini -->
+                    <div class="bg-white p-6 rounded-lg shadow mb-8 border border-green-200">
+                        <h3 class="font-bold text-lg mb-4 text-green-700 flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2a4 4 0 018 0v2M12 7a4 4 0 100 8 4 4 0 000-8zm0 0V3m0 8v8m8-8a8 8 0 11-16 0 8 8 0 0116 0z" />
+                            </svg>
+                            Rekapitulasi Absensi Kelas Hari Ini
+                        </h3>
+                        @php
+                        $tanggal = date('Y-m-d');
+                        $kelasIdList = \App\Models\Kelas::where('guru_id', auth()->user()->id)->pluck('id');
+                        $kelasMap = \App\Models\Kelas::whereIn('id', $kelasIdList)->get()->keyBy('id');
+                        $absensiHariIni = \App\Models\Absensi::whereIn('kelas_id', $kelasIdList)
+                        ->whereDate('tanggal', $tanggal)
+                        ->get();
+                        $rekap = [];
+                        foreach ($absensiHariIni as $absen) {
+                        $kid = $absen->kelas_id;
+                        if (!isset($rekap[$kid])) {
+                        $rekap[$kid] = [
+                        'kelas' => $kelasMap[$kid] ?? null,
+                        'hadir' => 0,
+                        'izin' => 0,
+                        'sakit' => 0,
+                        'alpha' => 0,
+                        ];
+                        }
+                        $rekap[$kid][$absen->status]++;
+                        }
+                        @endphp
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full bg-white rounded-lg shadow overflow-hidden">
+                                <thead class="bg-green-100">
+                                    <tr>
+                                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Tanggal</th>
+                                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Nama Kelas</th>
+                                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Jumlah Murid</th>
+                                        <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Hadir</th>
+                                        <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Izin</th>
+                                        <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Sakit</th>
+                                        <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Alpha</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($rekap as $row)
+                                    @php
+                                    $kelasObj = $row['kelas'];
+                                    $namaKelas = $kelasObj ? ($kelasObj->nama_kelas ?? $kelasObj->mata_pelajaran) : '-';
+                                    $level = $kelasObj && isset($kelasObj->classLevel) ? optional($kelasObj->classLevel)->level : '-';
+                                    $jumlahSantri = $kelasObj ? $kelasObj->users()->count() : '-';
+                                    @endphp
+                                    <tr class="border-b hover:bg-green-50 transition-all">
+                                        <td class="py-2 px-4">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->translatedFormat('d F Y') }}</td>
+                                        <td class="py-2 px-4">{{ $namaKelas }} - {{ $level }}</td>
+                                        <td class="py-2 px-4">{{ $jumlahSantri }}</td>
+                                        <td class="py-2 px-4 text-center font-semibold text-green-700">{{ $row['hadir'] }}</td>
+                                        <td class="py-2 px-4 text-center font-semibold text-yellow-700">{{ $row['izin'] }}</td>
+                                        <td class="py-2 px-4 text-center font-semibold text-blue-700">{{ $row['sakit'] }}</td>
+                                        <td class="py-2 px-4 text-center font-semibold text-red-700">{{ $row['alpha'] }}</td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="7" class="py-2 px-4 text-center text-gray-500">Belum ada absensi hari ini.</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-500">* Rekap absensi kelas ini untuk tanggal {{ \Carbon\Carbon::parse($tanggal)->locale('id')->translatedFormat('d F Y') }}.</div>
+                    </div>
+
+                    <!-- History Rekapitulasi Absensi Kelas (Semua Hari) -->
+                    <div class="bg-white p-6 rounded-lg shadow border border-blue-200">
+                        <h3 class="font-bold text-lg mb-4 text-blue-700 flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 17l4 4 4-4m-4-5v9" />
+                            </svg>
+                            History Rekapitulasi Absensi Kelas
+                        </h3>
+                        @php
+                        $kelasIdList = \App\Models\Kelas::where('guru_id', auth()->user()->id)->pluck('id');
+                        $kelasMap = \App\Models\Kelas::whereIn('id', $kelasIdList)->get()->keyBy('id');
+                        $absensiHistory = \App\Models\Absensi::whereIn('kelas_id', $kelasIdList)
+                        ->orderBy('tanggal', 'desc')
+                        ->get()
+                        ->groupBy(function($item) { return $item->tanggal . '-' . $item->kelas_id; });
+                        @endphp
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full bg-white rounded-lg shadow overflow-hidden mb-4">
+                                <thead class="bg-blue-100">
+                                    <tr>
+                                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Tanggal</th>
+                                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Nama Kelas</th>
+                                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Jumlah Murid</th>
+                                        <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Hadir</th>
+                                        <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Izin</th>
+                                        <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Sakit</th>
+                                        <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Alpha</th>
+                                        <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Detail Siswa</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($absensiHistory as $key => $absensiGroup)
+                                    @php
+                                    $first = $absensiGroup->first();
+                                    $kelasObj = $kelasMap[$first->kelas_id] ?? null;
+                                    $namaKelas = $kelasObj ? ($kelasObj->nama_kelas ?? $kelasObj->mata_pelajaran) : '-';
+                                    $level = $kelasObj && isset($kelasObj->classLevel) ? optional($kelasObj->classLevel)->level : '-';
+                                    $jumlahSantri = $kelasObj ? $kelasObj->users()->count() : '-';
+                                    $tanggal = $first->tanggal;
+                                    $hadir = $absensiGroup->where('status', 'hadir')->count();
+                                    $izin = $absensiGroup->where('status', 'izin')->count();
+                                    $sakit = $absensiGroup->where('status', 'sakit')->count();
+                                    $alpha = $absensiGroup->where('status', 'alpha')->count();
+                                    @endphp
+                                    <tr class="border-b hover:bg-blue-50 transition-all">
+                                        <td class="py-2 px-4">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->translatedFormat('d F Y') }}</td>
+                                        <td class="py-2 px-4">{{ $namaKelas }} - {{ $level }}</td>
+                                        <td class="py-2 px-4">{{ $jumlahSantri }}</td>
+                                        <td class="py-2 px-4 text-center font-semibold text-green-700">{{ $hadir }}</td>
+                                        <td class="py-2 px-4 text-center font-semibold text-yellow-700">{{ $izin }}</td>
+                                        <td class="py-2 px-4 text-center font-semibold text-blue-700">{{ $sakit }}</td>
+                                        <td class="py-2 px-4 text-center font-semibold text-red-700">{{ $alpha }}</td>
+                                        <td class="py-2 px-4 text-center">
+                                            <button type="button" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs" onclick="document.getElementById('detail-{{ $key }}').classList.toggle('hidden')">Lihat Siswa</button>
+                                        </td>
+                                    </tr>
+                                    <tr id="detail-{{ $key }}" class="hidden">
+                                        <td colspan="8" class="bg-blue-50 px-4 py-2">
+                                            <div class="overflow-x-auto">
+                                                <table class="min-w-full text-xs">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="py-1 px-2 text-left">Nama Siswa</th>
+                                                            <th class="py-1 px-2 text-left">Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($absensiGroup as $absen)
+                                                        <tr>
+                                                            <td class="py-1 px-2">{{ optional($absen->user)->nama_santri ?? optional($absen->user)->name ?? '-' }}</td>
+                                                            <td class="py-1 px-2">
+                                                                <span class="px-2 py-1 text-xs rounded-full
+                                                                                                @if($absen->status == 'hadir') bg-green-100 text-green-700
+                                                                                                @elseif($absen->status == 'izin') bg-yellow-100 text-yellow-700
+                                                                                                @elseif($absen->status == 'sakit') bg-blue-100 text-blue-700
+                                                                                                @else bg-red-100 text-red-700 @endif">
+                                                                    {{ ucfirst($absen->status) }}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="8" class="py-2 px-4 text-center text-gray-500">Belum ada history rekap absensi.</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-500">* History rekap absensi kelas, klik &quot;Lihat Siswa&quot; untuk detail siswa dan statusnya.</div>
+                    </div>
+
                     @elseif(auth()->user()->hasRole('user'))
                     <div class="mt-6 grid grid-cols-1 gap-6">
                         <!-- Tagihan Bulanan UI -->
