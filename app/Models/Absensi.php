@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Absensi extends Model
 {
@@ -23,11 +24,8 @@ class Absensi extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id',
         'kelas_id',
-        'guru_id',
         'tanggal',
-        'status',
     ];
 
     /**
@@ -40,11 +38,22 @@ class Absensi extends Model
     ];
 
     /**
-     * Get the santri (user) that owns the attendance record.
+     * Get the santri (users) associated with this attendance record.
      */
-    public function user(): BelongsTo
+    public function users(): BelongsToMany
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class, 'absensi_user')
+            ->withPivot('status')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the gurus who manage this attendance record.
+     */
+    public function gurus(): BelongsToMany
+    {
+        return $this->belongsToMany(Guru::class, 'absensi_guru')
+            ->withTimestamps();
     }
 
     /**
@@ -53,13 +62,5 @@ class Absensi extends Model
     public function kelas(): BelongsTo
     {
         return $this->belongsTo(Kelas::class);
-    }
-
-    /**
-     * Get the guru who recorded this attendance.
-     */
-    public function guru(): BelongsTo
-    {
-        return $this->belongsTo(Guru::class);
     }
 }

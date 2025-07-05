@@ -74,9 +74,11 @@ class User extends Authenticatable
     /**
      * The absensi records for the santri.
      */
-    public function absensi(): HasMany
+    public function absensi(): BelongsToMany
     {
-        return $this->hasMany(Absensi::class);
+        return $this->belongsToMany(Absensi::class, 'absensi_user')
+            ->withPivot('status')
+            ->withTimestamps();
     }
 
     /**
