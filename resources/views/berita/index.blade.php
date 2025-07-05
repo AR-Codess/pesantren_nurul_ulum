@@ -119,104 +119,77 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{{ route('welcome') }}">Pesantren Nurul Ulum</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('welcome') }}">Beranda</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('berita.index') }}">Berita</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('welcome') }}#tentang-kami">Tentang Kami</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('welcome') }}#kontak">Kontak</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    
-    <section class="page-title bg-light">
-        <div class="container">
-            <h1 class="display-4 fw-bold text-center">Berita & Kegiatan</h1>
-            <p class="lead text-center text-secondary">Informasi terbaru seputar kegiatan di Pesantren Nurul Ulum</p>
-        </div>
-    </section>
-    
-    <div class="container">
-        <div class="row">
-            @forelse($beritaItems as $item)
-                <div class="col-md-4 mb-4">
-                    <div class="card berita-item h-100 border-0 shadow-sm">
-                        <div class="berita-image-wrapper">
-                            <img src="{{ $item->image_url }}" class="img-fluid berita-img" alt="{{ $item->title }}">
+    <x-app-layout>
+        <x-slot name="header">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Berita & Kegiatan') }}
+            </h2>
+        </x-slot>
+
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 bg-white border-b border-gray-200">
+                        
+                        <!-- Breadcrumbs -->
+                        <nav class="mb-3" aria-label="breadcrumb">
+                            <ol class="flex space-x-2 text-gray-600 text-sm">
+                                <li><a href="{{ route('welcome') }}" class="hover:text-blue-600">Beranda</a></li>
+                                <li class="px-2">/</li>
+                                <li class="text-blue-600 font-medium">Berita</li>
+                            </ol>
+                        </nav>
+                        
+                        <h1 class="text-2xl font-bold mb-6">Berita & Kegiatan Pesantren</h1>
+                        <p class="text-gray-600 mb-8">Informasi terbaru seputar kegiatan di Pesantren Nurul Ulum</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            @forelse($beritaItems as $item)
+                                <div class="bg-white border rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
+                                    <div class="h-48 overflow-hidden">
+                                        <img src="{{ $item->image_url }}" class="w-full h-full object-cover" alt="{{ $item->title }}">
+                                    </div>
+                                    <div class="p-4">
+                                        <h3 class="font-bold text-lg mb-2 text-green-800">{{ $item->title }}</h3>
+                                        @if(isset($item->description))
+                                            <p class="text-gray-600 mb-4">{{ Str::limit(strip_tags($item->description), 100) }}</p>
+                                        @endif
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-sm text-gray-500">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                {{ $item->created_at ? $item->created_at->format('d M Y') : date('d M Y') }}
+                                            </span>
+                                            <a href="{{ route('berita.show', ['id' => $item->id, 'slug' => Str::slug($item->title)]) }}" class="inline-flex items-center px-3 py-1 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700">
+                                                Baca
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="col-span-3 text-center py-12">
+                                    <h3 class="text-xl font-medium text-gray-500">Belum ada berita yang tersedia.</h3>
+                                    <p class="text-gray-400 mt-2">Silakan kunjungi kembali halaman ini di lain waktu.</p>
+                                </div>
+                            @endforelse
                         </div>
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title fw-bold">{{ $item->title }}</h5>
-                            @if(isset($item->description))
-                                <p class="card-text text-muted mb-3">{{ Str::limit(strip_tags($item->description), 100) }}</p>
+                        
+                        
+                        <div class="mt-8 flex justify-center">
+                            @if(isset($beritaItems) && method_exists($beritaItems, 'links'))
+                                {{ $beritaItems->links() }}
                             @endif
-                            <div class="mt-auto text-end">
-                                <a href="{{ route('berita.show', ['id' => $item->id, 'slug' => $item->slug]) }}" class="btn btn-sm btn-outline-success">Baca selengkapnya</a>
-                            </div>
                         </div>
-                        <div class="card-footer bg-white border-0 text-muted">
-                            <small><i class="bi bi-calendar-event me-2"></i>{{ $item->created_at ? $item->created_at->format('d M Y') : date('d M Y') }}</small>
-                        </div>
+
                     </div>
                 </div>
-            @empty
-                <div class="col-12 text-center py-5">
-                    <h3>Belum ada berita yang tersedia.</h3>
-                    <p>Silakan kunjungi kembali halaman ini di lain waktu.</p>
-                </div>
-            @endforelse
-        </div>
-        
-        <div class="d-flex justify-content-center mt-4">
-            {{ $beritaItems->links() }}
-        </div>
-    </div>
-    
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>Pesantren Nurul Ulum</h5>
-                    <p>Mendidik generasi berakhlak mulia, berilmu, dan berdedikasi.</p>
-                </div>
-                <div class="col-md-3">
-                    <h5>Navigasi</h5>
-                    <ul class="list-unstyled">
-                        <li><a class="text-white" href="{{ route('welcome') }}">Beranda</a></li>
-                        <li><a class="text-white" href="{{ route('berita.index') }}">Berita</a></li>
-                        <li><a class="text-white" href="{{ route('welcome') }}#tentang-kami">Tentang Kami</a></li>
-                        <li><a class="text-white" href="{{ route('welcome') }}#kontak">Kontak</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                    <h5>Kontak</h5>
-                    <ul class="list-unstyled">
-                        <li><i class="bi bi-geo-alt me-2"></i> Alamat Pesantren</li>
-                        <li><i class="bi bi-telephone me-2"></i> (021) 1234-5678</li>
-                        <li><i class="bi bi-envelope me-2"></i> info@nurululum.sch.id</li>
-                    </ul>
-                </div>
-            </div>
-            <hr class="my-4 bg-light">
-            <div class="text-center">
-                <p class="mb-0">&copy; {{ date('Y') }} Pesantren Nurul Ulum. Hak Cipta Dilindungi.</p>
             </div>
         </div>
-    </footer>
+    </x-app-layout>
     
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
