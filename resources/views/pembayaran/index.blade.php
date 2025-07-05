@@ -23,8 +23,8 @@
                         <form id="searchForm" action="{{ route('pembayaran.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
                             <div class="flex-grow">
                                 <input type="text" id="searchInput" name="search" value="{{ request('search') }}" 
-                                       class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" 
-                                       placeholder="Cari nama santri atau nis...">
+                                        class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" 
+                                        placeholder="Cari nama santri atau nis...">
                             </div>
                             <div class="w-40">
                                 <select name="bulan" id="bulanFilter" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
@@ -132,12 +132,12 @@
                                         </td>
                                         <td class="px-6 py-4 flex space-x-2">
                                             <a href="{{ route('pembayaran.show', $pembayaran->id) }}" class="font-medium text-blue-600 hover:underline">Lihat</a>
-                                            <a href="{{ route('pembayaran.edit', $pembayaran->id) }}" class="font-medium text-green-600 hover:underline">Edit</a>
+                                            {{-- <a href="{{ route('pembayaran.edit', $pembayaran->id) }}" class="font-medium text-green-600 hover:underline">Edit</a> --}}
                                             
                                             @php
                                                 $showCicilanButton = false;
-                                                // Tampilkan tombol cicilan jika pembayaran adalah cicilan
-                                                if ($pembayaran->is_cicilan) {
+                                                // Tampilkan tombol cicilan jika pembayaran adalah cicilan dan belum lunas
+                                                if ($pembayaran->is_cicilan && !$isLunas) {
                                                     $showCicilanButton = true;
                                                 }
                                             @endphp

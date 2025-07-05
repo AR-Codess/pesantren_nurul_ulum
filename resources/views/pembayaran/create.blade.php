@@ -36,10 +36,13 @@
                                 @foreach($users as $user)
                                 <option value="{{ $user->id }}"
                                     data-spp="{{ $user->classLevel->spp }}"
+                                    data-spp-beasiswa="{{ $user->classLevel->spp_beasiswa }}"
+                                    data-is-beasiswa="{{ $user->is_beasiswa ? 1 : 0 }}"
                                     data-name="{{ $user->nama_santri }}"
                                     data-level="{{ $user->classLevel->level }}"
                                     {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                    {{ $user->nama_santri }} ({{ $user->nis }}) - {{ $user->classLevel->level }}
+                                    {{ $user->nama_santri }} ({{ $user->nis }}) 
+                                    @if($user->is_beasiswa) <span class="text-green-600">- Beasiswa</span> @endif
                                 </option>
                                 @endforeach
                             </select>
@@ -65,7 +68,7 @@
                         </div>
                         <div class="mb-4">
                             <label for="jumlah" class="block text-sm font-medium text-gray-700">Jumlah Pembayaran (Rp)</label>
-                            <input type="number" id="jumlah" name="jumlah_dibayar" value="{{ old('jumlah_dibayar') }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                            <input type="number" id="jumlah" name="jumlah_dibayar" value="{{ old('jumlah_dibayar') }}" placeholder="0" required class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                         </div>
 
                         <div class="mb-4">
@@ -132,17 +135,41 @@
             // Fetch user data from the selected option
             const selectedOption = document.querySelector(`#user_id option[value="${userId}"]`);
             const sppBulanan = selectedOption.getAttribute('data-spp');
+            const sppBeasiswa = selectedOption.getAttribute('data-spp-beasiswa');
+            const isBeasiswa = selectedOption.getAttribute('data-is-beasiswa') === '1';
             const santriName = selectedOption.getAttribute('data-name');
             const santriLevel = selectedOption.getAttribute('data-level');
+            
+            // Determine the appropriate SPP amount based on scholarship status
+            let actualSpp = sppBulanan;
+            if (isBeasiswa) {
+                // Use spp_beasiswa if it exists and is not zero or null
+                if (sppBeasiswa && parseInt(sppBeasiswa) > 0) {
+                    actualSpp = sppBeasiswa;
+                }
+                // If spp_beasiswa is null, zero, or not set, use a default value (you can adjust this as needed)
+                else {
+                    actualSpp = sppBulanan; // Fallback to regular SPP
+                    console.log("Scholarship SPP amount is not set, using regular SPP");
+                }
+            }
 
-            totalSppSpan.innerText = `Rp ${parseInt(sppBulanan).toLocaleString()}`;
+            console.log("Student data:", {
+                isBeasiswa,
+                sppBulanan,
+                sppBeasiswa,
+                actualSpp
+            });
+
+            // Display information with scholarship indicator if applicable
+            totalSppSpan.innerText = `Rp ${parseInt(actualSpp).toLocaleString()}${isBeasiswa ? ' (Beasiswa)' : ''}`;
             santriNameSpan.innerText = santriName;
             santriLevelSpan.innerText = santriLevel;
 
             // Set default values for payment
-            jumlahInput.value = sppBulanan;
-            totalTagihanInput.value = sppBulanan;
-            totalTagihanDisplay.value = `Rp ${parseInt(sppBulanan).toLocaleString()}`;
+            //jumlahInput.value = actualSpp;
+            totalTagihanInput.value = actualSpp;
+            totalTagihanDisplay.value = `Rp ${parseInt(actualSpp).toLocaleString()}`;
 
             // Set periode_pembayaran and bulan based on selected date
             updatePeriodePembayaran();
@@ -162,7 +189,7 @@
                             remainingAmountSpan.innerText = `Rp ${parseInt(data.remaining).toLocaleString()}`;
 
                             // Set jumlah input to remaining amount
-                            jumlahInput.value = data.remaining;
+                            //jumlahInput.value = data.remaining;
 
                             // Check cicilan checkbox
                             document.getElementById('is_cicilan').checked = true;
@@ -175,14 +202,14 @@
                     } else {
                         paymentStatusSpan.innerHTML = '<span class="px-2 py-1 text-xs text-white bg-red-600 rounded">Belum Dibayar</span>';
                         paidAmountSpan.innerText = 'Rp 0';
-                        remainingAmountSpan.innerText = `Rp ${parseInt(sppBulanan).toLocaleString()}`;
+                        remainingAmountSpan.innerText = `Rp ${parseInt(actualSpp).toLocaleString()}`;
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching payment data:', error);
                     paymentStatusSpan.innerText = 'Belum Dibayar';
                     paidAmountSpan.innerText = 'Rp 0';
-                    remainingAmountSpan.innerText = `Rp ${parseInt(sppBulanan).toLocaleString()}`;
+                    remainingAmountSpan.innerText = `Rp ${parseInt(actualSpp).toLocaleString()}`;
                 });
 
             sppInfoDiv.classList.remove('hidden');

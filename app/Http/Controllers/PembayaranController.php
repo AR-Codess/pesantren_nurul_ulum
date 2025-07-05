@@ -77,7 +77,10 @@ class PembayaranController extends Controller
 
         // Get the user and their class level for SPP
         $user = User::with('classLevel')->findOrFail($request->user_id);
-        $sppBulanan = $user->classLevel->spp;
+        // Check if student has scholarship and use appropriate SPP amount
+        $sppBulanan = $user->is_beasiswa && $user->classLevel->spp_beasiswa !== null 
+            ? $user->classLevel->spp_beasiswa 
+            : $user->classLevel->spp;
 
         // Validate payment amount matches SPP if not an installment payment
         if (!$request->has('is_cicilan') && $request->jumlah_dibayar != $sppBulanan) {
@@ -173,6 +176,9 @@ class PembayaranController extends Controller
      */
     public function show(Pembayaran $pembayaran)
     {
+        // Muat relasi 'user' dan 'detailPembayaran' pada objek $pembayaran
+        $pembayaran->load(['user', 'detailPembayaran']);
+
         return view('pembayaran.show', compact('pembayaran'));
     }
 
@@ -199,7 +205,10 @@ class PembayaranController extends Controller
 
         // Get user with classLevel for SPP amount
         $user = User::with('classLevel')->findOrFail($request->user_id);
-        $sppBulanan = $user->classLevel->spp;
+        // Check if student has scholarship and use appropriate SPP amount
+        $sppBulanan = $user->is_beasiswa && $user->classLevel->spp_beasiswa !== null 
+            ? $user->classLevel->spp_beasiswa 
+            : $user->classLevel->spp;
         
         // Validate payment amount matches SPP if not an installment payment
         if (!$request->has('is_cicilan') && $request->jumlah_dibayar != $sppBulanan) {
@@ -448,7 +457,10 @@ class PembayaranController extends Controller
         
         // Get user with class level to access SPP amount            
         $user = User::with('classLevel')->findOrFail($userId);
-        $sppBulanan = $user->classLevel->spp;
+        // Check if student has scholarship and use appropriate SPP amount
+        $sppBulanan = $user->is_beasiswa && $user->classLevel->spp_beasiswa !== null 
+            ? $user->classLevel->spp_beasiswa 
+            : $user->classLevel->spp;
                     
         if (!$payment) {
             return response()->json([
