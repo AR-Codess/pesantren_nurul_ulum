@@ -84,4 +84,9 @@ Route::get('/pembayaran/{id}/cicilan/history', [PembayaranController::class, 'ge
 // API endpoints for payment status checking
 Route::get('/api/check-payment-status/{userId}/{month}', [PembayaranController::class, 'checkPaymentStatus']);
 
+// Invoice generation route
+Route::get('/invoice/{pembayaran}/download', [App\Http\Controllers\InvoiceController::class, 'generatePDF'])
+    ->name('invoice.download')
+    ->middleware(['auth:web,admin,guru']);
+
 require __DIR__ . '/auth.php';
