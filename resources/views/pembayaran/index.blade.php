@@ -12,12 +12,12 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-bold">Daftar Pembayaran</h2>
-                        <a href="{{ route('pembayaran.create') }}" 
-                           class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+                        <a href="{{ route('pembayaran.create') }}"
+                            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
                             + Tambah Pembayaran
                         </a>
                     </div>
-                    
+
                     <!-- Search Form -->
                     <div class="mb-4">
                         <form id="searchForm" action="{{ route('pembayaran.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
@@ -62,11 +62,11 @@
                     </div>
 
                     @if(session('success'))
-                        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
-                            {{ session('success') }}
-                        </div>
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
+                        {{ session('success') }}
+                    </div>
                     @endif
-                    
+
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-500">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-100">
@@ -142,27 +142,27 @@
                                                 }
                                             @endphp
 
-                                            @if($showCicilanButton)
-                                                <a href="{{ route('pembayaran.installment.show', $pembayaran->id) }}" class="font-medium text-purple-600 hover:underline">Cicilan</a>
-                                            @endif
-                                            
-                                            <form action="{{ route('pembayaran.destroy', $pembayaran->id) }}" method="POST" class="inline"
-                                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="font-medium text-red-600 hover:underline">Hapus</button>
-                                            </form>
-                                        </td>
-                                    </tr>
+                                        @if($showCicilanButton)
+                                        <a href="{{ route('pembayaran.installment.show', $pembayaran->id) }}" class="font-medium text-purple-600 hover:underline">Cicilan</a>
+                                        @endif
+
+                                        <form action="{{ route('pembayaran.destroy', $pembayaran->id) }}" method="POST" class="inline"
+                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="font-medium text-red-600 hover:underline">Hapus</button>
+                                        </form>
+                                    </td>
+                                </tr>
                                 @empty
-                                    <tr class="bg-white border-b">
-                                        <td colspan="9" class="px-6 py-4 text-center">Tidak ada data pembayaran</td>
-                                    </tr>
+                                <tr class="bg-white border-b">
+                                    <td colspan="9" class="px-6 py-4 text-center">Tidak ada data pembayaran</td>
+                                </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <!-- Pagination Links -->
                     <div class="mt-6">
                         {{ $pembayarans->appends(request()->query())->links() }}
@@ -171,7 +171,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Live search JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -179,7 +179,7 @@
             const searchInput = document.getElementById('searchInput');
             if (searchInput) {
                 let timer;
-                
+
                 searchInput.addEventListener('input', function(e) {
                     clearTimeout(timer);
                     timer = setTimeout(function() {
@@ -187,17 +187,17 @@
                     }, 500);
                 });
             }
-            
+
             // Filter dropdown handling
             const bulanFilter = document.getElementById('bulanFilter');
             const statusFilter = document.getElementById('statusFilter');
-            
+
             if (bulanFilter) {
                 bulanFilter.addEventListener('change', function() {
                     document.getElementById('searchForm').submit();
                 });
             }
-            
+
             if (statusFilter) {
                 statusFilter.addEventListener('change', function() {
                     document.getElementById('searchForm').submit();

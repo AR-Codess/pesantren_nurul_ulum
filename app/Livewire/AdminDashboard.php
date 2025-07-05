@@ -41,14 +41,14 @@ class AdminDashboard extends Component
                     ->toArray();
         
         // Set default values if not exists
-        $this->confirmedPayments = $paymentStats['confirmed'] ?? 0;
-        $this->pendingPayments = $paymentStats['pending'] ?? 0;
+        $this->confirmedPayments = $paymentStats['lunas'] ?? 0;
+        $this->pendingPayments = $paymentStats['belum_lunas'] ?? 0;
         $this->rejectedPayments = $paymentStats['rejected'] ?? 0;
         
         // If we still don't have data, let's query all payments regardless of date
         if ($this->confirmedPayments == 0 && $this->pendingPayments == 0) {
-            $this->confirmedPayments = Pembayaran::where('status', 'confirmed')->count();
-            $this->pendingPayments = Pembayaran::where('status', 'pending')->count();
+            $this->confirmedPayments = Pembayaran::where('status', 'lunas')->count();
+            $this->pendingPayments = Pembayaran::where('status', 'belum_lunas')->count();
             $this->rejectedPayments = Pembayaran::where('status', 'rejected')->count();
         }
         
