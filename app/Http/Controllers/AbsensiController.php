@@ -35,25 +35,31 @@ class AbsensiController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input absensi harian (banyak santri sekaligus)
+        // Validasi input absensi harian (banyak santri sekaligus, satu kelas per request)
         $request->validate([
             'tanggal' => 'required|date',
+            'kelas_id' => 'required|exists:kelas,id',
+            'guru_id' => 'required|exists:users,id',
             'absensi' => 'required|array',
         ]);
 
         $tanggal = $request->tanggal;
+        $kelasId = $request->kelas_id;
+        $guruId = $request->guru_id;
         $absensiData = $request->absensi;
 
+        // Proses absensi hanya untuk satu kelas per request, isolasi data tiap kelas
         foreach ($absensiData as $userId => $data) {
             Absensi::updateOrCreate(
                 [
                     'user_id' => $userId,
                     'tanggal' => $tanggal,
+                    'kelas_id' => $kelasId,
                 ],
                 [
                     'status' => $data['status'] ?? 'hadir',
-                    'kelas_id' => $data['kelas_id'] ?? null,
-                    'guru_id' => $data['guru_id'] ?? null,
+                    'kelas_id' => $kelasId,
+                    'guru_id' => $guruId,
                 ]
             );
         }
