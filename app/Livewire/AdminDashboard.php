@@ -55,6 +55,9 @@ class AdminDashboard extends Component
         $this->totalGuru = $this->totalGuru ?: 0;
         $this->confirmedPayments = $this->confirmedPayments ?: 0;
         $this->pendingPayments = $this->pendingPayments ?: 0;
+        
+        // Emit event to refresh charts after data is loaded
+        $this->dispatch('refreshCharts');
     }
 
     public function render()

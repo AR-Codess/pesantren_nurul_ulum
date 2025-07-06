@@ -25,4 +25,34 @@
                 </div>
             </div>
         </div>
+
+        <!-- Chart.js Charts -->
+        <div class="grid grid-cols-1 gap-6 mt-6" wire:ignore>
+            <!-- Lunas Payment Chart -->
+            <div class="bg-white p-6 rounded-lg shadow-lg border border-blue-100">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-semibold text-xl text-blue-800">Grafik Pembayaran Santri</h3>
+                    <div class="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full">
+                        Data 12 bulan terakhir
+                    </div>
+                </div>
+                <div class="h-80">
+                    <canvas id="lunasPaymentChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
+
+    @push('scripts')
+    <script>
+        // Reinitialize charts when Livewire component updates
+        document.addEventListener('livewire:initialized', () => {
+            @this.on('refreshCharts', () => {
+                if (window.initDashboardCharts) {
+                    window.initDashboardCharts();
+                }
+            });
+        });
+    </script>
+    @endpush
+</div>

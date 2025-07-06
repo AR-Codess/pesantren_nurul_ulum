@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Guru extends Authenticatable
 {
@@ -80,10 +81,11 @@ class Guru extends Authenticatable
     }
 
     /**
-     * Get the absensi records created by this guru.
+     * Get the absensi records managed by this guru.
      */
-    public function absensi(): HasMany
+    public function absensi(): BelongsToMany
     {
-        return $this->hasMany(Absensi::class);
+        return $this->belongsToMany(Absensi::class, 'absensi_guru')
+            ->withTimestamps();
     }
 }

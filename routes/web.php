@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\KelasController;
 use App\Http\Controllers\CKEditorController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KelolaSppController;
 
@@ -83,6 +84,13 @@ Route::get('/pembayaran/{id}/cicilan/history', [PembayaranController::class, 'ge
 
 // API endpoints for payment status checking
 Route::get('/api/check-payment-status/{userId}/{month}', [PembayaranController::class, 'checkPaymentStatus']);
+
+// API endpoints for dashboard charts
+Route::prefix('api/dashboard')->group(function () {
+    Route::get('/combined-growth', [DashboardController::class, 'getCombinedGrowth']);
+    Route::get('/payment-summary-by-month', [DashboardController::class, 'getPaymentSummaryByMonth']);
+    Route::get('/lunas-payments', [DashboardController::class, 'getLunasPayments']);
+});
 
 // Invoice generation route
 Route::get('/invoice/{pembayaran}/download', [App\Http\Controllers\InvoiceController::class, 'generatePDF'])
