@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Absensi;
-use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -16,20 +15,10 @@ class AbsensiController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $kelasId = $request->input('kelas_id');
-        $muridList = collect();
-        
-        if ($kelasId) {
-            $kelas = Kelas::find($kelasId);
-            if ($kelas) {
-                $muridList = $kelas->users;
-            }
-        }
-        
-        $absensi = Absensi::with(['users', 'kelas'])->latest()->get();
-        return view('absensi.index', compact('absensi', 'muridList'));
+        $absensi = Absensi::with('user')->latest()->get();
+        return view('absensi.index', compact('absensi'));
     }
 
     /**
@@ -46,31 +35,36 @@ class AbsensiController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input absensi harian
+        // Validasi input absensi harian (banyak santri sekaligus, satu kelas per request)
         $request->validate([
             'tanggal' => 'required|date',
             'kelas_id' => 'required|exists:kelas,id',
+            'guru_id' => 'required|exists:users,id',
             'absensi' => 'required|array',
         ]);
 
-        // Create a new absensi record for this class and date
-        $absensi = Absensi::create([
-            'tanggal' => $request->tanggal,
-            'kelas_id' => $request->kelas_id,
-        ]);
-
-        // Attach guru (teacher) to this absensi record
-        $absensi->gurus()->attach(Auth::id());
-
-        // Attach students with their attendance status
+        $tanggal = $request->tanggal;
+        $kelasId = $request->kelas_id;
+        $guruId = $request->guru_id;
         $absensiData = $request->absensi;
+
+        // Proses absensi hanya untuk satu kelas per request, isolasi data tiap kelas
         foreach ($absensiData as $userId => $data) {
-            $absensi->users()->attach($userId, [
-                'status' => $data['status'] ?? 'hadir',
-            ]);
+            Absensi::updateOrCreate(
+                [
+                    'user_id' => $userId,
+                    'tanggal' => $tanggal,
+                    'kelas_id' => $kelasId,
+                ],
+                [
+                    'status' => $data['status'] ?? 'hadir',
+                    'kelas_id' => $kelasId,
+                    'guru_id' => $guruId,
+                ]
+            );
         }
 
-        // Redirect to dashboard after successful attendance recording
+        // Redirect ke dashboard guru setelah absensi berhasil
         return redirect()->route('dashboard')
             ->with('success', 'Absensi harian berhasil disimpan.');
     }
@@ -80,7 +74,6 @@ class AbsensiController extends Controller
      */
     public function show(Absensi $absensi)
     {
-        $absensi->load(['users', 'gurus', 'kelas']);
         return view('absensi.show', compact('absensi'));
     }
 
@@ -90,7 +83,6 @@ class AbsensiController extends Controller
     public function edit(Absensi $absensi)
     {
         $users = User::role('user')->get();
-        $absensi->load(['users', 'kelas']);
         return view('absensi.edit', compact('absensi', 'users'));
     }
 
@@ -100,26 +92,12 @@ class AbsensiController extends Controller
     public function update(Request $request, Absensi $absensi)
     {
         $request->validate([
-            'kelas_id' => 'required|exists:kelas,id',
+            'user_id' => 'required|exists:users,id',
             'tanggal' => 'required|date',
-            'user_statuses' => 'required|array',
+            'status' => 'required|in:hadir,izin,sakit,alpha',
         ]);
 
-        // Update basic absensi information
-        $absensi->update([
-            'kelas_id' => $request->kelas_id,
-            'tanggal' => $request->tanggal,
-        ]);
-
-        // Sync users with their attendance status
-        $userStatuses = $request->user_statuses;
-        $syncData = [];
-        
-        foreach ($userStatuses as $userId => $status) {
-            $syncData[$userId] = ['status' => $status];
-        }
-        
-        $absensi->users()->sync($syncData);
+        $absensi->update($request->all());
 
         return redirect()->route('absensi.index')
             ->with('success', 'Absensi berhasil diperbarui.');
@@ -130,7 +108,6 @@ class AbsensiController extends Controller
      */
     public function destroy(Absensi $absensi)
     {
-        // This will automatically detach pivot relationships due to cascading delete
         $absensi->delete();
 
         return redirect()->route('absensi.index')
@@ -142,8 +119,9 @@ class AbsensiController extends Controller
      */
     public function check()
     {
-        $user = Auth::user();
-        $absensi = $user->absensi()->latest()->get();
+        $absensi = Absensi::where('user_id', Auth::id())
+            ->latest()
+            ->get();
 
         return view('absensi.check', compact('absensi'));
     }
@@ -154,9 +132,7 @@ class AbsensiController extends Controller
     public function export(Request $request, $format)
     {
         $tanggal = $request->tanggal ?? date('Y-m-d');
-        $absensi = Absensi::with(['users', 'kelas', 'gurus'])
-            ->where('tanggal', $tanggal)
-            ->get();
+        $absensi = Absensi::with('user')->where('tanggal', $tanggal)->get();
 
         if ($format === 'excel') {
             return Excel::download(new AbsensiExport($tanggal), 'absensi_' . $tanggal . '.xlsx');
