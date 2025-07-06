@@ -28,24 +28,25 @@ class InvoiceController extends Controller
         // Format the invoice number
         $invoiceNumber = 'INV-' . str_pad($pembayaran->id, 6, '0', STR_PAD_LEFT);
         
-        // Get the month name from periode_pembayaran
+        // Get the month name based on the periode_bulan field (integer 1-12)
         $bulanNames = [
-            '01' => 'Januari',
-            '02' => 'Februari',
-            '03' => 'Maret',
-            '04' => 'April',
-            '05' => 'Mei',
-            '06' => 'Juni',
-            '07' => 'Juli',
-            '08' => 'Agustus',
-            '09' => 'September',
-            '10' => 'Oktober',
-            '11' => 'November',
-            '12' => 'Desember'
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
         ];
-        $bulanNum = $pembayaran->periode_pembayaran->format('m');
+        // Use the periode_bulan and periode_tahun fields directly
+        $bulanNum = $pembayaran->periode_bulan;
         $bulanName = $bulanNames[$bulanNum] ?? 'Unknown';
-        $tahun = $pembayaran->periode_pembayaran->format('Y');
+        $tahun = $pembayaran->periode_tahun;
         $periodText = $bulanName . ' ' . $tahun;
         
         // Prepare data to pass to the view

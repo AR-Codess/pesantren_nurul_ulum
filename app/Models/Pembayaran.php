@@ -26,7 +26,8 @@ class Pembayaran extends Model
     protected $fillable = [
         'user_id',
         'total_tagihan',
-        'periode_pembayaran',
+        'periode_bulan',   // Added new column
+        'periode_tahun',   // Added new column
         'status',
         'is_cicilan',
         'admin_id_pembuat',
@@ -38,9 +39,10 @@ class Pembayaran extends Model
      * @var array
      */
     protected $casts = [
-        'periode_pembayaran' => 'date',
         'is_cicilan' => 'boolean',
         'total_tagihan' => 'integer',
+        'periode_bulan' => 'integer',    // Added new cast
+        'periode_tahun' => 'integer',    // Added new cast
     ];
 
     /**

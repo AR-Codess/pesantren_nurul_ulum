@@ -21,21 +21,21 @@
                     
                     @php
                         $bulanNames = [
-                            '01' => 'Januari',
-                            '02' => 'Februari',
-                            '03' => 'Maret',
-                            '04' => 'April',
-                            '05' => 'Mei',
-                            '06' => 'Juni',
-                            '07' => 'Juli',
-                            '08' => 'Agustus',
-                            '09' => 'September',
+                            '1' => 'Januari',
+                            '2' => 'Februari',
+                            '3' => 'Maret',
+                            '4' => 'April',
+                            '5' => 'Mei',
+                            '6' => 'Juni',
+                            '7' => 'Juli',
+                            '8' => 'Agustus',
+                            '9' => 'September',
                             '10' => 'Oktober',
                             '11' => 'November',
                             '12' => 'Desember'
                         ];
-                        $bulanNum = \Carbon\Carbon::parse($pembayaran->periode_pembayaran)->format('m');
-                        $bulanName = $bulanNames[$bulanNum] ?? 'Unknown';
+                        // Use the periode_bulan field directly instead of parsing periode_pembayaran
+                        $bulanName = $bulanNames[$pembayaran->periode_bulan] ?? 'Unknown';
                         
                         // Calculate payment details
                         if($pembayaran->is_cicilan) {
@@ -66,7 +66,7 @@
                                 </p>
                                 <p class="mb-2 text-sm">
                                     <span class="text-gray-600">Bulan:</span>
-                                    <span class="font-medium">{{ $bulanName }}</span>
+                                    <span class="font-medium">{{ $bulanName }} {{ $pembayaran->periode_tahun }}</span>
                                 </p>
                                 <p class="text-sm">
                                     <span class="text-gray-600">Beasiswa:</span>

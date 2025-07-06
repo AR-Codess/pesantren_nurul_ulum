@@ -28,19 +28,19 @@ class PembayaranController extends Controller
                     $q->where('nama_santri', 'like', '%' . $search . '%')
                       ->orWhere('nis', 'like', '%' . $search . '%');
                 })
-                ->orWhere('periode_pembayaran', 'like', '%' . $search . '%')
+                ->orWhere('bulan', 'like', '%' . $search . '%')
                 ->orWhere('status', 'like', '%' . $search . '%');
             })
             ->when($bulan, function ($query, $bulan) {
                 // Convert month name to month number
                 $bulanAngka = [
-                    'Januari' => '01', 'Februari' => '02', 'Maret' => '03', 'April' => '04',
-                    'Mei' => '05', 'Juni' => '06', 'Juli' => '07', 'Agustus' => '08',
-                    'September' => '09', 'Oktober' => '10', 'November' => '11', 'Desember' => '12'
+                    'Januari' => 1, 'Februari' => 2, 'Maret' => 3, 'April' => 4,
+                    'Mei' => 5, 'Juni' => 6, 'Juli' => 7, 'Agustus' => 8,
+                    'September' => 9, 'Oktober' => 10, 'November' => 11, 'Desember' => 12
                 ];
                 
                 if (isset($bulanAngka[$bulan])) {
-                    return $query->whereMonth('periode_pembayaran', $bulanAngka[$bulan]);
+                    return $query->where('periode_bulan', $bulanAngka[$bulan]);
                 }
                 return $query;
             })
@@ -71,8 +71,9 @@ class PembayaranController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'jumlah_dibayar' => 'required|numeric',
-            'tanggal_bayar' => 'required|date',
             'metode_pembayaran' => 'required|string',
+            'periode_bulan' => 'required|integer|min:1|max:12',
+            'periode_tahun' => 'required|integer',
         ]);
 
         // Get the user and their class level for SPP
@@ -89,82 +90,76 @@ class PembayaranController extends Controller
                 ->withErrors(['jumlah_dibayar' => 'Jumlah pembayaran harus sama dengan nilai SPP bulanan (Rp ' . number_format($sppBulanan, 0, ',', '.') . ') jika bukan pembayaran cicilan.']);
         }
         
-        // Prepare payment data
-        $data = $request->all();
-        $data['total_tagihan'] = $sppBulanan;
+        // Check if payment for this period already exists and is fully paid
+        $bulanNames = [
+            '1' => 'Januari', '2' => 'Februari', '3' => 'Maret', '4' => 'April',
+            '5' => 'Mei', '6' => 'Juni', '7' => 'Juli', '8' => 'Agustus',
+            '9' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+        ];
+        
+        $existingPayment = Pembayaran::where('user_id', $request->user_id)
+            ->where('periode_bulan', $request->periode_bulan)
+            ->where('periode_tahun', $request->periode_tahun)
+            ->where('status', 'lunas')
+            ->first();
+        
+        if ($existingPayment) {
+            $monthName = $bulanNames[$request->periode_bulan] ?? "Bulan {$request->periode_bulan}";
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['periode_bulan' => "Pembayaran untuk {$monthName} {$request->periode_tahun} sudah lunas."]);
+        }
         
         // Set admin_id_pembuat based on who is creating the payment
+        $admin_id_pembuat = null;
         $isAdminPayment = false;
+        
         if (Auth::guard('admin')->check()) {
-            $data['admin_id_pembuat'] = Auth::guard('admin')->id();
+            $admin_id_pembuat = Auth::guard('admin')->id();
             $isAdminPayment = true;
-            
-            // Force payment method to Tunai if admin is creating
-            $data['metode_pembayaran'] = 'Tunai';
+            $metode_pembayaran = 'Tunai';
         } else {
             // If regular user is creating payment
             $admin = Admin::first();
             if ($admin) {
-                $data['admin_id_pembuat'] = $admin->id;
+                $admin_id_pembuat = $admin->id;
             } else {
                 return redirect()->back()->with('error', 'Tidak ada admin yang tersedia untuk membuat pembayaran.');
             }
-            
-            // Set status to awaiting payment if created by user
-            $data['status'] = 'menunggu_pembayaran';
+            $metode_pembayaran = $request->metode_pembayaran;
         }
         
-        // Extract month name from payment date
-        $paymentDate = \Carbon\Carbon::parse($request->tanggal_bayar);
-        $bulanNames = [
-            '01' => 'Januari',
-            '02' => 'Februari',
-            '03' => 'Maret',
-            '04' => 'April',
-            '05' => 'Mei',
-            '06' => 'Juni',
-            '07' => 'Juli',
-            '08' => 'Agustus',
-            '09' => 'September',
-            '10' => 'Oktober',
-            '11' => 'November',
-            '12' => 'Desember'
-        ];
-        $bulanNum = $paymentDate->format('m');
-        $data['bulan'] = $bulanNames[$bulanNum] ?? 'Januari';
-        
-        // Set nilai periode_pembayaran to the first day of the month from payment date
-        $data['periode_pembayaran'] = $paymentDate->format('Y-m-01');
-        
-        // Tentukan status pembayaran berdasarkan pembuat dan jumlah
+        // Determine payment status
+        $status = 'menunggu_pembayaran';
         if ($isAdminPayment) {
-            // Admin membuat pembayaran
-            if (isset($data['is_cicilan']) && $data['is_cicilan']) {
-                // Pembayaran cicilan
-                if ($request->jumlah_dibayar >= $sppBulanan) {
-                    $data['status'] = 'lunas';
-                } else {
-                    $data['status'] = 'belum_lunas';
-                }
+            if ($request->has('is_cicilan')) {
+                $status = ($request->jumlah_dibayar >= $sppBulanan) ? 'lunas' : 'belum_lunas';
             } else {
-                // Pembayaran langsung (non-cicilan)
-                $data['status'] = 'lunas';
+                $status = 'lunas';
             }
-        } else {
-            // User membuat pembayaran (menunggu konfirmasi)
-            $data['status'] = 'menunggu_pembayaran';
         }
         
-        // Buat record pembayaran
-        $pembayaran = Pembayaran::create($data);
+        // Siapkan data untuk disimpan secara eksplisit
+        $dataToCreate = [
+            'user_id' => $request->user_id,
+            'total_tagihan' => $sppBulanan,
+            'periode_bulan' => $request->periode_bulan, // <-- WAJIB DITAMBAHKAN
+            'periode_tahun' => $request->periode_tahun, // <-- WAJIB DITAMBAHKAN
+            'status' => $status,
+            'is_cicilan' => $request->has('is_cicilan') ? 1 : 0,
+            'admin_id_pembuat' => $admin_id_pembuat,
+        ];
+        
+        // Buat record pembayaran dengan data yang sudah lengkap
+        $pembayaran = Pembayaran::create($dataToCreate);
         
         // Buat detail pembayaran untuk semua jenis pembayaran (cicilan maupun langsung)
         DetailPembayaran::create([
             'pembayaran_id' => $pembayaran->id,
             'jumlah_dibayar' => $request->jumlah_dibayar,
-            'tanggal_bayar' => $request->tanggal_bayar,
-            'metode_pembayaran' => $data['metode_pembayaran'],
-            'admin_id_pencatat' => $data['admin_id_pembuat'],
+            'tanggal_bayar' => now(), // Use current date and time
+            'metode_pembayaran' => $metode_pembayaran,
+            'admin_id_pencatat' => $admin_id_pembuat,
         ]);
 
         return redirect()->route('pembayaran.index')
@@ -217,11 +212,12 @@ class PembayaranController extends Controller
                 ->withErrors(['jumlah_dibayar' => 'Jumlah pembayaran harus sama dengan nilai SPP bulanan (Rp ' . number_format($sppBulanan, 0, ',', '.') . ') jika bukan pembayaran cicilan.']);
         }
         
-        // Update total_tagihan if user_id changes
-        $data = $request->all();
-        if ($pembayaran->user_id != $request->user_id) {
-            $data['total_tagihan'] = $sppBulanan;
-        }
+        // Prepare data to update
+        $dataToUpdate = [
+            'user_id' => $request->user_id,
+            'total_tagihan' => $sppBulanan,
+            'is_cicilan' => $request->has('is_cicilan') ? 1 : 0,
+        ];
         
         // Set admin_id_pembuat if there are changes
         $isAdminPayment = false;
@@ -229,50 +225,37 @@ class PembayaranController extends Controller
             $isAdminPayment = true;
             
             // Force payment method to Tunai if admin is editing
-            $data['metode_pembayaran'] = 'Tunai';
+            $metode_pembayaran = 'Tunai';
+        } else {
+            $metode_pembayaran = $request->metode_pembayaran;
         }
         
-        // Extract month name from payment date
+        // Extract month and year from payment date
         $paymentDate = \Carbon\Carbon::parse($request->tanggal_bayar);
-        $bulanNames = [
-            '01' => 'Januari',
-            '02' => 'Februari',
-            '03' => 'Maret',
-            '04' => 'April',
-            '05' => 'Mei',
-            '06' => 'Juni',
-            '07' => 'Juli',
-            '08' => 'Agustus',
-            '09' => 'September',
-            '10' => 'Oktober',
-            '11' => 'November',
-            '12' => 'Desember'
-        ];
-        $bulanNum = $paymentDate->format('m');
-        $data['bulan'] = $bulanNames[$bulanNum] ?? 'Januari';
         
-        // Set periode_pembayaran to the first day of the month from payment date
-        $data['periode_pembayaran'] = $paymentDate->format('Y-m-01');
+        // Update periode_bulan and periode_tahun from payment date
+        $dataToUpdate['periode_bulan'] = (int)$paymentDate->format('m'); 
+        $dataToUpdate['periode_tahun'] = (int)$paymentDate->format('Y');
 
         // Tentukan status pembayaran berdasarkan pembuat dan jumlah
         if ($isAdminPayment) {
             // Admin mengedit pembayaran
-            if (isset($data['is_cicilan']) && $data['is_cicilan']) {
+            if (isset($dataToUpdate['is_cicilan']) && $dataToUpdate['is_cicilan']) {
                 // Jika cicilan, periksa jumlah detail pembayaran atau jumlah pembayaran ini
                 if ($pembayaran->is_cicilan) {
                     // Hitung total yang sudah dibayar termasuk detail pembayaran
                     $totalDibayar = $pembayaran->detailPembayaran->sum('jumlah_dibayar');
                     if ($totalDibayar >= $sppBulanan) {
-                        $data['status'] = 'lunas';
+                        $dataToUpdate['status'] = 'lunas';
                     } else {
-                        $data['status'] = 'belum_lunas';
+                        $dataToUpdate['status'] = 'belum_lunas';
                     }
                 } else {
                     // Jika sebelumnya bukan cicilan, maka ini adalah cicilan pertama
                     if ($request->jumlah_dibayar >= $sppBulanan) {
-                        $data['status'] = 'lunas';
+                        $dataToUpdate['status'] = 'lunas';
                     } else {
-                        $data['status'] = 'belum_lunas';
+                        $dataToUpdate['status'] = 'belum_lunas';
                     }
                     
                     // Buat entri detail pembayaran untuk cicilan pertama
@@ -280,13 +263,13 @@ class PembayaranController extends Controller
                         'pembayaran_id' => $pembayaran->id,
                         'jumlah_dibayar' => $request->jumlah_dibayar,
                         'tanggal_bayar' => $request->tanggal_bayar,
-                        'metode_pembayaran' => $data['metode_pembayaran'],
+                        'metode_pembayaran' => $metode_pembayaran,
                         'admin_id_pencatat' => Auth::guard('admin')->id(),
                     ]);
                 }
             } else {
                 // Pembayaran langsung (non-cicilan)
-                $data['status'] = 'lunas';
+                $dataToUpdate['status'] = 'lunas';
                 
                 // If converting from installment to non-installment or creating a new payment detail
                 // First check if there are no payment details yet
@@ -296,7 +279,7 @@ class PembayaranController extends Controller
                         'pembayaran_id' => $pembayaran->id,
                         'jumlah_dibayar' => $request->jumlah_dibayar,
                         'tanggal_bayar' => $request->tanggal_bayar,
-                        'metode_pembayaran' => $data['metode_pembayaran'],
+                        'metode_pembayaran' => $metode_pembayaran,
                         'admin_id_pencatat' => Auth::guard('admin')->id(),
                     ]);
                 } else {
@@ -305,16 +288,16 @@ class PembayaranController extends Controller
                     $detailPembayaran->update([
                         'jumlah_dibayar' => $request->jumlah_dibayar,
                         'tanggal_bayar' => $request->tanggal_bayar,
-                        'metode_pembayaran' => $data['metode_pembayaran'],
+                        'metode_pembayaran' => $metode_pembayaran,
                     ]);
                 }
             }
         } else {
             // User mengedit pembayaran (tetap menunggu konfirmasi)
-            $data['status'] = 'menunggu_pembayaran';
+            $dataToUpdate['status'] = 'menunggu_pembayaran';
         }
 
-        $pembayaran->update($data);
+        $pembayaran->update($dataToUpdate);
 
         return redirect()->route('pembayaran.index')
             ->with('success', 'Pembayaran berhasil diperbarui.');
@@ -450,8 +433,27 @@ class PembayaranController extends Controller
      */
     public function checkPaymentStatus($userId, $month)
     {
+        // Convert month name to month number
+        $bulanAngka = [
+            'Januari' => 1, 'Februari' => 2, 'Maret' => 3, 'April' => 4,
+            'Mei' => 5, 'Juni' => 6, 'Juli' => 7, 'Agustus' => 8,
+            'September' => 9, 'Oktober' => 10, 'November' => 11, 'Desember' => 12
+        ];
+        
+        $monthNumber = isset($bulanAngka[$month]) ? $bulanAngka[$month] : null;
+        
+        if (!$monthNumber) {
+            return response()->json([
+                'exists' => false,
+                'error' => 'Invalid month name'
+            ], 400);
+        }
+        
+        $currentYear = date('Y');
+        
         $payment = Pembayaran::where('user_id', $userId)
-                    ->where('bulan', $month)
+                    ->where('periode_bulan', $monthNumber)
+                    ->where('periode_tahun', $currentYear)
                     ->latest()
                     ->first();
         

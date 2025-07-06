@@ -31,9 +31,9 @@
             <!-- Lunas Payment Chart -->
             <div class="bg-white p-6 rounded-lg shadow-lg border border-blue-100">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-semibold text-xl text-blue-800">Grafik Pembayaran Santri</h3>
+                    <h3 class="font-semibold text-xl text-blue-800">Grafik Pembayaran Lunas Berdasarkan Periode</h3>
                     <div class="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full">
-                        Data 12 bulan terakhir
+                        Data pembayaran tahun ini
                     </div>
                 </div>
                 <div class="h-80">

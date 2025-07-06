@@ -159,49 +159,58 @@ class DashboardController extends Controller
     }
     
     /**
+     * Get all available years for payment data filtering
+     * 
+     * @return \Illuminate\Support\Collection
+     */
+    public function getAvailableYears()
+    {
+        // Get all unique years from the payment table, ordered by newest first
+        return Pembayaran::select('periode_tahun')
+            ->distinct()
+            ->orderBy('periode_tahun', 'desc')
+            ->pluck('periode_tahun');
+    }
+
+    /**
      * Provides data for lunas payment chart showing completed payments by month
      * 
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getLunasPayments()
+    public function getLunasPayments(Request $request)
     {
-        // Get data for the last 12 months
-        $startDate = Carbon::now()->subMonths(11)->startOfMonth();
-        $endDate = Carbon::now()->endOfMonth();
+        // Get year from request or use current year as default
+        $selectedYear = $request->input('tahun', Carbon::now()->year);
         
-        // Generate month labels for the last 12 months
+        // Initialize month labels and data
         $labels = [];
-        $monthKeys = [];
+        $monthCounts = array_fill(1, 12, 0); // Creates array [1 => 0, 2 => 0, ..., 12 => 0]
         
-        for ($i = 0; $i < 12; $i++) {
-            $date = Carbon::now()->subMonths(11 - $i);
-            $labels[] = $date->format('M Y');
-            $monthKeys[$date->format('Y-m')] = 0; // Initialize with zeros
+        // Generate month labels for selected year
+        for ($i = 1; $i <= 12; $i++) {
+            $labels[] = Carbon::create($selectedYear, $i, 1)->format('M Y');
         }
         
-        // Get counts of lunas payments by month
+        // Get counts of lunas payments by month for the selected year
         $lunasPayments = Pembayaran::where('status', 'lunas')
-            ->where('created_at', '>=', $startDate)
-            ->where('created_at', '<=', $endDate)
-            ->select(
-                DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
-                DB::raw('COUNT(*) as count')
-            )
-            ->groupBy('month')
-            ->get();
-            
-        // Populate data array with actual counts
-        $data = $monthKeys;
-        foreach ($lunasPayments as $payment) {
-            if (isset($data[$payment->month])) {
-                $data[$payment->month] = $payment->count;
+            ->where('periode_tahun', $selectedYear)
+            ->select('periode_bulan', DB::raw('COUNT(*) as count'))
+            ->groupBy('periode_bulan')
+            ->get()
+            ->keyBy('periode_bulan'); // Make periode_bulan the key
+        
+        // Populate month counts with query results
+        foreach ($lunasPayments as $bulan => $payment) {
+            if (isset($monthCounts[$bulan])) {
+                $monthCounts[$bulan] = $payment->count;
             }
         }
         
         // Return formatted data for chart
         return response()->json([
             'labels' => $labels,
-            'values' => array_values($data)
+            'values' => array_values($monthCounts)
         ]);
     }
 }
