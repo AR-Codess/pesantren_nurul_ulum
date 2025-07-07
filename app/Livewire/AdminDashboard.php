@@ -17,10 +17,17 @@ class AdminDashboard extends Component
     public $confirmedPayments;
     public $pendingPayments;
     public $rejectedPayments;
+    public $availableYears;
+    public $currentYear;
 
     public function mount()
     {
         $this->loadData();
+        $this->availableYears = Pembayaran::select('periode_tahun')
+            ->distinct()
+            ->orderBy('periode_tahun', 'desc')
+            ->pluck('periode_tahun');
+        $this->currentYear = Carbon::now()->year;
     }
 
     public function loadData()

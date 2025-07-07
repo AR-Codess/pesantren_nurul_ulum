@@ -97,4 +97,7 @@ Route::get('/invoice/{pembayaran}/download', [App\Http\Controllers\InvoiceContro
     ->name('invoice.download')
     ->middleware(['auth:web,admin,guru']);
 
+// Admin dashboard route
+Route::get('/admin-dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
+
 require __DIR__ . '/auth.php';

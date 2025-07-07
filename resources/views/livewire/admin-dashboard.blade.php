@@ -32,8 +32,14 @@
             <div class="bg-white p-6 rounded-lg shadow-lg border border-blue-100">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-semibold text-xl text-blue-800">Grafik Pembayaran Lunas Berdasarkan Periode</h3>
-                    <div class="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full">
-                        Data pembayaran tahun ini
+                    <div>
+                        <select id="lunasYearFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mr-5 cursor-pointer">
+                            @foreach($availableYears as $year)
+                                <option value="{{ $year }}" {{ $year == $currentYear ? 'selected' : '' }} class="cursor-pointer">
+                                    {{ $year }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="h-80">

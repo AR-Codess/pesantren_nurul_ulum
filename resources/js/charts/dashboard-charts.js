@@ -44,7 +44,7 @@ function initLunasPaymentChart() {
                     labels: data.labels,
                     datasets: [
                         {
-                            label: "Pembayaran Lunas",
+                            label: "Total Pembayaran Lunas",
                             data: data.values,
                             backgroundColor: "rgba(59, 130, 246, 0.6)", // Warna biru
                             borderColor: "rgba(59, 130, 246, 1)", // Border warna biru
@@ -83,7 +83,8 @@ function initLunasPaymentChart() {
                             callbacks: {
                                 label: function (context) {
                                     return (
-                                        "Jumlah: " + context.raw + " pembayaran"
+                                        "Total: Rp " +
+                                        context.raw.toLocaleString("id-ID")
                                     );
                                 },
                             },
@@ -98,6 +99,11 @@ function initLunasPaymentChart() {
                                     family: "Figtree, sans-serif",
                                 },
                                 color: "#64748b",
+                                callback: function (value) {
+                                    return (
+                                        "Rp " + value.toLocaleString("id-ID")
+                                    );
+                                },
                             },
                             grid: {
                                 color: "rgba(226, 232, 240, 0.6)",
@@ -138,6 +144,49 @@ function initLunasPaymentChart() {
             }
         });
 }
+
+/**
+ * Fungsi untuk meng-handle perubahan pada filter tahun.
+ * Menggunakan event delegation agar tetap berfungsi setelah update Livewire.
+ */
+function handleYearFilterChange(event) {
+    // Pastikan event berasal dari elemen yang kita inginkan
+    if (event.target && event.target.id === "lunasYearFilter") {
+        const selectedYear = event.target.value;
+        console.log(`Year selected: ${selectedYear}. Fetching new data...`);
+
+        // Fetch data berdasarkan tahun yang dipilih
+        fetch(`/api/dashboard/lunas-payments?tahun=${selectedYear}`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (lunasPaymentChartInstance) {
+                    // Update data chart
+                    lunasPaymentChartInstance.data.labels = data.labels;
+                    lunasPaymentChartInstance.data.datasets[0].data =
+                        data.values;
+
+                    // Perbarui (refetch) chart
+                    lunasPaymentChartInstance.update();
+                    console.log("Chart updated successfully.");
+                } else {
+                    console.warn("Chart instance not found for update.");
+                }
+            })
+            .catch((error) => console.error("Error updating chart:", error));
+    }
+}
+
+// Hapus event listener lama jika ada untuk mencegah duplikasi
+document.removeEventListener("change", handleYearFilterChange);
+
+// Tambahkan satu event listener ke document
+document.addEventListener("change", handleYearFilterChange);
+
+// Panggil initDashboardCharts saat halaman pertama kali dimuat
+document.addEventListener("DOMContentLoaded", initDashboardCharts);
+
+// Panggil kembali saat Livewire selesai navigasi (misalnya setelah redirect)
+document.addEventListener("livewire:navigated", initDashboardCharts);
 
 // Inisialisasi chart ketika dokumen sudah siap
 document.addEventListener("DOMContentLoaded", initDashboardCharts);

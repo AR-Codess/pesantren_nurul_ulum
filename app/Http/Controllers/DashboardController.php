@@ -180,37 +180,66 @@ class DashboardController extends Controller
      */
     public function getLunasPayments(Request $request)
     {
-        // Get year from request or use current year as default
         $selectedYear = $request->input('tahun', Carbon::now()->year);
-        
-        // Initialize month labels and data
         $labels = [];
-        $monthCounts = array_fill(1, 12, 0); // Creates array [1 => 0, 2 => 0, ..., 12 => 0]
-        
-        // Generate month labels for selected year
+        $monthAmounts = array_fill(1, 12, 0);
         for ($i = 1; $i <= 12; $i++) {
             $labels[] = Carbon::create($selectedYear, $i, 1)->format('M Y');
         }
-        
-        // Get counts of lunas payments by month for the selected year
-        $lunasPayments = Pembayaran::where('status', 'lunas')
+        // Ambil semua pembayaran lunas tahun ini
+        $lunasPayments = Pembayaran::with('detailPembayaran')
+            ->where('status', 'lunas')
             ->where('periode_tahun', $selectedYear)
-            ->select('periode_bulan', DB::raw('COUNT(*) as count'))
-            ->groupBy('periode_bulan')
-            ->get()
-            ->keyBy('periode_bulan'); // Make periode_bulan the key
-        
-        // Populate month counts with query results
-        foreach ($lunasPayments as $bulan => $payment) {
-            if (isset($monthCounts[$bulan])) {
-                $monthCounts[$bulan] = $payment->count;
+            ->get();
+        // Jumlahkan total pembayaran yang benar-benar dibayar (sum detail_pembayaran) per bulan
+        foreach ($lunasPayments as $payment) {
+            $bulan = (int) $payment->periode_bulan;
+            $totalPaid = $payment->detailPembayaran->sum('jumlah_dibayar');
+            if (isset($monthAmounts[$bulan])) {
+                $monthAmounts[$bulan] += $totalPaid;
             }
         }
-        
-        // Return formatted data for chart
         return response()->json([
             'labels' => $labels,
-            'values' => array_values($monthCounts)
+            'values' => array_values($monthAmounts)
+        ]);
+    }
+
+    /**
+     * Display the dashboard index page with available years and current year
+     *
+     * @return \Illuminate\View\View
+     */
+    public function index()
+    {
+        $availableYears = Pembayaran::select('periode_tahun')
+            ->distinct()
+            ->orderBy('periode_tahun', 'desc')
+            ->pluck('periode_tahun');
+        $currentYear = Carbon::now()->year;
+
+        return view('dashboard', [
+            'availableYears' => $availableYears,
+            'currentYear' => $currentYear,
+        ]);
+    }
+    
+    /**
+     * Display the admin dashboard page with available years and current year
+     *
+     * @return \Illuminate\View\View
+     */
+    public function adminDashboard()
+    {
+        $availableYears = Pembayaran::select('periode_tahun')
+            ->distinct()
+            ->orderBy('periode_tahun', 'desc')
+            ->pluck('periode_tahun');
+        $currentYear = Carbon::now()->year;
+
+        return view('livewire.admin-dashboard', [
+            'availableYears' => $availableYears,
+            'currentYear' => $currentYear,
         ]);
     }
 }
