@@ -24,8 +24,10 @@ class Absensi extends Model
      * @var array
      */
     protected $fillable = [
+        'user_id',
         'kelas_id',
         'tanggal',
+        'status',
     ];
 
     /**
@@ -62,5 +64,13 @@ class Absensi extends Model
     public function kelas(): BelongsTo
     {
         return $this->belongsTo(Kelas::class);
+    }
+
+    /**
+     * Get the user (santri) for this absensi record.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
