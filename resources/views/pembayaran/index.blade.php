@@ -44,6 +44,14 @@
                                 </select>
                             </div>
                             <div class="w-40">
+                                <select name="tahun" id="tahunFilter" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                    <option value="">-- Pilih Tahun --</option>
+                                    @for($year = date('Y'); $year >= 2000; $year--)
+                                        <option value="{{ $year }}" {{ request('tahun') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                            <div class="w-40">
                                 <select name="status" id="statusFilter" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                                     <option value="">-- Pilih Status --</option>
                                     <option value="lunas" {{ request('status') == 'lunas' ? 'selected' : '' }}>Lunas</option>
@@ -72,6 +80,7 @@
                                     <th scope="col" class="px-6 py-3">NIS</th>
                                     <th scope="col" class="px-6 py-3">Santri</th>
                                     <th scope="col" class="px-6 py-3">SPP</th>
+                                    <th scope="col" class="px-6 py-3">Periode</th>
                                     <th scope="col" class="px-6 py-3">Status</th>
                                     <th scope="col" class="px-6 py-3">Aksi</th>
                                 </tr>
@@ -108,6 +117,30 @@
                                             <span class="{{ $isLunas ? 'text-green-600' : 'text-red-600' }} font-medium">
                                                 Rp {{ number_format($totalPaid, 0, ',', '.') }} / Rp {{ number_format($totalTagihan, 0, ',', '.') }}
                                             </span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            @if($pembayaran->periode_bulan && $pembayaran->periode_tahun)
+                                                @php
+                                                    $bulanIndonesia = [
+                                                        'January' => 'Januari',
+                                                        'February' => 'Februari',
+                                                        'March' => 'Maret',
+                                                        'April' => 'April',
+                                                        'May' => 'Mei',
+                                                        'June' => 'Juni',
+                                                        'July' => 'Juli',
+                                                        'August' => 'Agustus',
+                                                        'September' => 'September',
+                                                        'October' => 'Oktober',
+                                                        'November' => 'November',
+                                                        'December' => 'Desember'
+                                                    ];
+                                                    $bulan = DateTime::createFromFormat('!m', $pembayaran->periode_bulan)->format('F');
+                                                @endphp
+                                                {{ $bulanIndonesia[$bulan] }} {{ $pembayaran->periode_tahun }}
+                                            @else
+                                                <span class="text-red-500">-</span>
+                                            @endif
                                         </td>
                                         <td class="px-6 py-4">
                                             @if($pembayaran->status == 'confirmed')
@@ -188,6 +221,7 @@
             // Filter dropdown handling
             const bulanFilter = document.getElementById('bulanFilter');
             const statusFilter = document.getElementById('statusFilter');
+            const tahunFilter = document.getElementById('tahunFilter');
 
             if (bulanFilter) {
                 bulanFilter.addEventListener('change', function() {
@@ -197,6 +231,12 @@
 
             if (statusFilter) {
                 statusFilter.addEventListener('change', function() {
+                    document.getElementById('searchForm').submit();
+                });
+            }
+
+            if (tahunFilter) {
+                tahunFilter.addEventListener('change', function() {
                     document.getElementById('searchForm').submit();
                 });
             }
