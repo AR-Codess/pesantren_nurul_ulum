@@ -151,8 +151,8 @@
                                     @forelse($kelasList as $kelas)
                                     @php
                                     $sudahAbsen = \App\Models\Absensi::where('kelas_id', $kelas->id)
-                                        ->whereDate('tanggal', date('Y-m-d'))
-                                        ->exists();
+                                    ->whereDate('tanggal', date('Y-m-d'))
+                                    ->exists();
                                     @endphp
                                     <tr class="border-b">
                                         <td class="py-2 px-4">{{ $kelas->nama_kelas ?? $kelas->mata_pelajaran }} - {{ optional($kelas->classLevel)->level ?? '-' }} </td>
@@ -205,7 +205,7 @@
                         ];
                         }
                         if (in_array($status, ['hadir','izin','sakit','alpha'])) {
-                            $rekap[$kid][$status]++;
+                        $rekap[$kid][$status]++;
                         }
                         }
                         @endphp
