@@ -151,7 +151,6 @@
                                     @forelse($kelasList as $kelas)
                                     @php
                                     $sudahAbsen = \App\Models\Absensi::where('kelas_id', $kelas->id)
-                                    ->where('guru_id', auth()->user()->id)
                                     ->whereDate('tanggal', date('Y-m-d'))
                                     ->exists();
                                     @endphp
@@ -195,6 +194,7 @@
                         $rekap = [];
                         foreach ($absensiHariIni as $absen) {
                         $kid = $absen->kelas_id;
+                        $status = $absen->status ?? null;
                         if (!isset($rekap[$kid])) {
                         $rekap[$kid] = [
                         'kelas' => $kelasMap[$kid] ?? null,
@@ -204,7 +204,9 @@
                         'alpha' => 0,
                         ];
                         }
-                        $rekap[$kid][$absen->status]++;
+                        if (in_array($status, ['hadir','izin','sakit','alpha'])) {
+                        $rekap[$kid][$status]++;
+                        }
                         }
                         @endphp
                         <div class="overflow-x-auto">

@@ -48,7 +48,6 @@
                             @csrf
                             <input type="hidden" name="kelas_id" value="{{ $kelasId }}">
                             <input type="hidden" name="tanggal" value="{{ date('Y-m-d') }}">
-                            <input type="hidden" name="guru_id" value="{{ auth()->user()->id }}">
                             <table class="w-full text-sm text-left text-gray-700">
                                 <thead class="text-xs text-gray-700 uppercase bg-blue-50">
                                     <tr>
@@ -94,9 +93,6 @@
                                             @endif
                                         </td>
                                         <td class="px-4 py-3 text-center">
-                                            <input type="hidden" name="absensi[{{ $murid->id }}][user_id]" value="{{ $murid->id }}">
-                                            <input type="hidden" name="absensi[{{ $murid->id }}][kelas_id]" value="{{ $kelasId }}">
-                                            <input type="hidden" name="absensi[{{ $murid->id }}][guru_id]" value="{{ auth()->user()->id }}">
                                             <input type="radio" name="absensi[{{ $murid->id }}][status]" value="hadir" checked required>
                                         </td>
                                         <td class="px-4 py-3 text-center">
