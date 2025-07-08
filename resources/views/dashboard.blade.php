@@ -348,7 +348,7 @@
                     @elseif(auth()->user()->hasRole('user'))
                     <div class="mt-6 grid grid-cols-1 gap-6">
                         <!-- Tagihan Bulanan UI -->
-                        <div class="bg-gradient-to-br from-green-400 to-blue-500 p-6 rounded-xl shadow-lg">
+                        <div class="bg-gradient-to-br from-green-400 to-blue-500 p-6 rounded-xl shadow-lg mb-8">
                             <div class="flex items-center mb-4">
                                 <svg class="w-8 h-8 text-white mr-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0V4m0 8v8m8-8a8 8 0 11-16 0 8 8 0 0116 0z" />
@@ -360,29 +360,50 @@
                                     <thead class="bg-blue-100">
                                         <tr>
                                             <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Bulan</th>
+                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Deskripsi</th>
                                             <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Jumlah</th>
                                             <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Status</th>
                                             <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- Contoh data statis, ganti dengan data dinamis jika sudah ada -->
-                                        <tr class="border-b">
-                                            <td class="py-2 px-4">Juli 2025</td>
-                                            <td class="py-2 px-4">Rp 150.000</td>
-                                            <td class="py-2 px-4"><span class="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full">Belum Lunas</span></td>
-                                            <td class="py-2 px-4">
-                                                <a href="#" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs">Bayar Sekarang</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="py-2 px-4">Juni 2025</td>
-                                            <td class="py-2 px-4">Rp 150.000</td>
-                                            <td class="py-2 px-4"><span class="px-2 py-1 text-xs bg-green-100 text-green-600 rounded-full">Lunas</span></td>
-                                            <td class="py-2 px-4">
-                                                <span class="px-3 py-1 bg-gray-300 text-gray-600 rounded text-xs cursor-not-allowed">Sudah Dibayar</span>
-                                            </td>
-                                        </tr>
+                                        @php
+                                        $user = \App\Models\User::find(auth()->id());
+                                        $pembayaranList = \App\Models\Pembayaran::where('user_id', $user->id)->orderBy('periode_pembayaran')->get();
+                                        $bulanList = [
+                                            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
+                                            7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+                                        ];
+                                        @endphp
+                                        @foreach($pembayaranList as $pembayaran)
+                                            @php
+                                                $bulan = (int)date('n', strtotime($pembayaran->periode_pembayaran));
+                                                $tahun = date('Y', strtotime($pembayaran->periode_pembayaran));
+                                                $isLunas = ($pembayaran->status === 'lunas' || $pembayaran->status === 'PAID') && $pembayaran->detailPembayaran->sum('jumlah_dibayar') >= $pembayaran->total_tagihan;
+                                                $sisaTagihan = $pembayaran->total_tagihan - $pembayaran->detailPembayaran->sum('jumlah_dibayar');
+                                            @endphp
+                                            <tr class="border-b">
+                                                <td class="py-2 px-4">{{ $bulanList[$bulan] }} {{ $tahun }}</td>
+                                                <td class="py-2 px-4">{{ $pembayaran->deskripsi ?? '-' }}</td>
+                                                <td class="py-2 px-4">Rp {{ number_format($pembayaran->total_tagihan,0,',','.') }}</td>
+                                                <td class="py-2 px-4">
+                                                    @if($isLunas)
+                                                        <span class="px-2 py-1 text-xs bg-green-100 text-green-600 rounded-full">Lunas</span>
+                                                    @else
+                                                        <span class="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full">Belum Lunas</span>
+                                                    @endif
+                                                </td>
+                                                <td class="py-2 px-4">
+                                                    @if($isLunas)
+                                                        <span class="px-3 py-1 bg-gray-300 text-gray-600 rounded text-xs cursor-not-allowed">Sudah Dibayar</span>
+                                                        <span class="ml-2 text-xs text-green-700">Sisa: Rp 0</span>
+                                                    @else
+                                                        <a href="{{ route('tagihan.bayar', ['id' => $pembayaran->id, 'periode' => $pembayaran->periode_pembayaran]) }}" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs">Bayar Sekarang</a>
+                                                        <span class="ml-2 text-xs text-red-700">Sisa: Rp {{ number_format($sisaTagihan,0,',','.') }}</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -429,6 +450,71 @@
                             </div>
                             <div class="mt-4 text-sm text-white opacity-80">* Data rekap diambil dari absensi harian Anda setiap bulan.</div>
                         </div>
+
+                        <!-- Rekapitulasi Tagihan 12 Bulan Terakhir -->
+                        <div class="bg-white p-6 rounded-lg shadow mb-8 border border-blue-200">
+                            <h3 class="font-bold text-lg mb-4 text-blue-700 flex items-center">
+                                <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                                </svg>
+                                Rekapitulasi Tagihan 12 Bulan Terakhir
+                            </h3>
+                            @php
+                            $userId = auth()->user()->id;
+                            $bulanSekarang = \Carbon\Carbon::now();
+                            $rekapTagihan = [];
+                            for ($i = 11; $i >= 0; $i--) {
+                                $bulan = $bulanSekarang->copy()->subMonths($i);
+                                $periode = $bulan->format('Y-m-01');
+                                $tagihan = \App\Models\Pembayaran::where('user_id', $userId)
+                                    ->where('periode_pembayaran', $periode)
+                                    ->first();
+                                $rekapTagihan[] = [
+                                    'bulan' => $bulan->isoFormat('MMMM YYYY'),
+                                    'jumlah' => $tagihan ? $tagihan->total_tagihan : 0,
+                                    'status' => $tagihan ? $tagihan->status : 'tidak_ada',
+                                    'deskripsi' => $tagihan ? $tagihan->deskripsi : '-',
+                                    'sudah_dibayar' => $tagihan ? $tagihan->detailPembayaran->sum('jumlah_dibayar') : 0,
+                                    'sisa' => $tagihan ? max(0, $tagihan->total_tagihan - $tagihan->detailPembayaran->sum('jumlah_dibayar')) : 0,
+                                ];
+                            }
+                            @endphp
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white rounded-lg shadow overflow-hidden">
+                                    <thead class="bg-blue-100">
+                                        <tr>
+                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Bulan</th>
+                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Jumlah Tagihan</th>
+                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($rekapTagihan as $row)
+                                        <tr class="border-b hover:bg-blue-50 transition-all">
+                                            <td class="py-2 px-4">{{ $row['bulan'] }}</td>
+                                            <td class="py-2 px-4">Rp {{ number_format($row['jumlah'], 0, ',', '.') }}</td>
+                                            <td class="py-2 px-4">
+                                                @if($row['status'] == 'lunas')
+                                                    <span class="px-2 py-1 text-xs text-white bg-green-600 rounded">Lunas</span>
+                                                @elseif($row['status'] == 'menunggu_pembayaran')
+                                                    <span class="px-2 py-1 text-xs text-white bg-yellow-600 rounded">Menunggu Pembayaran</span>
+                                                @elseif($row['status'] == 'belum_lunas')
+                                                    <span class="px-2 py-1 text-xs text-white bg-yellow-500 rounded">Belum Lunas</span>
+                                                    @if($row['sisa'] > 0)
+                                                        <span class="ml-2 px-2 py-1 text-xs text-red-600 bg-red-100 rounded">Sisa: Rp {{ number_format($row['sisa'], 0, ',', '.') }}</span>
+                                                    @endif
+                                                @elseif($row['status'] == 'tidak_ada')
+                                                    <span class="px-2 py-1 text-xs text-gray-600 bg-gray-200 rounded">Tidak Ada Tagihan</span>
+                                                @else
+                                                    <span class="px-2 py-1 text-xs text-white bg-gray-400 rounded">{{ ucfirst($row['status']) }}</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     @endif
                 </div>
@@ -437,3 +523,29 @@
     </div>
     @endsection
 </x-app-layout>
+
+@if(auth()->user()->hasRole('user'))
+<script>
+    function refreshDashboardData() {
+        fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                // Ganti tabel tagihan bulanan
+                const newTable = doc.querySelector('table.min-w-full.bg-white.rounded-lg.shadow.overflow-hidden');
+                const oldTable = document.querySelector('table.min-w-full.bg-white.rounded-lg.shadow.overflow-hidden');
+                if (newTable && oldTable) {
+                    oldTable.innerHTML = newTable.innerHTML;
+                }
+                // Ganti rekap tagihan 12 bulan terakhir
+                const newRekap = doc.querySelectorAll('div.bg-white.p-6.rounded-lg.shadow.mb-8.border.border-blue-200')[1];
+                const oldRekap = document.querySelectorAll('div.bg-white.p-6.rounded-lg.shadow.mb-8.border.border-blue-200')[1];
+                if (newRekap && oldRekap) {
+                    oldRekap.innerHTML = newRekap.innerHTML;
+                }
+            });
+    }
+    setInterval(refreshDashboardData, 10000); // 10 detik
+</script>
+@endif

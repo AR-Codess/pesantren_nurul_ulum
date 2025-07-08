@@ -17,6 +17,7 @@ class AdminDashboard extends Component
     public $confirmedPayments;
     public $pendingPayments;
     public $rejectedPayments;
+    public $paymentChartData = [];
 
     public function mount()
     {
@@ -58,6 +59,28 @@ class AdminDashboard extends Component
         
         // Emit event to refresh charts after data is loaded
         $this->dispatch('refreshCharts');
+
+        // Ambil data pembayaran 12 bulan terakhir
+        $months = collect(range(0, 11))->map(function ($i) {
+            return Carbon::now()->subMonths(11 - $i)->format('Y-m');
+        });
+        $labels = $months->map(function ($m) {
+            return Carbon::createFromFormat('Y-m', $m)->isoFormat('MMM YYYY');
+        });
+        $data = $months->map(function ($m) {
+            return Pembayaran::whereRaw("DATE_FORMAT(periode_pembayaran, '%Y-%m') = ?", [$m])
+                ->where('status', 'lunas')
+                ->sum('total_tagihan');
+        });
+        $this->paymentChartData = [
+            'labels' => $labels,
+            'data' => $data,
+        ];
+    }
+
+    public function getPaymentChartData()
+    {
+        return response()->json($this->paymentChartData);
     }
 
     public function render()

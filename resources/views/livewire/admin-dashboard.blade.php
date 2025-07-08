@@ -44,6 +44,8 @@
     </div>
 
     @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/admin-dashboard-chart.js"></script>
     <script>
         // Reinitialize charts when Livewire component updates
         document.addEventListener('livewire:initialized', () => {

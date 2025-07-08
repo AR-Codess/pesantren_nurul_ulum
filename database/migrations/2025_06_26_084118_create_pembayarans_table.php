@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('status', 50); // 'Belum Bayar', 'Menunggu Pembayaran', 'Belum Lunas', 'Lunas'
             $table->boolean('is_cicilan')->default(false);
             $table->foreignId('admin_id_pembuat')->constrained('admin')->onDelete('cascade');
+            $table->string('midtrans_order_id')->nullable(); // Untuk integrasi Midtrans
+            $table->string('deskripsi')->nullable(); // Deskripsi pembayaran
+            $table->string('jenis_pembayaran')->nullable(); // SPP, Beasiswa, Dll
             $table->timestamps();
         });
 

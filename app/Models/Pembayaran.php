@@ -30,6 +30,9 @@ class Pembayaran extends Model
         'status',
         'is_cicilan',
         'admin_id_pembuat',
+        'midtrans_order_id',
+        'deskripsi',
+        'jenis_pembayaran',
     ];
 
     /**

@@ -102,9 +102,7 @@
                                                 // Menghitung total yang sudah dibayar dari semua detail pembayaran
                                                 $totalPaid = $pembayaran->detailPembayaran->sum('jumlah_dibayar');
                                                 $totalTagihan = $pembayaran->total_tagihan;
-                                        
-                                                // Menentukan apakah sudah lunas atau belum
-                                                $isLunas = $totalPaid >= $totalTagihan;
+                                                $isLunas = ($pembayaran->status == 'lunas' || $pembayaran->status == 'PAID') && $totalPaid >= $totalTagihan;
                                             @endphp
                                         
                                             {{-- Menampilkan format: Rp [sudah dibayar] / Rp [total tagihan] --}}
@@ -123,8 +121,10 @@
                                                 <span class="px-2 py-1 text-xs text-white bg-yellow-600 rounded">Belum Lunas</span>
                                             @elseif($pembayaran->status == 'belum_bayar')
                                                 <span class="px-2 py-1 text-xs text-white bg-red-600 rounded">Belum Bayar</span>
-                                            @else
+                                            @elseif($pembayaran->status == 'rejected' || $pembayaran->status == 'ditolak')
                                                 <span class="px-2 py-1 text-xs text-white bg-red-500 rounded">Ditolak</span>
+                                            @else
+                                                <span class="px-2 py-1 text-xs text-white bg-gray-400 rounded">{{ ucfirst($pembayaran->status) }}</span>
                                             @endif
                                             @if($pembayaran->is_cicilan)
                                                 <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded ml-1">Cicilan</span>

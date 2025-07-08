@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Pembayaran;
-use App\Models\DetailPembayaran;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -98,9 +97,15 @@ class PembayaranController extends Controller
         if (Auth::guard('admin')->check()) {
             $data['admin_id_pembuat'] = Auth::guard('admin')->id();
             $isAdminPayment = true;
-            
             // Force payment method to Tunai if admin is creating
             $data['metode_pembayaran'] = 'Tunai';
+            // Jika admin input tunai dan langsung lunas
+            if (!$request->has('is_cicilan') && $request->jumlah_dibayar >= $sppBulanan) {
+                $data['status'] = 'lunas';
+            } else {
+                // Jika admin hanya membuat tagihan, status menunggu pembayaran user
+                $data['status'] = 'menunggu_pembayaran';
+            }
         } else {
             // If regular user is creating payment
             $admin = Admin::first();
@@ -109,7 +114,6 @@ class PembayaranController extends Controller
             } else {
                 return redirect()->back()->with('error', 'Tidak ada admin yang tersedia untuk membuat pembayaran.');
             }
-            
             // Set status to awaiting payment if created by user
             $data['status'] = 'menunggu_pembayaran';
         }
@@ -135,37 +139,29 @@ class PembayaranController extends Controller
         
         // Set nilai periode_pembayaran to the first day of the month from payment date
         $data['periode_pembayaran'] = $paymentDate->format('Y-m-01');
-        
-        // Tentukan status pembayaran berdasarkan pembuat dan jumlah
-        if ($isAdminPayment) {
-            // Admin membuat pembayaran
-            if (isset($data['is_cicilan']) && $data['is_cicilan']) {
-                // Pembayaran cicilan
-                if ($request->jumlah_dibayar >= $sppBulanan) {
-                    $data['status'] = 'lunas';
-                } else {
-                    $data['status'] = 'belum_lunas';
-                }
-            } else {
-                // Pembayaran langsung (non-cicilan)
-                $data['status'] = 'lunas';
-            }
-        } else {
-            // User membuat pembayaran (menunggu konfirmasi)
-            $data['status'] = 'menunggu_pembayaran';
-        }
-        
-        // Buat record pembayaran
-        $pembayaran = Pembayaran::create($data);
-        
-        // Buat detail pembayaran untuk semua jenis pembayaran (cicilan maupun langsung)
-        DetailPembayaran::create([
-            'pembayaran_id' => $pembayaran->id,
-            'jumlah_dibayar' => $request->jumlah_dibayar,
-            'tanggal_bayar' => $request->tanggal_bayar,
-            'metode_pembayaran' => $data['metode_pembayaran'],
-            'admin_id_pencatat' => $data['admin_id_pembuat'],
-        ]);
+
+        // Buat pembayaran baru (admin/user) atau update jika sudah ada
+        $periode = $request->input('periode') ?? $request->input('periode_pembayaran');
+        $userId = $request->input('user_id') ?? Auth::id();
+        $jumlah = $request->input('jumlah_dibayar') ?? $request->input('total_tagihan');
+        $deskripsi = $request->input('deskripsi') ?? 'Pembayaran Bulanan';
+        $jenis = $request->input('jenis_pembayaran') ?? 'SPP';
+        $midtransOrderId = $request->input('midtrans_order_id') ?? null;
+        $pembayaran = Pembayaran::updateOrCreate(
+            [
+                'user_id' => $userId,
+                'periode_pembayaran' => $periode,
+            ],
+            [
+                'total_tagihan' => $jumlah,
+                'status' => 'UNPAID',
+                'is_cicilan' => false,
+                'admin_id_pembuat' => Auth::user()->id ?? 1,
+                'midtrans_order_id' => $midtransOrderId,
+                'deskripsi' => $deskripsi,
+                'jenis_pembayaran' => $jenis,
+            ]
+        );
 
         return redirect()->route('pembayaran.index')
             ->with('success', 'Pembayaran berhasil ditambahkan.');

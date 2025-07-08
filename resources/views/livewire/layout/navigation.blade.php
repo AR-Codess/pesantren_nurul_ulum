@@ -74,26 +74,25 @@ new class extends Component
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
-
                     @if(Auth::guard('admin')->check() || (Auth::guard('web')->check() && Auth::guard('web')->user()->hasRole('admin')))
-                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                        {{ __('Kelola Santri') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('guru.index')" :active="request()->routeIs('guru.*')">
-                        {{ __('Kelola Guru') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('admin.kelas.index')" :active="request()->routeIs('admin.kelas.*')">
-                        {{ __('Kelola Kelas') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('pembayaran.index')" :active="request()->routeIs('pembayaran.*')">
-                        {{ __('Pembayaran') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('admin.berita.index')" :active="request()->routeIs('admin.berita.*')">
-                        {{ __('Berita') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('kelola-spp')" :active="request()->routeIs('kelola-spp')">
-                        {{ __('Kelola SPP') }}
-                    </x-nav-link>
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                            {{ __('Kelola Santri') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('guru.index')" :active="request()->routeIs('guru.*')">
+                            {{ __('Kelola Guru') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.kelas.index')" :active="request()->routeIs('admin.kelas.*')">
+                            {{ __('Kelola Kelas') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('pembayaran.index')" :active="request()->routeIs('pembayaran.*')">
+                            {{ __('Pembayaran') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.berita.index')" :active="request()->routeIs('admin.berita.*')">
+                            {{ __('Berita') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('kelola-spp')" :active="request()->routeIs('kelola-spp')">
+                            {{ __('Kelola SPP') }}
+                        </x-nav-link>
                     @endif
                 </div>
             </div>

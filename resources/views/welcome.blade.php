@@ -572,7 +572,8 @@
             </div>
             
             <div class="text-center mt-4">
-                <a href="{{ route('berita.index') }}" class="btn btn-primary">Lihat Semua Berita</a>
+                {{-- <a href="{{ route('berita.index') }}" class="btn btn-primary">Lihat Semua Berita</a> --}}
+                <a href="#" class="btn btn-primary">Lihat Semua Berita</a>
             </div>
         </div>
     </section>
