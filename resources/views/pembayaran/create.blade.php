@@ -31,19 +31,24 @@
 
                         <div class="mb-4">
                             <label for="user_id" class="block text-sm font-medium text-gray-700">Santri</label>
-                            <select id="user_id" name="user_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" onchange="updateSppInfo(this.value)">
+                            <select id="user_id" name="user_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                 <option value="">-- Pilih Santri --</option>
                                 @foreach($users as $user)
-                                <option value="{{ $user->id }}"
-                                    data-spp="{{ $user->classLevel->spp }}"
-                                    data-spp-beasiswa="{{ $user->classLevel->spp_beasiswa }}"
-                                    data-is-beasiswa="{{ $user->is_beasiswa ? 1 : 0 }}"
-                                    data-name="{{ $user->nama_santri }}"
-                                    data-level="{{ $user->classLevel->level }}"
-                                    {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                    {{ $user->nama_santri }} ({{ $user->nis }}) 
-                                    @if($user->is_beasiswa) <span class="text-green-600">- Beasiswa</span> @endif
-                                </option>
+                                    <option value="{{ $user->id }}"
+                                        data-spp="{{ $user->classLevel->spp ?? 0 }}"
+                                        data-spp-beasiswa="{{ $user->classLevel->spp_beasiswa ?? 0 }}"
+                                        data-is-beasiswa="{{ $user->is_beasiswa ? 1 : 0 }}"
+                                        data-name="{{ $user->nama_santri }}"
+                                        data-level="{{ $user->classLevel->level ?? 'Tanpa Kelas' }}"
+                                        {{ old('user_id') == $user->id ? 'selected' : '' }}
+                                        @if(!$user->classLevel) disabled @endif>
+                                        {{ $user->nama_santri }} ({{ $user->nis }})
+                                        @if(!$user->classLevel)
+                                            <span class="text-red-600 font-semibold">- (Atur kelas terlebih dahulu)</span>
+                                        @elseif($user->is_beasiswa)
+                                            <span class="text-green-600">- Beasiswa</span>
+                                        @endif
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -131,7 +136,7 @@
                         </div>
 
                         <div class="mt-6">
-                            <button type="submit" id="submit-payment-btn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+                            <button type="submit" id="submit-payment-btn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 opacity-50 cursor-not-allowed" disabled>
                                 Simpan Pembayaran
                             </button>
                         </div>
@@ -160,6 +165,8 @@
                 sppInfoDiv.classList.add('hidden');
                 totalTagihanInput.value = '';
                 totalTagihanDisplay.value = 'Rp 0';
+                submitBtn.disabled = true; // Disable submit button
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 return;
             }
 
@@ -170,22 +177,29 @@
             const isBeasiswa = selectedOption.getAttribute('data-is-beasiswa') === '1';
             const santriName = selectedOption.getAttribute('data-name');
             const santriLevel = selectedOption.getAttribute('data-level');
-            
+
+            // Check if the student has a class
+            if (santriLevel === 'Tanpa Kelas') {
+                sppInfoDiv.classList.add('hidden');
+                totalTagihanInput.value = '';
+                totalTagihanDisplay.value = 'Rp 0';
+                submitBtn.disabled = true; // Disable submit button
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                alert('Silahkan atur kelas santri terlebih dahulu');
+                return;
+            }
+
             // Determine the appropriate SPP amount based on scholarship status
             let actualSpp = sppBulanan;
             if (isBeasiswa) {
-                // Use spp_beasiswa if it exists and is not zero or null
                 if (sppBeasiswa && parseInt(sppBeasiswa) > 0) {
                     actualSpp = sppBeasiswa;
-                }
-                // If spp_beasiswa is null, zero, or not set, use a default value (you can adjust this as needed)
-                else {
+                } else {
                     actualSpp = sppBulanan; // Fallback to regular SPP
-                    // console.log("Scholarship SPP amount is not set, using regular SPP");
                 }
             }
 
-            // Display information with scholarship indicator if applicable
+            // Display information
             totalSppSpan.innerText = `Rp ${parseInt(actualSpp).toLocaleString()}${isBeasiswa ? ' (Beasiswa)' : ''}`;
             santriNameSpan.innerText = santriName;
             santriLevelSpan.innerText = santriLevel;
@@ -195,8 +209,10 @@
             totalTagihanDisplay.value = `Rp ${parseInt(actualSpp).toLocaleString()}`;
 
             checkPaymentStatus(userId);
-            
+
             sppInfoDiv.classList.remove('hidden');
+            submitBtn.disabled = false; // Enable submit button
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         }
 
         function checkPaymentStatus(userId) {

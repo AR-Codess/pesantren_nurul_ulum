@@ -44,14 +44,14 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="email" class="block text-sm font-medium text-gray-700">Email <span class="text-red-600">*</span></label>
-                                <input type="email" name="email" id="email" value="{{ old('email') }}" required 
+                                <label for="email" class="block text-sm font-medium text-gray-700">Email  <span class="text-red-600">*</span></label>
+                                <input type="email" name="email" id="email" value="{{ old('email') }}" required
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
 
                             <div class="mb-4">
-                                <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700">Jenis Kelamin</label>
-                                <select name="jenis_kelamin" id="jenis_kelamin" 
+                                <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700">Jenis Kelamin  <span class="text-red-600">*</span></label>
+                                <select name="jenis_kelamin" id="jenis_kelamin" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                                     <option value="1" {{ old('jenis_kelamin') === '1' ? 'selected' : '' }}>Laki-laki</option>
                                     <option value="0" {{ old('jenis_kelamin') === '0' ? 'selected' : '' }}>Perempuan</option>
@@ -59,21 +59,27 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="tempat_lahir" class="block text-sm font-medium text-gray-700">Tempat Lahir</label>
-                                <input type="text" name="tempat_lahir" id="tempat_lahir" value="{{ old('tempat_lahir') }}" 
+                                <label for="tempat_lahir" class="block text-sm font-medium text-gray-700">Tempat Lahir  <span class="text-red-600">*</span></label>
+                                <input type="text" name="tempat_lahir" id="tempat_lahir" value="{{ old('tempat_lahir') }}" required
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
 
                             <div class="mb-4">
-                                <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
-                                <input type="date" name="tanggal_lahir" id="tanggal_lahir" value="{{ old('tanggal_lahir') }}" 
+                                <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700">Tanggal Lahir  <span class="text-red-600">*</span></label>
+                                <input type="date" name="tanggal_lahir" required="tanggal_lahir" value="{{ old('tanggal_lahir') }}" 
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
 
                             <div class="mb-4">
-                                <label for="pendidikan_terakhir" class="block text-sm font-medium text-gray-700">Pendidikan Terakhir</label>
-                                <input type="text" name="pendidikan_terakhir" id="pendidikan_terakhir" value="{{ old('pendidikan_terakhir') }}" 
+                                <label for="pendidikan_terakhir" class="block text-sm font-medium text-gray-700">Pendidikan Terakhir  <span class="text-red-600">*</span></label>
+                                <input type="text" name="pendidikan_terakhir" required="pendidikan_terakhir" value="{{ old('pendidikan_terakhir') }}" 
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="riwayat_pendidikan_keagamaan" class="block text-sm font-medium text-gray-700">Riwayat Pendidikan Keagamaan   <span class="text-red-600">*</span></label>
+                                <input type="text" name="riwayat_pendidikan_keagamaan" id="riwayat_pendidikan_keagamaan" rows="3" required
+                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('riwayat_pendidikan_keagamaan') }}</input>
                             </div>
 
                             <div class="mb-4">
@@ -83,33 +89,27 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="no_telepon" class="block text-sm font-medium text-gray-700">Nomor HP</label>
-                                <input type="text" name="no_telepon" id="no_telepon" value="{{ old('no_telepon') }}" 
+                                <label for="no_telepon" class="block text-sm font-medium text-gray-700">Nomor HP  <span class="text-red-600">*</span></label>
+                                <input type="text" name="no_telepon" id="no_telepon" value="{{ old('no_telepon') }}" required
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
 
                             <div class="mb-4">
-                                <label for="provinsi" class="block text-sm font-medium text-gray-700">Provinsi</label>
-                                <input type="text" name="provinsi" id="provinsi" value="{{ old('provinsi') }}" 
+                                <label for="provinsi" class="block text-sm font-medium text-gray-700">Provinsi  <span class="text-red-600">*</span></label>
+                                <input type="text" name="provinsi" id="provinsi" value="{{ old('provinsi') }}" required
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
 
                             <div class="mb-4">
-                                <label for="kabupaten" class="block text-sm font-medium text-gray-700">Kabupaten</label>
-                                <input type="text" name="kabupaten" id="kabupaten" value="{{ old('kabupaten') }}" 
+                                <label for="kabupaten" class="block text-sm font-medium text-gray-700">Kabupaten  <span class="text-red-600">*</span></label>
+                                <input type="text" name="kabupaten" id="kabupaten" value="{{ old('kabupaten') }}" required
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="riwayat_pendidikan_keagamaan" class="block text-sm font-medium text-gray-700">Riwayat Pendidikan Keagamaan</label>
-                            <textarea name="riwayat_pendidikan_keagamaan" id="riwayat_pendidikan_keagamaan" rows="3" 
-                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('riwayat_pendidikan_keagamaan') }}</textarea>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="alamat" class="block text-sm font-medium text-gray-700">Alamat</label>
-                            <textarea name="alamat" id="alamat" rows="3" 
+                            <label for="alamat" class="block text-sm font-medium text-gray-700">Alamat  <span class="text-red-600">*</span></label>
+                            <textarea name="alamat" id="alamat" rows="3" required
                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('alamat') }}</textarea>
                         </div>
 

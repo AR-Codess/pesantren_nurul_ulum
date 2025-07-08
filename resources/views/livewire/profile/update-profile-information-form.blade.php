@@ -12,12 +12,22 @@ new class extends Component
     public string $email = '';
 
     /**
-     * Mount the component.
+     * Mount the component with the correct user data.
      */
     public function mount(): void
     {
-        $this->name = Auth::user()->name ?? '';
-        $this->email = Auth::user()->email ?? '';
+        $user = Auth::user();
+
+        // Logika untuk mengambil nama yang benar berdasarkan guard/role
+        if (Auth::guard('admin')->check()) {
+            $this->name = $user->name ?? '';
+        } elseif (Auth::guard('guru')->check()) {
+            $this->name = $user->nama_pendidik ?? '';
+        } elseif (Auth::guard('web')->check()) {
+            $this->name = $user->nama_santri ?? ($user->name ?? '');
+        }
+
+        $this->email = $user->email ?? '';
     }
 
     /**
@@ -29,30 +39,41 @@ new class extends Component
 
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            // Email dibuat opsional dan unik jika diisi
+            'email' => ['nullable', 'string', 'lowercase', 'email', 'max:255', Rule::unique(get_class($user))->ignore($user->id)],
         ]);
 
-        $user->fill($validated);
+        // Logika untuk menyimpan nama ke kolom yang benar
+        if ($user instanceof \App\Models\Admin) { // Ganti dengan namespace model Admin Anda
+            $user->name = $validated['name'];
+        } elseif ($user instanceof \App\Models\Guru) { // Ganti dengan namespace model Guru Anda
+            $user->nama_pendidik = $validated['name'];
+        } elseif ($user instanceof User && property_exists($user, 'nama_santri')) {
+            $user->nama_santri = $validated['name'];
+        } else {
+            $user->name = $validated['name'];
+        }
 
-        if ($user->isDirty('email')) {
+        // Update email jika diisi dan berubah
+        if (isset($validated['email']) && $user->email !== $validated['email']) {
+            $user->email = $validated['email'];
             $user->email_verified_at = null;
         }
 
         $user->save();
-
-        $this->dispatch('profile-updated', name: $user->name);
+        
+        Session::flash('status', 'Profil berhasil diperbarui.');
+        $this->dispatch('profile-updated', name: $validated['name']);
     }
 
     /**
-     * Send an email verification notification to the current user.
+     * Send an email verification notification.
      */
     public function sendVerification(): void
     {
         $user = Auth::user();
 
         if ($user->hasVerifiedEmail()) {
-            $this->redirectIntended(default: route('dashboard', absolute: false));
-
             return;
         }
 
@@ -76,13 +97,16 @@ new class extends Component
     <form wire:submit="updateProfileInformation" class="mt-6 space-y-6">
         <div>
             <x-input-label for="name" :value="__('Name')" />
+            {{-- PERBAIKAN: Menghapus atribut 'disabled' dan 'bg-gray-100' --}}
             <x-text-input wire:model="name" id="name" name="name" type="text" class="mt-1 block w-full" required autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            {{-- PERBAIKAN: Menghapus teks yang tidak relevan --}}
         </div>
 
         <div>
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" name="email" type="email" class="mt-1 block w-full" required autocomplete="username" />
+            {{-- Dibuat readonly untuk mencegah perubahan email yang bisa jadi username --}}
+            <x-text-input wire:model="email" id="email" name="email" type="email" class="mt-1 block w-full bg-gray-100" readonly autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
             @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
@@ -108,7 +132,7 @@ new class extends Component
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
             <x-action-message class="me-3" on="profile-updated">
-                {{ __('Profil berhasil diubah') }}
+                {{ __('Profil berhasi diubah') }}
             </x-action-message>
         </div>
     </form>

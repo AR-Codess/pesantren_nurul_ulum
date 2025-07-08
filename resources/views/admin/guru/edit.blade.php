@@ -39,7 +39,7 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="nik" class="block text-sm font-medium text-gray-700">NIK (Tidak dapat diubah)</label>
+                                <label for="nik" class="block text-sm font-medium text-gray-700">NIK  <span class="text-red-600">*</span> (Tidak dapat diubah)</label>
                                 <input type="text" name="nik" id="nik" value="{{ old('nik', $guru->nik) }}" readonly
                                        class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
@@ -51,8 +51,8 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700">Jenis Kelamin</label>
-                                <select name="jenis_kelamin" id="jenis_kelamin" 
+                                <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700">Jenis Kelamin  <span class="text-red-600">*</span></label>
+                                <select name="jenis_kelamin" id="jenis_kelamin" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                                     <option value="1" {{ isset($guru->jenis_kelamin) && $guru->jenis_kelamin === true ? 'selected' : '' }}>Laki-laki</option>
                                     <option value="0" {{ isset($guru->jenis_kelamin) && $guru->jenis_kelamin === false ? 'selected' : '' }}>Perempuan</option>
@@ -60,57 +60,60 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="tempat_lahir" class="block text-sm font-medium text-gray-700">Tempat Lahir</label>
-                                <input type="text" name="tempat_lahir" id="tempat_lahir" value="{{ old('tempat_lahir', $guru->tempat_lahir) }}" 
+                                <label for="tempat_lahir" class="block text-sm font-medium text-gray-700">Tempat Lahir  <span class="text-red-600">*</span></label>
+                                <input type="text" name="tempat_lahir" required="tempat_lahir" value="{{ old('tempat_lahir', $guru->tempat_lahir) }}" 
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
 
                             <div class="mb-4">
-                                <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
-                                <input type="date" name="tanggal_lahir" id="tanggal_lahir" value="{{ old('tanggal_lahir', $guru->tanggal_lahir ? $guru->tanggal_lahir->format('Y-m-d') : '') }}" 
+                                <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700">Tanggal Lahir  <span class="text-red-600">*</span></label>
+                                <input type="date" name="tanggal_lahir" id="tanggal_lahir" value="{{ old('tanggal_lahir', $guru->tanggal_lahir ? $guru->tanggal_lahir->format('Y-m-d') : '') }}" required
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
 
                             <div class="mb-4">
-                                <label for="pendidikan_terakhir" class="block text-sm font-medium text-gray-700">Pendidikan Terakhir</label>
-                                <input type="text" name="pendidikan_terakhir" id="pendidikan_terakhir" value="{{ old('pendidikan_terakhir', $guru->pendidikan_terakhir) }}" 
+                                <label for="pendidikan_terakhir" class="block text-sm font-medium text-gray-700">Pendidikan Terakhir  <span class="text-red-600">*</span></label>
+                                <input type="text" name="pendidikan_terakhir" id="pendidikan_terakhir" value="{{ old('pendidikan_terakhir', $guru->pendidikan_terakhir) }}" required
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
 
                             <div class="mb-4">
-                                <label for="bidang" class="block text-sm font-medium text-gray-700">Bidang/Mata Pelajaran</label>
-                                <input type="text" name="bidang" id="bidang" value="{{ old('bidang', $guru->bidang) }}" 
+                                <label for="riwayat_pendidikan_keagamaan" class="block text-sm font-medium text-gray-700">
+                                    Riwayat Pendidikan Keagamaan <span class="text-red-600">*</span>
+                                </label>
+                                <input type="text" name="riwayat_pendidikan_keagamaan" id="riwayat_pendidikan_keagamaan" 
+                                       value="{{ old('riwayat_pendidikan_keagamaan', $guru->riwayat_pendidikan_keagamaan) }}" required
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
 
                             <div class="mb-4">
-                                <label for="no_telepon" class="block text-sm font-medium text-gray-700">Nomor HP</label>
-                                <input type="text" name="no_telepon" id="no_telepon" value="{{ old('no_telepon', $guru->no_telepon) }}" 
+                                <label for="bidang" class="block text-sm font-medium text-gray-700">Bidang/Mata Pelajaran  <span class="text-red-600">*</span></label>
+                                <input type="text" name="bidang" id="bidang" value="{{ old('bidang', $guru->bidang) }}" required
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
 
                             <div class="mb-4">
-                                <label for="provinsi" class="block text-sm font-medium text-gray-700">Provinsi</label>
-                                <input type="text" name="provinsi" id="provinsi" value="{{ old('provinsi', $guru->provinsi) }}" 
+                                <label for="no_telepon" class="block text-sm font-medium text-gray-700">Nomor HP  <span class="text-red-600">*</span></label>
+                                <input type="text" name="no_telepon" id="no_telepon" value="{{ old('no_telepon', $guru->no_telepon) }}" required
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
 
                             <div class="mb-4">
-                                <label for="kabupaten" class="block text-sm font-medium text-gray-700">Kabupaten</label>
-                                <input type="text" name="kabupaten" id="kabupaten" value="{{ old('kabupaten', $guru->kabupaten) }}" 
+                                <label for="provinsi" class="block text-sm font-medium text-gray-700">Provinsi  <span class="text-red-600">*</span></label>
+                                <input type="text" name="provinsi" id="provinsi" value="{{ old('provinsi', $guru->provinsi) }}" required
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="kabupaten" class="block text-sm font-medium text-gray-700">Kabupaten  <span class="text-red-600">*</span></label>
+                                <input type="text" name="kabupaten" id="kabupaten" value="{{ old('kabupaten', $guru->kabupaten) }}" required 
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="riwayat_pendidikan_keagamaan" class="block text-sm font-medium text-gray-700">Riwayat Pendidikan Keagamaan</label>
-                            <textarea name="riwayat_pendidikan_keagamaan" id="riwayat_pendidikan_keagamaan" rows="3" 
-                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('riwayat_pendidikan_keagamaan', $guru->riwayat_pendidikan_keagamaan) }}</textarea>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="alamat" class="block text-sm font-medium text-gray-700">Alamat</label>
-                            <textarea name="alamat" id="alamat" rows="3" 
+                            <label for="alamat" class="block text-sm font-medium text-gray-700">Alamat  <span class="text-red-600">*</span></label>
+                            <textarea name="alamat" id="alamat" rows="3" required
                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('alamat', $guru->alamat) }}</textarea>
                         </div>
 
