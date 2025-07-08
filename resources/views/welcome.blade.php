@@ -459,9 +459,6 @@
                     <div class="education-card h-100">
                         <div class="img-wrapper">
                             <img src="{{ asset('images/hero-bg.jpg') }}" class="img-fluid" alt="SMP Nurul Ulum">
-                            <div class="overlay-content">
-                                <a href="#" class="btn btn-light rounded-pill px-4">Selengkapnya</a>
-                            </div>
                             <span class="akreditasi-badge">Akreditasi B</span>
                         </div>
                         <div class="card-body p-4">
@@ -472,7 +469,7 @@
                                 <small class="text-muted">Jl. RS. Prawiro No. 1A</small>
                             </div>
                         </div>
-                    </div>
+                    </div>`
                 </div>
                 
                 <!-- SMK Kesehatan -->
@@ -481,7 +478,6 @@
                         <div class="img-wrapper">
                             <img src="{{ asset('images/hero-bg.jpg') }}" class="img-fluid" alt="SMK Kesehatan">
                             <div class="overlay-content">
-                                <a href="#" class="btn btn-light rounded-pill px-4">Selengkapnya</a>
                             </div>
                             <span class="akreditasi-badge">Akreditasi B</span>
                         </div>
@@ -503,7 +499,6 @@
                         <div class="img-wrapper">
                             <img src="{{ asset('images/hero-bg.jpg') }}" class="img-fluid" alt="Tahfidz Qur'an">
                             <div class="overlay-content">
-                                <a href="#" class="btn btn-light rounded-pill px-4">Selengkapnya</a>
                             </div>
                         </div>
                         <div class="card-body p-4">
@@ -523,7 +518,6 @@
                         <div class="img-wrapper">
                             <img src="{{ asset('images/hero-bg.jpg') }}" class="img-fluid" alt="Madrasah Diniyah">
                             <div class="overlay-content">
-                                <a href="#" class="btn btn-light rounded-pill px-4">Selengkapnya</a>
                             </div>
                         </div>
                         <div class="card-body p-4">
@@ -612,7 +606,7 @@
                                 </li>
                                 <li>
                                     <div class="facility-icon">
-                                        <i class="bi bi-flask"></i>
+                                        <i class="bi-pc-display"></i>
                                     </div>
                                     <strong>Laboratorium Keperawatan Modern</strong>
                                 </li>
