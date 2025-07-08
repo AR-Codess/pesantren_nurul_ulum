@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Spatie\Permission\Models\Role;
+use App\Imports\SantriImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -213,5 +215,37 @@ class UserController extends Controller
 
         return redirect()->route('users.index')
             ->with('success', 'Data santri berhasil dihapus.');
+    }
+
+    /**
+     * Menangani proses import data santri dari file Excel.
+     */
+    public function importExcel(Request $request)
+    {
+        // 1. Ubah validasi menjadi opsional (nullable)
+        $request->validate([
+            'file_import' => 'required|mimes:xlsx,xls',
+            'class_level_id' => 'nullable|exists:class_level,id'
+        ]);
+
+        try {
+            // Langsung ambil class_level_id, bisa jadi null jika tidak dipilih
+            $classLevelId = $request->input('class_level_id');
+
+            // Kirim class_level_id (bisa null) ke constructor SantriImport
+            Excel::import(new SantriImport($classLevelId), $request->file('file_import'));
+
+            return redirect()->route('users.index')->with('success', 'Data santri berhasil diimport!');
+
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Kesalahan pada baris " . $failure->row() . ": " . implode(', ', $failure->errors());
+            }
+            return redirect()->back()->with('error', 'Gagal mengimpor data. <br>' . implode('<br>', $errorMessages));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+        }
     }
 }

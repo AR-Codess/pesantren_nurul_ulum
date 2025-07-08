@@ -12,7 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('class_level_id')->after('nama_santri')->constrained('class_level')->onDelete('cascade');
+            $table->foreignId('class_level_id')
+                  ->after('nama_santri')
+                  ->nullable() 
+                  ->constrained('class_level')
+                  ->onDelete('set null');
+                  
             $table->boolean('is_beasiswa')->default(false)->after('spp_bulanan');
         });
     }

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Spatie\Permission\Models\Role;
+use App\Imports\GuruImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class GuruController extends Controller
 {
@@ -155,6 +157,31 @@ class GuruController extends Controller
 
         return redirect()->route('guru.index')
             ->with('success', 'Data guru berhasil diperbarui.');
+    }
+
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'file_import' => 'required|mimes:xlsx,xls'
+        ]);
+
+        try {
+            Excel::import(new GuruImport, $request->file('file_import'));
+
+            return redirect()->route('guru.index')->with('success', 'Data guru berhasil diimpor!');
+
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                // Pesan error: "Ada kesalahan pada baris [nomor baris]: [pesan error]"
+                $errorMessages[] = "Kesalahan pada baris " . $failure->row() . ": " . implode(', ', $failure->errors());
+            }
+            return redirect()->back()->with('error', 'Gagal mengimpor data. <br>' . implode('<br>', $errorMessages));
+        } catch (\Exception $e) {
+            // Tangkap error umum lainnya
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+        }
     }
 
     /**

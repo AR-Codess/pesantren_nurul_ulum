@@ -201,9 +201,9 @@
                     // Ensure is_beasiswa hidden field is added if checkbox is checked
                     const isBeasiswaCheckbox = document.getElementById('is_beasiswa');
                     if (isBeasiswaCheckbox && isBeasiswaCheckbox.checked) {
-                        console.log('Beasiswa checkbox is checked, submitting value: 1');
+                        // console.log('Beasiswa checkbox is checked, submitting value: 1');
                     } else {
-                        console.log('Beasiswa checkbox is NOT checked');
+                        // console.log('Beasiswa checkbox is NOT checked');
                     }
                 });
             }

@@ -181,7 +181,7 @@
                 // If spp_beasiswa is null, zero, or not set, use a default value (you can adjust this as needed)
                 else {
                     actualSpp = sppBulanan; // Fallback to regular SPP
-                    console.log("Scholarship SPP amount is not set, using regular SPP");
+                    // console.log("Scholarship SPP amount is not set, using regular SPP");
                 }
             }
 

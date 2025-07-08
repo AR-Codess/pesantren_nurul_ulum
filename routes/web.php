@@ -100,4 +100,8 @@ Route::get('/invoice/{pembayaran}/download', [App\Http\Controllers\InvoiceContro
 // Admin dashboard route
 Route::get('/admin-dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
 
+// User import route
+Route::post('/user/import', [UserController::class, 'importExcel'])->name('users.import');
+Route::post('/guru/import', [App\Http\Controllers\GuruController::class, 'importExcel'])->name('guru.import');
+
 require __DIR__ . '/auth.php';

@@ -8,7 +8,7 @@ let lunasPaymentChartInstance = null;
  * Inisialisasi chart untuk dashboard admin
  */
 export function initDashboardCharts() {
-    console.log("Initializing dashboard charts...");
+    // console.log("Initializing dashboard charts...");
 
     // Chart untuk Pembayaran Lunas Perbulan
     initLunasPaymentChart();
@@ -18,9 +18,9 @@ export function initDashboardCharts() {
  * Chart untuk pembayaran lunas per bulan
  */
 function initLunasPaymentChart() {
-    console.log("Initializing lunas payment chart...");
+    // console.log("Initializing lunas payment chart...");
     const chartElement = document.getElementById("lunasPaymentChart");
-    console.log("Chart element found:", chartElement);
+    // console.log("Chart element found:", chartElement);
 
     if (!chartElement) return;
 
@@ -32,11 +32,11 @@ function initLunasPaymentChart() {
 
     fetch("/api/dashboard/lunas-payments")
         .then((response) => {
-            console.log("API response status:", response.status);
+            // console.log("API response status:", response.status);
             return response.json();
         })
         .then((data) => {
-            console.log("Lunas payment data:", data);
+            // console.log("Lunas payment data:", data);
             // Buat chart baru dan simpan instance-nya
             lunasPaymentChartInstance = new Chart(chartElement, {
                 type: "bar",
@@ -127,7 +127,7 @@ function initLunasPaymentChart() {
                     },
                 },
             });
-            console.log("Lunas payment chart created successfully");
+            // console.log("Lunas payment chart created successfully");
         })
         .catch((error) => {
             console.error("Error loading lunas payment data:", error);
@@ -153,7 +153,7 @@ function handleYearFilterChange(event) {
     // Pastikan event berasal dari elemen yang kita inginkan
     if (event.target && event.target.id === "lunasYearFilter") {
         const selectedYear = event.target.value;
-        console.log(`Year selected: ${selectedYear}. Fetching new data...`);
+        // console.log(`Year selected: ${selectedYear}. Fetching new data...`);
 
         // Fetch data berdasarkan tahun yang dipilih
         fetch(`/api/dashboard/lunas-payments?tahun=${selectedYear}`)
@@ -167,12 +167,12 @@ function handleYearFilterChange(event) {
 
                     // Perbarui (refetch) chart
                     lunasPaymentChartInstance.update();
-                    console.log("Chart updated successfully.");
+                    // console.log("Chart updated successfully.");
                 } else {
-                    console.warn("Chart instance not found for update.");
+                    // console.warn("Chart instance not found for update.");
                 }
-            })
-            .catch((error) => console.error("Error updating chart:", error));
+            });
+        // .catch((error) => console.error("Error updating chart:", error));
     }
 }
 
