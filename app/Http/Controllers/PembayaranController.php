@@ -20,6 +20,7 @@ class PembayaranController extends Controller
         $search = $request->input('search');
         $bulan = $request->input('bulan');
         $status = $request->input('status');
+        $tahun = $request->input('tahun');
         $perPage = $request->input('per_page', 4);
 
         $pembayarans = Pembayaran::with('user')
@@ -32,13 +33,11 @@ class PembayaranController extends Controller
                 ->orWhere('status', 'like', '%' . $search . '%');
             })
             ->when($bulan, function ($query, $bulan) {
-                // Convert month name to month number
                 $bulanAngka = [
                     'Januari' => 1, 'Februari' => 2, 'Maret' => 3, 'April' => 4,
                     'Mei' => 5, 'Juni' => 6, 'Juli' => 7, 'Agustus' => 8,
                     'September' => 9, 'Oktober' => 10, 'November' => 11, 'Desember' => 12
                 ];
-                
                 if (isset($bulanAngka[$bulan])) {
                     return $query->where('periode_bulan', $bulanAngka[$bulan]);
                 }
@@ -47,11 +46,14 @@ class PembayaranController extends Controller
             ->when($status, function ($query, $status) {
                 return $query->where('status', $status);
             })
+            ->when($tahun, function ($query, $tahun) {
+                return $query->where('periode_tahun', $tahun);
+            })
             ->latest()
             ->paginate($perPage)
             ->withQueryString();
 
-        return view('pembayaran.index', compact('pembayarans', 'search', 'bulan', 'status', 'perPage'));
+        return view('pembayaran.index', compact('pembayarans', 'search', 'bulan', 'status', 'tahun', 'perPage'));
     }
 
     /**
