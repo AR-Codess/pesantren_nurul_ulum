@@ -103,7 +103,7 @@
                                     </tr>
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Tanggal Bergabung</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->created_at ? $user->created_at->format('d F Y H:i:s') : '-' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->created_at ? $user->created_at->format('d F Y') : '-' }}</td>
                                     </tr>
                                     {{-- <tr class="bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Terakhir Diperbarui</td>

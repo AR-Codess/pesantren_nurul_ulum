@@ -21,7 +21,7 @@ class UserController extends Controller
         $search = $request->input('search');
         $bulan = $request->input('bulan');
         $status = $request->input('status');
-        $perPage = $request->input('per_page', 4); // Changed from 10 to 4 records per page
+        $perPage = $request->input('per_page', 10); // Changed from 10 to 4 records per page
 
         // Get all santri users with the 'user' role
         $users = User::role('user')

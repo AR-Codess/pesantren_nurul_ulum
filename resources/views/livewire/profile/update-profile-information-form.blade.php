@@ -16,8 +16,8 @@ new class extends Component
      */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
+        $this->name = Auth::user()->name ?? '';
+        $this->email = Auth::user()->email ?? '';
     }
 
     /**
@@ -108,7 +108,7 @@ new class extends Component
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
             <x-action-message class="me-3" on="profile-updated">
-                {{ __('Saved.') }}
+                {{ __('Profil berhasil diubah') }}
             </x-action-message>
         </div>
     </form>

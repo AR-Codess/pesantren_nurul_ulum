@@ -21,7 +21,7 @@ class PembayaranController extends Controller
         $bulan = $request->input('bulan');
         $status = $request->input('status');
         $tahun = $request->input('tahun');
-        $perPage = $request->input('per_page', 4);
+        $perPage = $request->input('per_page', 10);
 
         $pembayarans = Pembayaran::with('user')
             ->when($search, function ($query, $search) {

@@ -19,7 +19,7 @@ class GuruController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $perPage = $request->input('per_page', 4); // Changed from 10 to 4 records per page
+        $perPage = $request->input('per_page', 10); // Changed from 10 to 4 records per page
 
         // Get guru records with search and pagination
         $guru = Guru::when($search, function ($query, $search) {

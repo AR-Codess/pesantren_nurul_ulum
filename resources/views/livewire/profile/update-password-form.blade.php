@@ -72,7 +72,7 @@ new class extends Component
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
             <x-action-message class="me-3" on="password-updated">
-                {{ __('Saved.') }}
+                {{ __('Password berhasil diubah') }}
             </x-action-message>
         </div>
     </form>

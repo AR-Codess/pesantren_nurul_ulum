@@ -91,32 +91,32 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="tempat_lahir" class="block text-sm font-medium text-gray-700">Tempat Lahir</label>
-                            <input type="text" name="tempat_lahir" id="tempat_lahir" value="{{ old('tempat_lahir') }}"
+                            <label for="tempat_lahir" class="block text-sm font-medium text-gray-700">Tempat Lahir <span class="text-red-500">*</span></label>
+                            <input type="text" name="tempat_lahir" id="tempat_lahir" value="{{ old('tempat_lahir') }}" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                         </div>
 
                         <div class="mb-4">
-                            <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
-                            <input type="date" name="tanggal_lahir" id="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
+                            <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700">Tanggal Lahir  <span class="text-red-500">*</span></label>
+                            <input type="date" name="tanggal_lahir" id="tanggal_lahir" value="{{ old('tanggal_lahir') }}" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                         </div>
 
                         <div class="mb-4">
-                            <label for="provinsi" class="block text-sm font-medium text-gray-700">Provinsi</label>
-                            <input type="text" name="provinsi" id="provinsi" value="{{ old('provinsi') }}"
+                            <label for="provinsi" class="block text-sm font-medium text-gray-700">Provinsi <span class="text-red-500">*</span></label>
+                            <input type="text" name="provinsi" id="provinsi" value="{{ old('provinsi') }}" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                         </div>
 
                         <div class="mb-4">
-                            <label for="kabupaten" class="block text-sm font-medium text-gray-700">Kabupaten</label>
-                            <input type="text" name="kabupaten" id="kabupaten" value="{{ old('kabupaten') }}"
+                            <label for="kabupaten" class="block text-sm font-medium text-gray-700">Kabupaten  <span class="text-red-500">*</span></label>
+                            <input type="text" name="kabupaten" id="kabupaten" value="{{ old('kabupaten') }}" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                         </div>
 
                         <div class="mb-4">
-                            <label for="alamat" class="block text-sm font-medium text-gray-700">Alamat</label>
-                            <textarea name="alamat" id="alamat" rows="3"
+                            <label for="alamat" class="block text-sm font-medium text-gray-700">Alamat  <span class="text-red-500">*</span></label>
+                            <textarea name="alamat" id="alamat" rows="3" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">{{ old('alamat') }}</textarea>
                         </div>
 
