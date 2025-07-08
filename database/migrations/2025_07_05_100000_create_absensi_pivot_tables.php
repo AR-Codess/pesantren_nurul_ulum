@@ -37,11 +37,9 @@ return new class extends Migration
         // Modify the existing absensi table to remove direct relationships
         Schema::table('absensi', function (Blueprint $table) {
             // First remove the foreign key constraints
-            $table->dropForeign(['user_id']);
             $table->dropForeign(['guru_id']);
             
             // Then drop the columns
-            $table->dropColumn('user_id');
             $table->dropColumn('guru_id');
             $table->dropColumn('status'); // Status will now be in the pivot table
         });

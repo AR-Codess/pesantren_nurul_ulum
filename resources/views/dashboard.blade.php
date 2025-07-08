@@ -275,6 +275,7 @@
                                         <tr>
                                             <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Nama Kelas</th>
                                             <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Level</th>
+                                            <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Jumlah Pertemuan</th>
                                             <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Aksi</th>
                                         </tr>
                                     </thead>
@@ -283,6 +284,13 @@
                                         <tr class="border-b hover:bg-indigo-50 transition-all">
                                             <td class="py-2 px-4">{{ $kelas->nama_kelas ?? $kelas->mata_pelajaran }}</td>
                                             <td class="py-2 px-4">{{ optional($kelas->classLevel)->level ?? '-' }}</td>
+                                            <td class="py-2 px-4 text-center font-semibold text-indigo-700">
+                                                @php
+                                                // Hitung jumlah pertemuan (jumlah tanggal unik absensi kelas ini)
+                                                $jumlahPertemuan = \App\Models\Absensi::where('kelas_id', $kelas->id)->distinct('tanggal')->count('tanggal');
+                                                @endphp
+                                                {{ $jumlahPertemuan }}
+                                </td>
                                             <td class="py-2 px-4 text-center">
                                                 <button type="button" class="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 text-xs" onclick="document.getElementById('rekap-santri-{{ $kelas->id }}').classList.toggle('hidden')">Lihat Absensi</button>
                                             </td>
@@ -489,37 +497,36 @@
                                 </svg>
                                 <h3 class="text-2xl font-bold text-white">Rekap Absensi Bulanan</h3>
                             </div>
+                            @php
+                            $absensiData = \App\Models\Absensi::with('kelas')
+                                ->selectRaw('kelas_id, COUNT(CASE WHEN status = "hadir" THEN 1 END) as hadir_count, COUNT(CASE WHEN status = "izin" THEN 1 END) as izin_count, COUNT(CASE WHEN status = "sakit" THEN 1 END) as sakit_count, COUNT(CASE WHEN status = "alpha" THEN 1 END) as alpha_count')
+                                ->groupBy('kelas_id')
+                                ->get();
+                            @endphp
                             <div class="overflow-x-auto">
                                 <table class="min-w-full bg-white rounded-lg shadow overflow-hidden">
                                     <thead class="bg-green-100">
                                         <tr>
-                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Bulan</th>
-                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Hadir</th>
-                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Izin</th>
-                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Sakit</th>
-                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Alpha</th>
+                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Mata Pelajaran</th>
+                                            <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Hadir</th>
+                                            <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Izin</th>
+                                            <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Sakit</th>
+                                            <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Alpha</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- Contoh data statis, ganti dengan data dinamis jika sudah ada -->
+                                        @foreach($absensiData as $data)
                                         <tr class="border-b">
-                                            <td class="py-2 px-4">Juli 2025</td>
-                                            <td class="py-2 px-4"><span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">24</span></td>
-                                            <td class="py-2 px-4"><span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full">2</span></td>
-                                            <td class="py-2 px-4"><span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">1</span></td>
-                                            <td class="py-2 px-4"><span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full">0</span></td>
+                                            <td class="py-2 px-4">{{ optional($data->kelas)->mata_pelajaran ?? 'Tidak Diketahui' }}</td>
+                                            <td class="py-2 px-4 text-center font-semibold text-green-700">{{ $data->hadir_count }}</td>
+                                            <td class="py-2 px-4 text-center font-semibold text-yellow-700">{{ $data->izin_count }}</td>
+                                            <td class="py-2 px-4 text-center font-semibold text-blue-700">{{ $data->sakit_count }}</td>
+                                            <td class="py-2 px-4 text-center font-semibold text-red-700">{{ $data->alpha_count }}</td>
                                         </tr>
-                                        <tr>
-                                            <td class="py-2 px-4">Juni 2025</td>
-                                            <td class="py-2 px-4"><span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">22</span></td>
-                                            <td class="py-2 px-4"><span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full">1</span></td>
-                                            <td class="py-2 px-4"><span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">0</span></td>
-                                            <td class="py-2 px-4"><span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full">2</span></td>
-                                        </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="mt-4 text-sm text-white opacity-80">* Data rekap diambil dari absensi harian Anda setiap bulan.</div>
                         </div>
                     </div>
                     @endif
