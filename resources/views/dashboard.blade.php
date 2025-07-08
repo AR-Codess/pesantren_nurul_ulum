@@ -258,6 +258,96 @@
                             </svg>
                             History Rekapitulasi Absensi Kelas
                         </h3>
+                        <!-- Rekapitulasi Kehadiran Santri per Kelas (Kumulatif, Expand per Kelas) -->
+                        <div class="mb-8">
+                            <h4 class="font-bold text-base mb-2 text-indigo-700 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                                Rekap Kehadiran Santri per Kelas (Kumulatif)
+                            </h4>
+                            @php
+                            $kelasListAll = \App\Models\Kelas::where('guru_id', auth()->user()->id)->get();
+                            @endphp
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white rounded-lg shadow overflow-hidden mb-4">
+                                    <thead class="bg-indigo-100">
+                                        <tr>
+                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Nama Kelas</th>
+                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Level</th>
+                                            <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($kelasListAll as $kelas)
+                                        <tr class="border-b hover:bg-indigo-50 transition-all">
+                                            <td class="py-2 px-4">{{ $kelas->nama_kelas ?? $kelas->mata_pelajaran }}</td>
+                                            <td class="py-2 px-4">{{ optional($kelas->classLevel)->level ?? '-' }}</td>
+                                            <td class="py-2 px-4 text-center">
+                                                <button type="button" class="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 text-xs" onclick="document.getElementById('rekap-santri-{{ $kelas->id }}').classList.toggle('hidden')">Lihat Absensi</button>
+                                            </td>
+                                        </tr>
+                                        <tr id="rekap-santri-{{ $kelas->id }}" class="hidden">
+                                            <td colspan="3" class="bg-indigo-50 px-4 py-2">
+                                                <div class="overflow-x-auto">
+                                                    <table class="min-w-full text-xs">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="py-1 px-2 text-left">Nama Siswa</th>
+                                                                <th class="py-1 px-2 text-center">Hadir</th>
+                                                                <th class="py-1 px-2 text-center">Izin</th>
+                                                                <th class="py-1 px-2 text-center">Sakit</th>
+                                                                <th class="py-1 px-2 text-center">Alpha</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @php $users = $kelas->users; @endphp
+                                                            @forelse($users as $user)
+                                                            @php
+                                                            $hadir = \App\Models\Absensi::where('kelas_id', $kelas->id)
+                                                            ->where('user_id', $user->id)
+                                                            ->where('status', 'hadir')
+                                                            ->count();
+                                                            $izin = \App\Models\Absensi::where('kelas_id', $kelas->id)
+                                                            ->where('user_id', $user->id)
+                                                            ->where('status', 'izin')
+                                                            ->count();
+                                                            $sakit = \App\Models\Absensi::where('kelas_id', $kelas->id)
+                                                            ->where('user_id', $user->id)
+                                                            ->where('status', 'sakit')
+                                                            ->count();
+                                                            $alpha = \App\Models\Absensi::where('kelas_id', $kelas->id)
+                                                            ->where('user_id', $user->id)
+                                                            ->where('status', 'alpha')
+                                                            ->count();
+                                                            @endphp
+                                                            <tr>
+                                                                <td class="py-1 px-2">{{ $user->nama_santri ?? $user->name }}</td>
+                                                                <td class="py-1 px-2 text-center font-semibold text-green-700">{{ $hadir }}</td>
+                                                                <td class="py-1 px-2 text-center font-semibold text-yellow-700">{{ $izin }}</td>
+                                                                <td class="py-1 px-2 text-center font-semibold text-blue-700">{{ $sakit }}</td>
+                                                                <td class="py-1 px-2 text-center font-semibold text-red-700">{{ $alpha }}</td>
+                                                            </tr>
+                                                            @empty
+                                                            <tr>
+                                                                <td colspan="5" class="py-1 px-2 text-center text-gray-500">Belum ada santri di kelas ini.</td>
+                                                            </tr>
+                                                            @endforelse
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="3" class="py-2 px-4 text-center text-gray-500">Belum ada kelas yang Anda ampu.</td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-2 text-xs text-gray-500">* Klik "Lihat Absensi" untuk melihat rekap kumulatif santri per kelas.</div>
+                        </div>
                         @php
                         $kelasIdList = \App\Models\Kelas::where('guru_id', auth()->user()->id)->pluck('id');
                         $kelasMap = \App\Models\Kelas::whereIn('id', $kelasIdList)->get()->keyBy('id');
