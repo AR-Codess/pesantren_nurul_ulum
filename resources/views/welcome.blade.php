@@ -395,53 +395,12 @@
         </div>
     </div>
 
-    <div class="container section-padding">
-        <section class="text-center mb-5">
+    <div class="container mt-32 mb-10">
+        <div class="text-center">
             <h2 class="mb-4">Profil Pesantren Nurul Ulum</h2>
             <p class="lead text-muted mx-auto" style="max-width: 800px;">Didirikan pada tahun 1990, Pesantren Nurul Ulum berkomitmen untuk memberikan pendidikan Islam yang komprehensif, menyeimbangkan antara ilmu agama, pengetahuan umum, dan pengembangan karakter untuk menghadapi tantangan zaman.</p>
-        </section>
-    </div>
-
-    <section class="section-padding section-bg">
-        <div class="container">
-            <h2 class="text-center mb-5">Program Unggulan</h2>
-            <div class="row text-center g-4">
-                <div class="col-md-4">
-                    <div class="card program-card p-4">
-                        <div class="icon-box">
-                            <i class="bi bi-book-half"></i>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Tahfidz Al-Qur'an</h5>
-                            <p class="card-text">Program intensif menghafal Al-Qur'an dengan bimbingan ustadz/ustadzah yang berpengalaman.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card program-card p-4">
-                        <div class="icon-box">
-                            <i class="bi bi-journal-bookmark-fill"></i>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Kajian Kitab Kuning</h5>
-                            <p class="card-text">Mendalami khazanah keilmuan Islam klasik melalui kajian kitab-kitab turats.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card program-card p-4">
-                        <div class="icon-box">
-                            <i class="bi bi-person-video3"></i>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Pendidikan Formal</h5>
-                            <p class="card-text">Menyediakan jenjang pendidikan formal (SMP & SMK) dengan kurikulum terpadu.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-    </section>
+    </div>
 
     <section class="section-padding" id="unit-pendidikan">
         <div class="container">

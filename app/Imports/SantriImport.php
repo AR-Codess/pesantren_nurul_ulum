@@ -53,7 +53,7 @@ class SantriImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmpt
             'nama_santri'   => $row['nama_santri'],
             'nis'           => $row['nis'],
             'email'         => $row['email'] ?? null,
-            'password'      => Hash::make('password'),
+            'password'      => Hash::make('ppnurulum123'),
             'class_level_id'=> $this->classLevel ? $this->classLevel->id : null,
             'spp_bulanan'   => $this->classLevel ? $this->classLevel->spp : 0,
             'jenis_kelamin' => $jenisKelamin,

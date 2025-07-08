@@ -49,7 +49,7 @@ class GuruImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyR
             'nik'                           => $row['nik'],
             'nama_pendidik'                 => $row['nama_pendidik'],
             'email'                         => $row['email'] ?? null,
-            'password'                      => Hash::make('password'), // Password default
+            'password'                      => Hash::make('ppnurulum123'), // Password default
             'jenis_kelamin'                 => $jenisKelamin,
             'tempat_lahir'                  => $row['tempat_lahir'] ?? null,
             'tanggal_lahir'                 => $tanggalLahir,
@@ -74,7 +74,7 @@ class GuruImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyR
     public function rules(): array
     {
         return [
-            'nik'           => 'required|string|unique:guru,nik',
+            'nik'           => 'required|string|size:16|unique:guru,nik',
             'nama_pendidik' => 'required|string|max:255',
 
             // Kolom opsional

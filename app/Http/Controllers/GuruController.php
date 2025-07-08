@@ -53,7 +53,7 @@ class GuruController extends Controller
             'nama_pendidik' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:guru'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'nik' => ['required', 'string', 'max:20', 'unique:guru'], // Changed from nullable to required
+            'nik' => ['required', 'string', 'size:16', 'unique:guru'], // Changed from nullable to required
             'alamat' => ['nullable', 'string'],
             'no_telepon' => ['nullable', 'string', 'max:15'],
             'jenis_kelamin' => ['nullable'],
@@ -66,7 +66,7 @@ class GuruController extends Controller
             'bidang' => ['nullable', 'string', 'max:100'],
         ]);
 
-        Guru::create([
+        $guru = Guru::create([
             'nama_pendidik' => $request->nama_pendidik,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -81,7 +81,7 @@ class GuruController extends Controller
             'provinsi' => $request->provinsi,
             'kabupaten' => $request->kabupaten,
             'bidang' => $request->bidang,
-        ]);
+        ])->assignRole('guru');
 
         return redirect()->route('guru.index')
             ->with('success', 'Data guru berhasil ditambahkan.');
