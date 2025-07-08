@@ -499,7 +499,7 @@
                             </div>
                             @php
                             $absensiData = \App\Models\Absensi::with('kelas')
-                                ->selectRaw('kelas_id, COUNT(CASE WHEN status = "hadir" THEN 1 END) as hadir_count, COUNT(CASE WHEN status = "izin" THEN 1 END) as izin_count, COUNT(CASE WHEN status = "sakit" THEN 1 END) as sakit_count, COUNT(CASE WHEN status = "alpha" THEN 1 END) as alpha_count')
+                                ->selectRaw('kelas_id, COUNT(CASE WHEN user_id = ? AND status = "hadir" THEN 1 END) as hadir_count, COUNT(CASE WHEN user_id = ? AND status = "izin" THEN 1 END) as izin_count, COUNT(CASE WHEN user_id = ? AND status = "sakit" THEN 1 END) as sakit_count, COUNT(CASE WHEN user_id = ? AND status = "alpha" THEN 1 END) as alpha_count', [auth()->id(), auth()->id(), auth()->id(), auth()->id()])
                                 ->groupBy('kelas_id')
                                 ->get();
                             @endphp
