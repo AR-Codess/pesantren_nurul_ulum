@@ -14,7 +14,7 @@ class BeritaController extends Controller
      */
     public function index()
     {
-        $berita = Berita::orderBy('id', 'desc')->get();
+        $berita = Berita::orderBy('urut')->get();
         return view('admin.berita.index', compact('berita'));
     }
 
@@ -128,9 +128,10 @@ class BeritaController extends Controller
      */
     public function updateOrder(Request $request)
     {
-        // Fungsi ini dipertahankan untuk kompatibilitas dengan frontend yang mungkin masih memanggil endpoint ini
-        // tetapi tidak melakukan update karena kolom order tidak ada
-        
+        foreach ($request->items as $item) {
+            Berita::where('id', $item['id'])->update(['urut' => $item['urut']]);
+        }
+
         return response()->json(['success' => true]);
     }
 }

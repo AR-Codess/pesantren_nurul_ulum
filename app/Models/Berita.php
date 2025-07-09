@@ -21,7 +21,8 @@ class Berita extends Model
         'judul',
         'path_gambar',
         'deskripsi',
-        'admin_id'
+        'admin_id',
+        'urut',
     ];
     
     /**

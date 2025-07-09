@@ -13,7 +13,7 @@ class HomeController extends Controller
     public function index()
     {
         // Get berita items ordered by newest first
-        $beritaItems = Berita::orderBy('id', 'desc')->get();
+        $beritaItems = Berita::orderBy('urut')->get();
         
         // Add image display information
         $beritaItems->each(function($item) {

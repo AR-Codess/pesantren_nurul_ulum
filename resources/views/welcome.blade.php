@@ -390,8 +390,8 @@
     <div class="hero-section">
         <div class="container">
             <h1 class="display-4">Mencetak Generasi Qur'ani Berakhlak Mulia</h1>
-            <p class="lead my-4">Selamat datang di Pesantren Nurul Ulum, tempat ilmu, iman, dan amal bersatu.</p>
-            <a href="#" class="btn btn-primary btn-lg">Lihat Program Kami</a>
+            <p class="lead my-4">Selamat datang di Yayasan Pendidikan Pondok Pesantren Nuru Ulum Wirowongso.</p>
+            {{-- <a href="#" class="btn btn-primary btn-lg">Lihat Program Kami</a> --}}
         </div>
     </div>
 
@@ -504,9 +504,9 @@
                                 <img src="{{ $item->image_url }}" class="img-fluid berita-img" alt="{{ $item->alt_text ?? $item->title }}">
                             </div>
                             <div class="card-body d-flex flex-column">
-                                <h5 class="card-title fw-bold">{{ $item->title }}</h5>
+                                <h5 class="card-title fw-bold line-clamp-2">{{ $item->title }}</h5>
                                 @if(isset($item->description))
-                                    <p class="card-text text-muted mb-3">{{ Str::limit(strip_tags($item->description), 100) }}</p>
+                                    <p class="card-text text-muted mb-3 line-clamp-3">{{ Str::limit(strip_tags($item->description)) }}</p>
                                 @endif
                                 <div class="mt-auto text-end">
                                     <a href="{{ route('berita.show', ['id' => $item->id, 'slug' => Str::slug($item->title)]) }}" class="btn btn-sm btn-outline-success">Baca selengkapnya</a>
@@ -630,8 +630,14 @@
             <div class="row">
                 <div class="col-md-4 mx-auto mb-4">
                     <h6 class="fw-bold">Pesantren Nurul Ulum</h6>
-                    <hr class="mb-4 mt-2 d-inline-block mx-auto mx-md-0">
-                    <p>Membina insan cerdas, beriman, dan bertakwa, siap menjadi pemimpin masa depan.</p>
+                    <hr class=" mt-2 d-inline-block mx-auto mx-md-0">
+                    <div class="text-center">
+                        <div class="row justify-content-center">
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3948.7969400122624!2d113.69892927495286!3d-8.223165082536712!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd6971d7d26293f%3A0xfca93c5b50270c83!2sYayasan%20Pendidikan%20dan%20Pondok%20Pesantren%20Nurul%20Ulum!5e0!3m2!1sen!2sid!4v1752025173928!5m2!1sen!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-2 mx-auto mb-4">
                     <h6 class="fw-bold">Tautan</h6>
