@@ -76,6 +76,10 @@
                                 <span class="font-medium text-gray-700 mb-1">No. HP:</span>
                                 <span class="text-gray-900">{{ auth()->user()->no_hp }}</span>
                             </div>
+                            <div class="bg-white rounded-lg p-4 shadow flex flex-col">
+                                <span class="font-medium text-gray-700 mb-1">Status Beasiswa:</span>
+                                <span class="text-gray-900">{{ auth()->user()->is_beasiswa ? 'Penerimas Beasiswa' : 'Bukan Psenerima Beasiswa' }}</span>
+                            </div>
                         </div>
                     </div>
                     @endif
@@ -470,81 +474,77 @@
                                     </thead>
                                     <tbody>
                                         @php
-                                            $user = auth()->user();
-                                            // Ambil data SPP dari relasi user ke classLevel
-                                            $sppBulanan = $user->classLevel->spp ?? 0;
-                                            // Jika ada skema beasiswa, gunakan SPP beasiswa
-                                            if ($user->is_beasiswa && isset($user->classLevel->spp_beasiswa)) {
-                                                $sppBulanan = $user->classLevel->spp_beasiswa;
-                                            }
+                                        $user = auth()->user();
+                                        $sppBulanan = $user->classLevel->spp ?? 0;
 
-                                            // Tentukan periode dari tanggal user dibuat sampai bulan ini
-                                            $mulai = \Carbon\Carbon::parse($user->created_at)->startOfMonth();
-                                            $selesai = \Carbon\Carbon::now()->startOfMonth();
-                                            $periodeTagihan = \Carbon\CarbonPeriod::create($mulai, '1 month', $selesai)->invert();
+                                        if ($user->is_beasiswa && isset($user->classLevel->spp_beasiswa)) {
+                                            $sppBulanan = $user->classLevel->spp_beasiswa;
+                                        }
 
-                                            // Ambil semua pembayaran yang pernah ada untuk user ini untuk efisiensi query
-                                            $pembayaranTerdahulu = \App\Models\Pembayaran::with('detailPembayaran')
+                                        $mulai = \Carbon\Carbon::parse($user->created_at)->startOfMonth();
+                                        $selesai = \Carbon\Carbon::now()->startOfMonth();
+                                        $periodeTagihan = \Carbon\CarbonPeriod::create($mulai, '1 month', $selesai);
+
+                                        $pembayaranTerdahulu = \App\Models\Pembayaran::with('detailPembayaran')
                                             ->where('user_id', $user->id)
                                             ->get()
-                                            ->keyBy(function($item) {
+                                            ->keyBy(function ($item) {
                                                 return $item->periode_tahun . '-' . $item->periode_bulan;
-                                            });;            
-                                        @endphp
+                                            });
+                                    @endphp
 
-                                            @forelse ($periodeTagihan as $bulan)
-                                            @php
-                                                $key = $bulan->year . '-' . $bulan->month;
-                                                $pembayaran = $pembayaranTerdahulu->get($key);
-                                            @endphp
-                                            <tr class="border-b">
-                                                <td class="py-3 px-4">{{ $bulan->isoFormat('MMMM YYYY') }}</td>
-                                                <td class="py-3 px-4">Rp {{ number_format($sppBulanan, 0, ',', '.') }}</td>
-                                                <td class="py-3 px-4">
-                                                    @if ($pembayaran && strtolower($pembayaran->status) == 'lunas')
-                                                        <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full font-semibold">Lunas</span>
-                                                    @elseif ($pembayaran && strtolower($pembayaran->status) == 'pending')
-                                                        <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full font-semibold">Pending</span>
-                                                    @else
-                                                        <span class="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full font-semibold">Belum Lunas</span>
-                                                    @endif
-                                                </td>
-                                                <td class="py-3 px-4">
-                                                    {{-- INVOICE LOGIC --}}
-                                                    @if ($pembayaran && strtolower($pembayaran->status) == 'lunas')
-                                                        {{-- The route 'invoice.download' is used here --}}
-                                                        <a href="{{ route('invoice.download', $pembayaran->id) }}" target="_blank" class="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 text-xs">
-                                                            Download Invoice
-                                                        </a>
-                                                    @else
-                                                        <span>-</span>
-                                                    @endif
-                                                </td>
-                                                <td class="py-3 px-4">
-                                                    @if ($pembayaran && strtolower($pembayaran->status) == 'lunas')
-                                                        <span class="px-3 py-1 bg-gray-300 text-gray-600 rounded text-xs cursor-not-allowed">Lunas</span>
-                                                    @elseif ($pembayaran)
-                                                        {{-- Jika tagihan ada tapi belum lunas, arahkan langsung ke pembayaran --}}
-                                                        <a href="{{ route('pembayaran.pay_midtrans', $pembayaran->id) }}" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs">
-                                                            Bayar Online
-                                                        </a>
-                                                    @else
-                                                        {{-- Jika tagihan belum ada di DB, buat dulu lalu bayar --}}
-                                                        <a href="{{ route('pembayaran.create_and_pay', ['year' => $bulan->year, 'month' => $bulan->month]) }}" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs">
-                                                            Buat & Bayar
-                                                        </a>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="4" class="py-3 px-4 text-center text-gray-500">Belum ada data tagihan.</td>
-                                            </tr>
-                                        @endforelse
+                                    @forelse ($periodeTagihan as $bulan)
+                                        @php
+                                            $key = $bulan->year . '-' . $bulan->month;
+                                            $pembayaran = $pembayaranTerdahulu->get($key);
+                                        @endphp
+                                        <tr class="border-b">
+                                            <td class="py-3 px-4">{{ $bulan->isoFormat('MMMM YYYY') }}</td>
+                                            <td class="py-3 px-4">Rp {{ number_format($sppBulanan, 0, ',', '.') }}</td>
+                                            <td class="py-3 px-4">
+                                                @if ($pembayaran && strtolower($pembayaran->status) == 'lunas')
+                                                    <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full font-semibold">Lunas</span>
+                                                @elseif ($pembayaran && strtolower($pembayaran->status) == 'pending')
+                                                    <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full font-semibold">Pending</span>
+                                                @else
+                                                    <span class="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full font-semibold">Belum Lunas</span>
+                                                @endif
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                @if ($pembayaran && strtolower($pembayaran->status) == 'lunas')
+                                                    <a href="{{ route('invoice.download', $pembayaran->id) }}" target="_blank"
+                                                        class="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 text-xs">
+                                                        Download Invoice
+                                                    </a>
+                                                @else
+                                                    <span>-</span>
+                                                @endif
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                @if ($pembayaran && strtolower($pembayaran->status) == 'lunas')
+                                                    <span class="px-3 py-1 bg-gray-300 text-gray-600 rounded text-xs cursor-not-allowed">Lunas</span>
+                                                @elseif ($pembayaran)
+                                                    <a href="{{ route('pembayaran.pay_midtrans', $pembayaran->id) }}"
+                                                        class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs">
+                                                        Bayar Online
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('pembayaran.create_and_pay', ['year' => $bulan->year, 'month' => $bulan->month]) }}"
+                                                        class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs">
+                                                        Buat & Bayar
+                                                    </a>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="py-3 px-4 text-center text-gray-500">Belum ada data tagihan.</td>
+                                        </tr>
+                                    @endforelse
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="mt-4 text-sm text-white opacity-80">* Tombol "Buat & Bayar" akan muncul jika tagihan belum pernah dibuat oleh Admin.</div>
+                            <div class="mt-4 text-sm text-white opacity-80">* Mohon melakukan pembayaran sebelum tanggal 20.</div>
                         </div>
 
                          <!-- Rekap Absensi UI -->
