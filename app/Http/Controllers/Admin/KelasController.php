@@ -58,10 +58,8 @@ class KelasController extends Controller
         $gurus = Guru::orderBy('nama_pendidik')->get();
         $classLevels = ClassLevel::orderBy('level')->get();
 
-        // Get all students (users with role 'user')
-        $users = User::role('user')->orderBy('nama_santri')->get();
-
-        return view('admin.kelas.create', compact('gurus', 'classLevels', 'users'));
+        // Variabel $users tidak lagi dilempar ke view, akan di-load via AJAX
+        return view('admin.kelas.create', compact('gurus', 'classLevels'));
     }
 
     /**
@@ -133,7 +131,7 @@ class KelasController extends Controller
         $classLevels = ClassLevel::orderBy('level')->get();
 
         // Get all students (users with role 'user')
-        $users = User::role('user')->orderBy('nama_santri')->get();
+        $users = User::with('classLevel')->get(); 
 
         // Get IDs of students already in this class
         $selectedUserIds = $kela->users->pluck('id')->toArray();
@@ -192,6 +190,21 @@ class KelasController extends Controller
 
         return redirect()->route('admin.kelas.index')
             ->with('success', 'Kelas berhasil diperbarui.');
+    }
+
+    /**
+    * Mengambil data santri berdasarkan Jenjang Kelas untuk request AJAX.
+    */
+    public function getSantriByClassLevel($class_level_id)
+    {
+        // Cari santri (user dengan role 'user') yang sesuai dengan class_level_id
+        $santri = \App\Models\User::role('user')
+                        ->where('class_level_id', $class_level_id)
+                        ->orderBy('nama_santri')
+                        ->get(['id', 'nis', 'nama_santri']);
+
+        // Kembalikan data dalam format JSON
+        return response()->json($santri);
     }
 
     /**

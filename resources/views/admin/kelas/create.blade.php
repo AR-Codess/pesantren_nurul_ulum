@@ -91,19 +91,72 @@
 
                         <div class="mb-4">
                             <label for="users" class="block text-sm font-medium text-gray-700">Daftar Santri</label>
-                            <select name="users[]" id="users" multiple
+                            <select name="users[]" id="users" multiple disabled
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
-                                @foreach($users ?? [] as $user)
-                                <option value="{{ $user->id }}" {{ in_array($user->id, old('users', [])) ? 'selected' : '' }}>
-                                    {{ $user->nis }} - {{ $user->nama_santri }}
-                                </option>
-                                @endforeach
                             </select>
-                            <p class="text-xs text-gray-500 mt-1">Anda dapat memilih beberapa santri sekaligus untuk dimasukkan ke dalam kelas ini.</p>
+                            <p class="text-xs text-gray-500 mt-1">Pilih "Jenjang Kelas" terlebih dahulu untuk menampilkan daftar santri yang sesuai.</p>
                             @error('users')
                             <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>
+                        
+                        
+                        @push('scripts')
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const classLevelSelect = document.querySelector('#class_level_id');
+                            const usersSelectElement = document.querySelector('#users');
+                            
+                            // Inisialisasi Choices.js pada dropdown santri
+                            const choices = new Choices(usersSelectElement, {
+                                removeItemButton: true,
+                                placeholder: true,
+                                placeholderValue: 'Pilih jenjang kelas terlebih dahulu',
+                                searchPlaceholderValue: 'Ketik untuk mencari santri...',
+                                itemSelectText: 'Pilih',
+                            });
+                        
+                            // Tambahkan event listener saat dropdown "Jenjang Kelas" berubah
+                            classLevelSelect.addEventListener('change', function() {
+                                const classLevelId = this.value;
+                                
+                                // Kosongkan dan nonaktifkan dropdown santri saat proses
+                                choices.clearStore();
+                                choices.disable();
+                        
+                                // Jika ada jenjang kelas yang dipilih
+                                if (classLevelId) {
+                                    // Tampilkan pesan loading
+                                    choices.setChoices([{ value: '', label: 'Memuat santri...', disabled: true }], 'value', 'label', true);
+                        
+                                    // Panggil API yang sudah kita buat
+                                    fetch(`/admin/get-santri-by-class/${classLevelId}`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            choices.enable(); // Aktifkan kembali dropdown
+                                            
+                                            if (data.length > 0) {
+                                                // Format data agar sesuai dengan Choices.js
+                                                const santriOptions = data.map(santri => ({
+                                                    value: santri.id,
+                                                    label: `${santri.nis} - ${santri.nama_santri}`
+                                                }));
+                                                // Masukkan data santri baru ke dropdown
+                                                choices.setChoices(santriOptions, 'value', 'label', true);
+                                            } else {
+                                                // Tampilkan pesan jika tidak ada santri
+                                                choices.setChoices([{ value: '', label: 'Tidak ada santri pada jenjang ini', disabled: true }], 'value', 'label', true);
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error fetching santri:', error);
+                                            choices.setChoices([{ value: '', label: 'Gagal memuat data', disabled: true }], 'value', 'label', true);
+                                        });
+                                }
+                            });
+                        });
+                        </script>
+                        @endpush
 
                         <div class="flex items-center justify-end mt-6">
                             <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">

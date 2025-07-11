@@ -92,14 +92,11 @@
 
                         <div class="mb-4">
                             <label for="users" class="block text-sm font-medium text-gray-700">Daftar Santri</label>
-                            <select name="users[]" id="users" multiple
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
-                                @foreach($users as $user)
-                                <option value="{{ $user->id }}" {{ in_array($user->id, $selectedUserIds) ? 'selected' : '' }}>
-                                    {{ $user->nis }} - {{ $user->nama_santri }}
-                                </option>
-                                @endforeach
+                            
+                            <select name="users[]" id="users" multiple>
+                                {{-- Opsi yang sudah terpilih akan ditambahkan oleh JS --}}
                             </select>
+                            
                             <p class="text-xs text-gray-500 mt-1">Anda dapat memilih beberapa santri sekaligus untuk dimasukkan ke dalam kelas ini.</p>
                             @error('users')
                             <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
@@ -119,20 +116,65 @@
 
     @push('scripts')
     <script>
-        // Pastikan DOM sudah termuat sepenuhnya
-        document.addEventListener('DOMContentLoaded', function() {
-            // Inisialisasi Choices.js pada elemen select dengan id 'users'
-            const usersElement = document.querySelector('#users');
-            if (usersElement) {
-                const choices = new Choices(usersElement, {
-                    removeItemButton: true, // Tampilkan tombol hapus pada setiap item
-                    placeholder: true,
-                    placeholderValue: 'Ketik untuk mencari santri...',
-                    searchPlaceholderValue: 'Ketik untuk mencari...',
-                    // itemSelectText: 'Sudah terdaftar' // Mengubah teks "Press to select" menjadi "Sudah terdaftar"
-                });
-            }
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. SIMPAN SEMUA DATA DARI PHP KE JAVASCRIPT
+        // Pastikan controller mengirim data user dengan relasi classLevel
+        const allUsers = @json($users); 
+        const selectedUserIds = @json($selectedUserIds ?? []);
+    
+        // 2. AMBIL ELEMENT PENTING
+        const classLevelSelect = document.querySelector('#class_level_id');
+        const usersElement = document.querySelector('#users');
+    
+        // 3. INISIALISASI CHOICES.JS
+        const userChoices = new Choices(usersElement, {
+            removeItemButton: true,
+            placeholder: true,
+            placeholderValue: 'Pilih jenjang kelas terlebih dahulu...',
+            searchPlaceholderValue: 'Ketik untuk mencari...',
         });
+    
+        // 4. FUNGSI UNTUK MEMFILTER DAN MEMPERBARUI DAFTAR SANTRI
+        function updateSantriList() {
+            const selectedLevelId = classLevelSelect.value;
+    
+            // Kosongkan daftar santri jika tidak ada jenjang kelas yang dipilih
+            if (!selectedLevelId) {
+                userChoices.clearStore();
+                userChoices.setChoices([{ value: '', label: 'Pilih jenjang kelas terlebih dahulu', disabled: true }], 'value', 'label', false);
+                return;
+            }
+            
+            // Filter santri berdasarkan jenjang kelas yang dipilih
+            // Santri yang cocok ATAU yang belum punya kelas (class_level_id is null) akan ditampilkan
+            const filteredUsers = allUsers.filter(user => {
+                return user.class_level_id == selectedLevelId || user.class_level_id == null;
+            });
+    
+            // Format data untuk Choices.js
+            const choicesData = filteredUsers.map(user => {
+                // Cek apakah user ini harusnya sudah terpilih
+                const isSelected = selectedUserIds.includes(user.id);
+                const levelName = user.class_level ? user.class_level.level : 'Belum Punya Kelas';
+    
+                return {
+                    value: user.id,
+                    label: `${user.nis} - ${user.nama_santri}`,
+                    selected: isSelected
+                };
+            });
+    
+            // Perbarui pilihan di Choices.js
+            userChoices.clearStore(); // Hapus pilihan lama
+            userChoices.setChoices(choicesData, 'value', 'label', true); // Masukkan pilihan baru
+        }
+    
+        // 5. TAMBAHKAN EVENT LISTENER DAN JALANKAN SAAT HALAMAN DIMUAT
+        classLevelSelect.addEventListener('change', updateSantriList);
+        
+        // Jalankan fungsi saat pertama kali halaman dimuat untuk menampilkan santri sesuai jenjang kelas yang sudah ada
+        updateSantriList(); 
+    });
     </script>
     @endpush
 </x-app-layout>
