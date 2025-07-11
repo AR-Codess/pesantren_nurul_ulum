@@ -130,7 +130,7 @@ function initLunasPaymentChart() {
             // console.log("Lunas payment chart created successfully");
         })
         .catch((error) => {
-            console.error("Error loading lunas payment data:", error);
+            // console.error("Error loading lunas payment data:", error);
             // Display a message in the chart element if there's an error
             if (chartElement) {
                 const ctx = chartElement.getContext("2d");

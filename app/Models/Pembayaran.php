@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon; // <-- WAJIB TAMBAHKAN INI
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,59 +12,65 @@ class Pembayaran extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'pembayaran';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'user_id',
         'total_tagihan',
-        'periode_bulan',   // Added new column
-        'periode_tahun',   // Added new column
+        'periode_bulan',
+        'periode_tahun',
         'status',
         'is_cicilan',
         'admin_id_pembuat',
+        'midtrans_order_id',
+        'deskripsi',
+        'jenis_pembayaran',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'is_cicilan' => 'boolean',
         'total_tagihan' => 'integer',
-        'periode_bulan' => 'integer',    // Added new cast
-        'periode_tahun' => 'integer',    // Added new cast
+        'periode_bulan' => 'integer',
+        'periode_tahun' => 'integer',
     ];
 
+    // ============== TAMBAHKAN BLOK ACCESSOR & MUTATOR INI ==============
     /**
-     * Get the santri (user) that owns the payment.
+     * ACCESSOR: Membuat atribut virtual 'periode_pembayaran'
+     * dari 'periode_bulan' dan 'periode_tahun' yang ada di database.
      */
+    public function getPeriodePembayaranAttribute()
+    {
+        if ($this->periode_tahun && $this->periode_bulan) {
+            return Carbon::createFromDate($this->periode_tahun, $this->periode_bulan, 1);
+        }
+        return null;
+    }
+
+    /**
+     * MUTATOR: Memecah 'periode_pembayaran' menjadi 'periode_bulan' dan 'periode_tahun'
+     * saat data disimpan.
+     */
+    public function setPeriodePembayaranAttribute($value)
+    {
+        if ($value) {
+            $date = Carbon::parse($value);
+            $this->attributes['periode_tahun'] = $date->year;
+            $this->attributes['periode_bulan'] = $date->month;
+        }
+    }
+    // ====================================================================
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the admin who created this payment record.
-     */
     public function adminPembuat(): BelongsTo
     {
         return $this->belongsTo(Admin::class, 'admin_id_pembuat');
     }
 
-    /**
-     * Get the payment details for this payment.
-     */
     public function detailPembayaran(): HasMany
     {
         return $this->hasMany(DetailPembayaran::class);

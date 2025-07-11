@@ -280,7 +280,7 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching payment data:', error);
+                    // console.error('Error fetching payment data:', error);
                     const selectedOption = document.querySelector(`#user_id option[value="${userId}"]`);
                     const sppBulanan = selectedOption.getAttribute('data-spp');
                     const sppBeasiswa = selectedOption.getAttribute('data-spp-beasiswa');

@@ -18,8 +18,8 @@ use App\Http\Controllers\KelolaSppController;
 Route::get('/', [HomeController::class, 'index'])->name('welcome');
 
 // Public berita (news) routes
-Route::get('/berita', [App\Http\Controllers\BeritaController::class, 'index'])->name('berita.index');
-Route::get('/berita/{id}/{slug?}', [App\Http\Controllers\BeritaController::class, 'show'])->name('berita.show');
+Route::get('/berita', [App\Http\Controllers\Admin\BeritaController::class, 'index'])->name('berita.index');
+Route::get('/berita/{id}/{slug?}', [App\Http\Controllers\Admin\BeritaController::class, 'show'])->name('berita.show');
 
 // Admin routes
 Route::middleware(['auth:admin', 'role:admin|admin'])->group(function () {
@@ -96,6 +96,16 @@ Route::prefix('api/dashboard')->group(function () {
 Route::get('/invoice/{pembayaran}/download', [App\Http\Controllers\InvoiceController::class, 'generatePDF'])
     ->name('invoice.download')
     ->middleware(['auth:web,admin,guru']);
+
+// Route untuk user memulai pembayaran online (INI YANG PALING PENTING UNTUK TOMBOL ANDA)
+Route::get('/pembayaran/{id}/bayar-online', [PembayaranController::class, 'payWithMidtrans'])
+    ->middleware('auth')
+    ->name('pembayaran.pay_midtrans');
+
+// Route untuk membuat tagihan otomatis lalu bayar
+Route::get('/pembayaran/create-and-pay/{year}/{month}', [PembayaranController::class, 'createAndPay'])
+    ->middleware('auth')
+    ->name('pembayaran.create_and_pay');
 
 // Admin dashboard route
 Route::get('/admin-dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');

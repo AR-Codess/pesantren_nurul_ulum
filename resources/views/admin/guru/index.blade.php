@@ -131,7 +131,7 @@
                     }, 500);
                 });
             } else {
-                console.error('Search input element not found');
+                // console.error('Search input element not found');
             }
         });
 

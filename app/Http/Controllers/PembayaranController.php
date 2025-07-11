@@ -2,16 +2,80 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Pembayaran;
 use App\Models\DetailPembayaran;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log; 
 use Illuminate\Support\Facades\Storage;
+// ============== TAMBAHKAN USE STATEMENT UNTUK MIDTRANS ==============
+use Midtrans\Config;
+use Midtrans\Snap;
+use Midtrans\Notification;
 
 class PembayaranController extends Controller
 {
+    // ============== TAMBAHKAN CONSTRUCTOR UNTUK KONFIGURASI MIDTRANS ==============
+    /**
+     * Constructor to set up Midtrans configuration.
+     */
+    public function __construct()
+    {
+        // Set your Merchant Server Key
+        Config::$serverKey = config('services.midtrans.server_key');
+        // Set to Development/Sandbox Environment (default). Set to true for Production Environment.
+        Config::$isProduction = config('services.midtrans.is_production', false);
+        // Set sanitization on (default)
+        Config::$isSanitized = true;
+        // Set 3DS transaction for credit card to true
+        Config::$is3ds = true;
+    }
+
+    /**
+ * Membuat record pembayaran jika belum ada, lalu redirect ke halaman pembayaran.
+ *
+ * @param int $year
+ * @param int $month
+ * @return \Illuminate\Http\RedirectResponse
+ */
+public function createAndPay($year, $month)
+{
+    $user = auth()->user()->load('classLevel'); // Load relasi classLevel
+
+    // Cek apakah user punya classLevel
+    if (!$user->classLevel) {
+        return redirect()->route('dashboard')->with('error', 'Data kelas Anda tidak ditemukan. Hubungi admin.');
+    }
+    
+    // Tentukan jumlah SPP
+    $sppBulanan = $user->is_beasiswa && isset($user->classLevel->spp_beasiswa)
+        ? $user->classLevel->spp_beasiswa
+        : $user->classLevel->spp;
+
+    // Gunakan firstOrCreate untuk membuat tagihan jika belum ada
+    $pembayaran = Pembayaran::firstOrCreate(
+        [
+            'user_id' => $user->id,
+            'periode_bulan' => $month,
+            'periode_tahun' => $year,
+        ],
+        [
+            'total_tagihan' => $sppBulanan,
+            'status' => 'belum_lunas', // Status awal
+            'is_cicilan' => 0,
+            // Asumsikan ada admin default atau ambil admin pertama
+            'admin_id_pembuat' => \App\Models\Admin::first()->id ?? 1, 
+            'deskripsi' => 'Tagihan SPP Bulan ' . \Carbon\Carbon::createFromDate($year, $month)->isoFormat('MMMM YYYY'),
+        ]
+    );
+
+    // Redirect ke halaman pembayaran Midtrans dengan ID tagihan yang sudah pasti ada
+    return redirect()->route('pembayaran.pay_midtrans', $pembayaran->id);
+}
+
     /**
      * Display a listing of the resource.
      */
@@ -159,13 +223,15 @@ class PembayaranController extends Controller
         DetailPembayaran::create([
             'pembayaran_id' => $pembayaran->id,
             'jumlah_dibayar' => $request->jumlah_dibayar,
-            'tanggal_bayar' => now(), // Use current date and time
+            'tanggal_bayar' => now(),
             'metode_pembayaran' => $metode_pembayaran,
             'admin_id_pencatat' => $admin_id_pembuat,
+            // SOLUSI: Tambahkan baris ini untuk menyimpan URL download invoice
+            'bukti_pembayaran' => route('invoice.download', ['pembayaran' => $pembayaran->id]),
         ]);
 
         return redirect()->route('pembayaran.index')
-            ->with('success', 'Pembayaran berhasil ditambahkan.');
+            ->with('success', 'Pembayaran berhasil ditambahkan. Invoice siap diunduh.');
     }
 
     /**
@@ -345,17 +411,24 @@ class PembayaranController extends Controller
 
         // Get the main payment record
         $pembayaran = Pembayaran::findOrFail($request->pembayaran_id);
-        
+        DetailPembayaran::create([
+    'pembayaran_id' => $pembayaran->id,
+    'jumlah_dibayar' => $request->jumlah_dibayar,
+    'tanggal_bayar' => now(), // Use current date and time
+    'metode_pembayaran' => $metode_pembayaran,
+    'admin_id_pencatat' => $admin_id_pembuat,
+]);
         // Set is_cicilan flag to true
         $pembayaran->is_cicilan = true;
         
         // Create detail payment record
         $detailPembayaran = DetailPembayaran::create([
-            'pembayaran_id' => $request->pembayaran_id,
+            'pembayaran_id' => $pembayaran->id,
             'jumlah_dibayar' => $request->jumlah_dibayar,
             'tanggal_bayar' => now(),
             'metode_pembayaran' => $request->metode_pembayaran,
-            'bukti_pembayaran' => null,
+            // SOLUSI: Ganti 'null' dengan URL download invoice
+            'bukti_pembayaran' => route('invoice.download', ['pembayaran' => $pembayaran->id]),
             'admin_id_pencatat' => Auth::guard('admin')->check() ? Auth::guard('admin')->id() : null,
         ]);
 
@@ -494,4 +567,186 @@ class PembayaranController extends Controller
             'spp_amount' => $sppBulanan
         ]);
     }
+
+    /**
+     * Redirect user to Midtrans payment page.
+     *
+     * @param int $id The ID of the Pembayaran record.
+     * @return \Illuminate\View\View
+     */
+    public function payWithMidtrans($id)
+{
+    $pembayaran = Pembayaran::with('user')->findOrFail($id);
+    
+    // ================== TAMBAHKAN KODE PENGAMAN INI ==================
+    // Cek jika total tagihan valid sebelum melanjutkan
+    if ($pembayaran->total_tagihan <= 0) {
+        // Redirect kembali dengan pesan error yang jelas
+        return redirect()->route('dashboard')
+            ->with('error', 'Gagal memproses pembayaran. Jumlah tagihan tidak boleh nol.');
+    }
+    // =================================================================
+
+    $user = $pembayaran->user;
+
+    // Jika tagihan sudah lunas, kembalikan ke dashboard
+    if (in_array(strtolower($pembayaran->status), ['lunas', 'paid'])) {
+        return redirect()->route('dashboard')->with('info', 'Tagihan ini sudah lunas.');
+    }
+
+    // Buat Order ID unik untuk Midtrans
+    $orderId = 'SPP-' . $pembayaran->id . '-' . time();
+    $pembayaran->midtrans_order_id = $orderId;
+    $pembayaran->save();
+
+    // Siapkan parameter untuk Midtrans
+    $params = [
+        'transaction_details' => [
+            'order_id' => $orderId,
+            'gross_amount' => $pembayaran->total_tagihan,
+        ],
+        'item_details' => [[
+            'id' => 'PEMBAYARAN-' . $pembayaran->id,
+            'price' => $pembayaran->total_tagihan,
+            'quantity' => 1,
+            'name' => $pembayaran->deskripsi ?? 'Pembayaran SPP ' . optional($pembayaran->periode_pembayaran)->format('F Y'),
+        ]],
+        'customer_details' => [
+            'first_name' => $user->nama_santri ?? $user->name,
+            'email' => $user->email,
+            'phone' => $user->no_hp ?? '',
+        ],
+    ];
+
+    try {
+        $snapToken = Snap::getSnapToken($params);
+        return view('pembayaran.midtrans_payment', compact('snapToken', 'pembayaran'));
+    } catch (\Exception $e) {
+        Log::error('Midtrans Snap Token Error: ' . $e->getMessage());
+        return redirect()->route('dashboard')->with('error', 'Gagal terhubung ke gateway pembayaran. Coba lagi nanti.');
+    }
+}
+
+   /**
+ * Handle notification from Midtrans (Webhook).
+ *
+ * @param Request $request
+ * @return \Illuminate\Http\JsonResponse
+ */
+public function midtransNotificationHandler(Request $request)
+{
+    try {
+        // 1. Ambil Server Key dari config untuk validasi
+        $serverKey = config('services.midtrans.server_key');
+        
+        // 2. Buat hash dari data notifikasi untuk dicocokkan dengan signature_key
+        $hashed = hash("sha512", $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
+
+        // 3. Validasi signature key (keamanan)
+        if ($hashed != $request->signature_key) {
+            \Log::warning('[Midtrans Webhook] Invalid signature key.', ['request' => $request->all()]);
+            return response()->json(['message' => 'Invalid signature'], 403);
+        }
+
+        // --- Signature Key Valid, Lanjutkan Proses ---
+
+        $orderId = $request->order_id;
+        $transactionStatus = $request->transaction_status;
+        $fraudStatus = $request->fraud_status;
+
+        $pembayaran = \App\Models\Pembayaran::where('midtrans_order_id', $orderId)->first();
+
+        // Jika pembayaran tidak ditemukan di DB, kirim respons error
+        if (!$pembayaran) {
+            \Log::warning('[Midtrans Webhook] Pembayaran tidak ditemukan untuk order_id: ' . $orderId);
+            return response()->json(['message' => 'Payment not found'], 404);
+        }
+        
+        // Hindari proses duplikat jika status sudah lunas
+        if ($pembayaran->status === 'lunas') {
+            return response()->json(['message' => 'Notification for this order already processed.']);
+        }
+
+        // === Di sinilah logika utama Anda berjalan ===
+        if ($transactionStatus == 'settlement') {
+            // Status dari Midtrans adalah 'settlement', kita update menjadi 'lunas'
+            $pembayaran->status = 'lunas';
+        } else if ($transactionStatus == 'pending') {
+            // Status 'pending' juga kita catat
+            $pembayaran->status = 'pending';
+        } else if ($transactionStatus == 'expire') {
+            // Status 'expire' juga kita catat
+            $pembayaran->status = 'expired';
+        } else if ($transactionStatus == 'cancel' || $transactionStatus == 'deny') {
+            // Status 'cancel' atau 'deny' juga kita catat
+            $pembayaran->status = 'dibatalkan';
+        }
+
+        // Perbaikan: Gunakan Log::info() dengan benar
+        \Log::info('Data Pembayaran Sebelum Disimpan:', $pembayaran->toArray());
+
+        // Simpan perubahan status ke database
+        $pembayaran->save();
+
+        // Jika pembayaran lunas, buat juga detailnya sebagai arsip
+        if ($pembayaran->status === 'lunas') {
+            Log::info('[Midtrans Webhook] Status lunas terdeteksi untuk order_id: ' . $orderId . '. Mencoba membuat detail pembayaran.');
+
+            // Cek sekali lagi untuk menghindari duplikasi detail pembayaran dari Midtrans
+            if ($pembayaran->detailPembayaran()->where('metode_pembayaran', 'like', 'Midtrans%')->doesntExist()) {
+                try {
+                    // 1. Siapkan data bukti pembayaran yang terstruktur
+                    $buktiPembayaran = [
+                        'Tipe Pembayaran'    => $request->input('payment_type'),
+                        'ID Transaksi'       => $request->input('transaction_id'),
+                        'Waktu Transaksi'    => $request->input('transaction_time'),
+                        'Waktu Penyelesaian' => $request->input('settlement_time'),
+                        'Jumlah'             => 'Rp ' . number_format((float)$request->input('gross_amount'), 0, ',', '.'),
+                    ];
+
+                    // 2. Tambahkan detail spesifik berdasarkan tipe pembayaran
+                    if ($request->input('payment_type') == 'bank_transfer' && $request->has('va_numbers.0.bank')) {
+                        $buktiPembayaran['Bank'] = strtoupper($request->input('va_numbers.0.bank'));
+                        $buktiPembayaran['Nomor VA'] = $request->input('va_numbers.0.va_number');
+                    } elseif ($request->input('payment_type') == 'cstore') {
+                        $buktiPembayaran['Toko'] = ucfirst($request->input('store'));
+                        $buktiPembayaran['Kode Pembayaran'] = $request->input('payment_code');
+                    }
+
+                    // 3. Format nama metode pembayaran
+                    $metodePembayaran = 'Midtrans - ' . Str::title(str_replace('_', ' ', $request->input('payment_type', 'N/A')));
+
+                   // 4. Buat record detail pembayaran
+                    DetailPembayaran::create([
+                        'pembayaran_id'       => $pembayaran->id,
+                        'jumlah_dibayar'      => (float)$request->input('gross_amount'),
+                        'tanggal_bayar'       => \Carbon\Carbon::parse($request->input('settlement_time', now())),
+                        'metode_pembayaran'   => $metodePembayaran,
+                        'admin_id_pencatat'   => $pembayaran->admin_id_pembuat,
+                        // SOLUSI: Ganti json_encode dengan URL download invoice
+                        'bukti_pembayaran'    => route('invoice.download', ['pembayaran' => $pembayaran->id]),
+                    ]);
+
+                    
+                    Log::info('[Midtrans Webhook] Detail pembayaran berhasil dibuat untuk order_id: ' . $orderId);
+
+                } catch (\Exception $e) {
+                    Log::error('[Midtrans Webhook] Gagal membuat detail pembayaran untuk order_id: ' . $orderId . ' | Error: ' . $e->getMessage());
+                }
+            } else {
+                Log::info('[Midtrans Webhook] Detail pembayaran untuk order_id: ' . $orderId . ' sudah ada, proses dilewati.');
+            }
+        }
+
+        return response()->json(['message' => 'Notification processed successfully.']);
+        
+    } catch (\Exception $e) {
+        \Log::error('[Midtrans Webhook] Error processing notification: ' . $e->getMessage(), [
+            'request' => $request->all(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return response()->json(['message' => 'Internal server error'], 500);
+    }
+}
 }
