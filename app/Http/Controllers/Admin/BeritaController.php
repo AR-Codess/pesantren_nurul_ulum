@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Berita;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Vinkla\Hashids\Facades\Hashids;
 
 class BeritaController extends Controller
 {
@@ -65,16 +66,25 @@ class BeritaController extends Controller
      */
     public function edit(string $id)
     {
-        $berita = Berita::findOrFail($id);
-        return view('admin.berita.edit', compact('berita'));
+    $decodedId = Hashids::decode($id)[0] ?? null;
+    if (!$decodedId) {
+        abort(404);
     }
 
+    $berita = Berita::findOrFail($decodedId);
+    return view('admin.berita.edit', compact('berita'));
+    }
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        $berita = Berita::findOrFail($id);
+{
+    $decodedId = Hashids::decode($id)[0] ?? null;
+    if (!$decodedId) {
+        abort(404);
+    }
+
+    $berita = Berita::findOrFail($decodedId);
         
         $request->validate([
             'title' => 'required|string|max:255',

@@ -158,7 +158,7 @@
                                         <p class="card-text text-muted mb-3">{{ Str::limit(strip_tags($item->description), 100) }}</p>
                                         @endif
                                         <div class="mt-auto text-end">
-                                            <a href="{{ route('berita.show', ['id' => $item->id, 'slug' => Str::slug($item->title)]) }}" class="btn btn-sm btn-outline-success">Baca selengkapnya</a>
+                                            <a href="{{ route('berita.show', ['hashed_id' => $item->hashed_id, 'slug' => Str::slug($item->title)]) }}" class="btn btn-sm btn-outline-success">Baca selengkapnya</a>
                                         </div>
                                     </div>
                                     <div class="card-footer bg-white border-0 text-muted">

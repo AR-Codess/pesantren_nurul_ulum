@@ -50,15 +50,14 @@
                                 <div class="p-4">
                                     <div class="flex justify-between items-center mb-2">
                                         <h3 class="font-bold text-lg line-clamp-2">{{ $item->judul }}</h3>
-                                        <span class="text-sm text-gray-500 order-label">Urutan: {{ $loop->iteration }}</span>
                                     </div>
                                     @if($item->deskripsi)
                                         <p class="text-gray-700 text-sm mb-3 line-clamp-3">{{ Str::limit(strip_tags($item->deskripsi)) }}</p>
                                     @endif
                                     <div class="flex justify-end items-center mt-4">
                                         <div class="flex space-x-2">
-                                            <a href="{{ route('berita.show', ['id' => $item->id, 'slug' => Str::slug($item->judul)]) }}" class="font-medium text-blue-600 hover:underline">Lihat</a>
-                                            <a href="{{ route('admin.berita.edit', $item->id) }}" class="font-medium text-green-600 hover:underline">Edit</a>
+                                            <a href="{{ route('berita.show', ['hashed_id' => $item->hashed_id, 'slug' => Str::slug($item->judul)]) }}" class="font-medium text-blue-600 hover:underline">Lihat</a>
+                                            <a href="{{ route('admin.berita.edit', $item->hashed_id) }}" class="font-medium text-green-600 hover:underline">Edit</a>
                                             <form action="{{ route('admin.berita.destroy', $item->id) }}" method="POST" class="inline"
                                                   onsubmit="return confirm('Apakah Anda yakin ingin menghapus foto ini?');">
                                                 @csrf

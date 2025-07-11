@@ -26,7 +26,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('admin.berita.update', $berita->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.berita.update', $berita->hashed_id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -34,6 +34,21 @@
                             <label for="title" class="block text-sm font-medium text-gray-700">Judul Berita</label>
                             <input type="text" name="title" id="title" value="{{ old('title', $berita->judul) }}" required 
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="image" class="block text-sm font-medium text-gray-700">Ubah Foto (Opsional)</label>
+
+                            @if ($berita->path_gambar)
+                                <div class="mb-2">
+                                    <img src="{{ filter_var($berita->path_gambar, FILTER_VALIDATE_URL) ? $berita->path_gambar : asset('storage/' . $berita->path_gambar) }}" 
+                                         alt="Foto saat ini" class="w-40 rounded shadow">
+                                </div>
+                            @endif
+
+                            <input type="file" name="image" id="image"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, GIF. Maksimal 2MB.</p>
                         </div>
 
                         <div class="mb-4">

@@ -18,8 +18,9 @@ use App\Http\Controllers\KelolaSppController;
 Route::get('/', [HomeController::class, 'index'])->name('welcome');
 
 // Public berita (news) routes
-Route::get('/berita', [App\Http\Controllers\Admin\BeritaController::class, 'index'])->name('berita.index');
-Route::get('/berita/{id}/{slug?}', [App\Http\Controllers\Admin\BeritaController::class, 'show'])->name('berita.show');
+Route::get('/berita', [App\Http\Controllers\BeritaController::class, 'index'])->name('berita.index');
+Route::get('/berita/{hashed_id}/{slug?}', [App\Http\Controllers\BeritaController::class, 'show'])->name('berita.show');
+
 
 // Admin routes
 Route::middleware(['auth:admin', 'role:admin|admin'])->group(function () {
