@@ -7,7 +7,7 @@
 
         <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
 
-        <title>{{ config('app.name', 'PP Nurul Ulum') }}</title>
+        <title>{{ config('app.name', 'Nurul Ulum Wirowongso') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

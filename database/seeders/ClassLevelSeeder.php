@@ -15,42 +15,42 @@ class ClassLevelSeeder extends Seeder
         // Sample data for class levels
         $classLevels = [
             [
-                'level' => 'Kelas 1',
+                'level' => 'Kelas VII',
                 'spp' => 250000,
                 'spp_beasiswa' => 170000,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'level' => 'Kelas 2',
+                'level' => 'Kelas VIII',
                 'spp' => 275000,
                 'spp_beasiswa' => 195000,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'level' => 'Kelas 3',
+                'level' => 'Kelas IX',
                 'spp' => 300000,
                 'spp_beasiswa' => 220000,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'level' => 'Kelas 4',
+                'level' => 'Kelas X',
                 'spp' => 325000,
                 'spp_beasiswa' => 245000,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'level' => 'Kelas 5',
+                'level' => 'Kelas XI',
                 'spp' => 350000,
                 'spp_beasiswa' => 270000,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'level' => 'Kelas 6',
+                'level' => 'Kelas XII',
                 'spp' => 375000,
                 'spp_beasiswa' => 295000,
                 'created_at' => now(),

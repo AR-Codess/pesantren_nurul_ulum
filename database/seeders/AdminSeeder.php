@@ -27,16 +27,6 @@ class AdminSeeder extends Seeder
                 'email' => 'admin@pondok.test',
                 'password' => '12345678',
             ],
-            [
-                'name' => 'Sekretaris Pesantren',
-                'email' => 'sekretaris@pondok.test',
-                'password' => '12345678',
-            ],
-            [
-                'name' => 'Bendahara Pesantren',
-                'email' => 'bendahara@pondok.test',
-                'password' => '12345678',
-            ],
         ];
 
         // Create admin accounts
