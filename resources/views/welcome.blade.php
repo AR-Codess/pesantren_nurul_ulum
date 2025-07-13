@@ -37,7 +37,7 @@
 
         h1, h2, h3, h4, h5, h6 {
             font-weight: 600;
-            color: var(--primary-color);
+            color: var(--primary-color)
         }
 
         /* Tombol Utama */
@@ -69,8 +69,8 @@
 
     <div class="container mt-32 mb-10">
         <div class="text-center">
-            <h2 class="mb-4">Profil Pesantren Nurul Ulum</h2>
-            <p class="lead text-muted mx-auto" style="max-width: 800px;">Didirikan pada tahun 1990, Pesantren Nurul Ulum berkomitmen untuk memberikan pendidikan Islam yang komprehensif, menyeimbangkan antara ilmu agama, pengetahuan umum, dan pengembangan karakter untuk menghadapi tantangan zaman.</p>
+            <h2 class="mb-4 text-success">Profil Pesantren Nurul Ulum</h2>
+            <p class="mx-auto text-muted" style="max-width: 800px;">Didirikan pada tahun 1994 oleh RKH. Abdullah Abdul Kholiq, Pesantren Nurul Ulum berkomitmen untuk memberikan pendidikan Islam yang komprehensif, menyeimbangkan antara ilmu agama, pengetahuan umum, dan pengembangan karakter untuk menghadapi tantangan zaman.</p>
         </div>
     </div>
 

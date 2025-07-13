@@ -16,7 +16,6 @@
         }
 
         .footer {
-            background-color: var(--primary-color);
             color: rgba(255, 255, 255, 0.8);
             font-size: 0.9rem;
         }
@@ -77,7 +76,7 @@
 </head>
 <body>
 
-    <footer class="footer pt-5">
+    <footer class="footer pt-5 bg-success">
         <div class="container text-center text-md-start">
             <div class="row gy-4">
                 
@@ -108,13 +107,19 @@
                         <li>
                           <a href="https://wa.me/6282223333841" target="_blank">
                               <i class="bi bi-whatsapp me-3"></i>
-                              <span>CP Putra: 0822-2333-3841</span>
+                              <span>Pondok Putra: 0822-2333-3841</span>
                           </a>
                       </li>
                       <li>
                           <a href="https://wa.me/6282223333842" target="_blank">
                               <i class="bi bi-whatsapp me-3"></i>
-                              <span>CP Putri: 0822-2333-3842</span>
+                              <span>Pondok Putri: 0822-2333-3842</span>
+                          </a>
+                      </li>
+                      <li>
+                          <a href="https://wa.me/6282223333843" target="_blank">
+                              <i class="bi bi-whatsapp me-3"></i>
+                              <span>Klinik INSAN Medika: 0822-2333-3843</span>
                           </a>
                       </li>
                     </ul>

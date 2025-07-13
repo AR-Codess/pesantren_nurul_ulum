@@ -18,50 +18,47 @@
                         </a>
                     </div>
 
-                    <!-- Search Form -->
                     <div class="mb-4">
-                        <form id="searchForm" action="{{ route('pembayaran.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
-                            <div class="flex-grow">
-                                <input type="text" id="searchInput" name="search" value="{{ request('search') }}" 
-                                        class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" 
-                                        placeholder="Cari nama santri atau nis...">
-                            </div>
-                            <div class="w-40">
-                                <select name="bulan" id="bulanFilter" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                                    <option value="">-- Pilih Bulan --</option>
-                                    <option value="Januari" {{ request('bulan') == 'Januari' ? 'selected' : '' }}>Januari</option>
-                                    <option value="Februari" {{ request('bulan') == 'Februari' ? 'selected' : '' }}>Februari</option>
-                                    <option value="Maret" {{ request('bulan') == 'Maret' ? 'selected' : '' }}>Maret</option>
-                                    <option value="April" {{ request('bulan') == 'April' ? 'selected' : '' }}>April</option>
-                                    <option value="Mei" {{ request('bulan') == 'Mei' ? 'selected' : '' }}>Mei</option>
-                                    <option value="Juni" {{ request('bulan') == 'Juni' ? 'selected' : '' }}>Juni</option>
-                                    <option value="Juli" {{ request('bulan') == 'Juli' ? 'selected' : '' }}>Juli</option>
-                                    <option value="Agustus" {{ request('bulan') == 'Agustus' ? 'selected' : '' }}>Agustus</option>
-                                    <option value="September" {{ request('bulan') == 'September' ? 'selected' : '' }}>September</option>
-                                    <option value="Oktober" {{ request('bulan') == 'Oktober' ? 'selected' : '' }}>Oktober</option>
-                                    <option value="November" {{ request('bulan') == 'November' ? 'selected' : '' }}>November</option>
-                                    <option value="Desember" {{ request('bulan') == 'Desember' ? 'selected' : '' }}>Desember</option>
-                                </select>
-                            </div>
-                            <div class="w-40">
-                                <select name="tahun" id="tahunFilter" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                                    <option value="">-- Pilih Tahun --</option>
-                                    @for($year = date('Y'); $year >= 2000; $year--)
-                                        <option value="{{ $year }}" {{ request('tahun') == $year ? 'selected' : '' }}>{{ $year }}</option>
-                                    @endfor
-                                </select>
-                            </div>
-                            <div class="w-40">
-                                <select name="status" id="statusFilter" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                                    <option value="">-- Pilih Status --</option>
-                                    <option value="lunas" {{ request('status') == 'lunas' ? 'selected' : '' }}>Lunas</option>
-                                    <option value="belum_lunas" {{ request('status') == 'belum_lunas' ? 'selected' : '' }}>Belum Lunas</option>
-                                </select>
-                            </div>
-                            <div>
-                                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-                                    Cari
-                                </button>
+                        <form id="searchForm" action="{{ route('pembayaran.index') }}" method="GET">
+                            
+                            <div class="flex flex-wrap items-end gap-4">
+                                <div class="flex-1 min-w-[150px]>
+                                    <label for="searchInput" class="block text-sm font-medium text-gray-700">Cari Santri</label>
+                                    <input type="text" id="searchInput" name="search" value="{{ request('search') }}" 
+                                        class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" 
+                                        placeholder="Cari Nama/NIS">
+                                </div>
+                    
+                                {{-- Filter Status --}}
+                                <div class="flex-1 min-w-[150px]">
+                                    <label for="statusFilter" class="block text-sm font-medium text-gray-700">Status</label>
+                                    <select name="status" id="statusFilter" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                                        <option value="">-- Semua Status --</option>
+                                        <option value="lunas" {{ request('status') == 'lunas' ? 'selected' : '' }}>Lunas</option>
+                                        <option value="belum_lunas" {{ request('status') == 'belum_lunas' ? 'selected' : '' }}>Belum Lunas</option>
+                                    </select>
+                                </div>
+                    
+                                {{-- Filter Tanggal Mulai --}}
+                                <div class="flex-1 min-w-[150px]">
+                                    <label for="startDateFilter" class="block text-sm font-medium text-gray-700">Tanggal Mulai</label>
+                                    <input type="date" name="start_date" id="startDateFilter" value="{{ request('start_date') }}"
+                                           class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                                </div>
+                    
+                                {{-- Filter Tanggal Akhir --}}
+                                <div class="flex-1 min-w-[150px]">
+                                    <label for="endDateFilter" class="block text-sm font-medium text-gray-700">Tanggal Akhir</label>
+                                    <input type="date" name="end_date" id="endDateFilter" value="{{ request('end_date') }}"
+                                           class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                                </div>
+                    
+                                {{-- Tombol Aksi --}}
+                                <div class="flex gap-2">
+                                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+                                        <i class="bi bi-search"></i> Cari
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>

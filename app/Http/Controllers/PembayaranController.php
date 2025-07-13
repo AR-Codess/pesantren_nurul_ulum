@@ -80,45 +80,49 @@ public function createAndPay($year, $month)
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
-        $search = $request->input('search');
-        $bulan = $request->input('bulan');
-        $status = $request->input('status');
-        $tahun = $request->input('tahun');
-        $perPage = $request->input('per_page', 10);
+{
+    $search = $request->input('search');
+    $bulan = $request->input('bulan');
+    $status = $request->input('status');
+    $tahun = $request->input('tahun');
+    $startDate = $request->input('start_date'); // [BARU] Ambil input tanggal mulai
+    $endDate = $request->input('end_date');     // [BARU] Ambil input tanggal akhir
+    $perPage = $request->input('per_page', 10);
 
-        $pembayarans = Pembayaran::with('user')
-            ->when($search, function ($query, $search) {
-                return $query->whereHas('user', function($q) use ($search) {
-                    $q->where('nama_santri', 'like', '%' . $search . '%')
-                      ->orWhere('nis', 'like', '%' . $search . '%');
-                })
-                ->orWhere('bulan', 'like', '%' . $search . '%')
-                ->orWhere('status', 'like', '%' . $search . '%');
-            })
-            ->when($bulan, function ($query, $bulan) {
-                $bulanAngka = [
-                    'Januari' => 1, 'Februari' => 2, 'Maret' => 3, 'April' => 4,
-                    'Mei' => 5, 'Juni' => 6, 'Juli' => 7, 'Agustus' => 8,
-                    'September' => 9, 'Oktober' => 10, 'November' => 11, 'Desember' => 12
-                ];
-                if (isset($bulanAngka[$bulan])) {
-                    return $query->where('periode_bulan', $bulanAngka[$bulan]);
-                }
-                return $query;
-            })
-            ->when($status, function ($query, $status) {
-                return $query->where('status', $status);
-            })
-            ->when($tahun, function ($query, $tahun) {
-                return $query->where('periode_tahun', $tahun);
-            })
-            ->latest()
-            ->paginate($perPage)
-            ->withQueryString();
+    $pembayarans = Pembayaran::with(['user', 'detailPembayaran']) // Eager load relasi
+        ->when($search, function ($query, $search) {
+            return $query->whereHas('user', function($q) use ($search) {
+                $q->where('nama_santri', 'like', '%' . $search . '%')
+                  ->orWhere('nis', 'like', '%' . $search . '%');
+            });
+        })
+        ->when($bulan, function ($query, $bulan) {
+            $bulanAngka = [
+                'Januari' => 1, 'Februari' => 2, 'Maret' => 3, 'April' => 4,
+                'Mei' => 5, 'Juni' => 6, 'Juli' => 7, 'Agustus' => 8,
+                'September' => 9, 'Oktober' => 10, 'November' => 11, 'Desember' => 12
+            ];
+            return isset($bulanAngka[$bulan]) ? $query->where('periode_bulan', $bulanAngka[$bulan]) : $query;
+        })
+        ->when($status, function ($query, $status) {
+            return $query->where('status', $status);
+        })
+        ->when($tahun, function ($query, $tahun) {
+            return $query->where('periode_tahun', $tahun);
+        })
+        // [BARU] Logika untuk filter rentang tanggal
+        ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+            // Filter berdasarkan tanggal pembayaran dibuat (created_at)
+            // Mengubah endDate ke akhir hari agar data pada tanggal tersebut ikut terfilter
+            $endDateCarbon = \Carbon\Carbon::parse($endDate)->endOfDay();
+            return $query->whereBetween('created_at', [$startDate, $endDateCarbon]);
+        })
+        ->latest()
+        ->paginate($perPage)
+        ->withQueryString();
 
-        return view('pembayaran.index', compact('pembayarans', 'search', 'bulan', 'status', 'tahun', 'perPage'));
-    }
+    return view('pembayaran.index', compact('pembayarans'));
+}
 
     /**
      * Show the form for creating a new resource.
@@ -411,13 +415,6 @@ public function createAndPay($year, $month)
 
         // Get the main payment record
         $pembayaran = Pembayaran::findOrFail($request->pembayaran_id);
-        DetailPembayaran::create([
-    'pembayaran_id' => $pembayaran->id,
-    'jumlah_dibayar' => $request->jumlah_dibayar,
-    'tanggal_bayar' => now(), // Use current date and time
-    'metode_pembayaran' => $metode_pembayaran,
-    'admin_id_pencatat' => $admin_id_pembuat,
-]);
         // Set is_cicilan flag to true
         $pembayaran->is_cicilan = true;
         

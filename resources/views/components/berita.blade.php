@@ -58,7 +58,7 @@
 
 <section class="section-padding">
     <div class="container">
-        <h2 class="text-center mb-5">Berita & Kegiatan Santri</h2>
+        <h2 class="text-center mb-5 text-success">Berita & Kegiatan Santri</h2>
         <div class="row g-4">
             @forelse($beritaItems as $item)
                 <div class="col-md-4 mb-4">

@@ -12,6 +12,7 @@
         height: 100%;
         min-height: 400px;
         object-fit: cover;
+        object-position: bottom centers;
     }
     .facilities-content {
         background-color: white;
@@ -35,7 +36,7 @@
     }
     .facilities-list li:hover {
         transform: translateX(10px);
-        color: var(--primary-color);
+        color: #198754;
     }
     .facilities-list li .facility-icon {
         position: absolute;
@@ -48,7 +49,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--primary-color);
+        color: #198754;
     }
     .facility-card {
         background-color: white;
@@ -75,7 +76,7 @@
     }
     .facility-card .icon-container i {
         font-size: 30px;
-        color: var(--primary-color);
+        color: #198754;
     }
     .facility-card h5 {
         font-weight: 600;
@@ -90,7 +91,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-6 text-center">
-                <h2 class="mb-2">Fasilitas Lengkap untuk Mendukung Santri</h2>
+                <h2 class="mb-2 text-success">Fasilitas Lengkap untuk Mendukung Santri</h2>
                 <div class="heading-line mx-auto mb-4"></div>
                 <p class="text-muted mb-5">Pesantren Nurul Ulum menyediakan berbagai fasilitas modern untuk mendukung kegiatan belajar dan kehidupan santri</p>
             </div>
@@ -103,8 +104,8 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="facilities-content">
-                        <h3 class="mb-4">Fasilitas Unggulan</h3>
-                        <p>Kami menyediakan beragam fasilitas untuk menunjang kenyamanan dan keberhasilan pendidikan santri di Pesantren Nurul Ulum Wirowongso.</p>
+                        <h3 class="mb-4 text-success">Fasilitas Unggulan</h3>
+                        <p class="text-muted">Kami menyediakan beragam fasilitas untuk menunjang kenyamanan dan keberhasilan pendidikan santri di Pesantren Nurul Ulum Wirowongso.</p>
                         
                         <ul class="facilities-list">
                             <li>
@@ -156,7 +157,7 @@
                         <i class="bi bi-book"></i>
                     </div>
                     <h5>Perpustakaan</h5>
-                    <p>Koleksi buku ilmu pengetahuan dan kitab-kitab untuk memperdalam wawasan santri.</p>
+                    <p class="text-muted">Koleksi buku ilmu pengetahuan dan kitab-kitab untuk memperdalam wawasan santri.</p>
                 </div>
             </div>
             <div class="col-md-4">
@@ -165,7 +166,7 @@
                         <i class="bi bi-hospital"></i>
                     </div>
                     <h5>Klinik Kesehatan</h5>
-                    <p>Layanan kesehatan dengan dokter berpengalaman untuk menjaga kesehatan santri.</p>
+                    <p class="text-muted">Layanan kesehatan dengan dokter berpengalaman untuk menjaga kesehatan santri.</p>
                 </div>
             </div>
             <div class="col-md-4">
@@ -174,7 +175,7 @@
                         <i class="bi bi-dribbble"></i>
                     </div>
                     <h5>Sarana Olahraga</h5>
-                    <p>Fasilitas olahraga lengkap untuk mendukung aktivitas fisik dan rekreasi santri.</p>
+                    <p class="text-muted">Fasilitas olahraga lengkap untuk mendukung aktivitas fisik dan rekreasi santri.</p>
                 </div>
             </div>
         </div>
