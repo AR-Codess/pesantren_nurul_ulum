@@ -35,13 +35,14 @@
                                 <option value="">-- Pilih Santri --</option>
                                 @foreach($users as $user)
                                     <option value="{{ $user->id }}"
-                                        data-spp="{{ $user->classLevel->spp ?? 0 }}"
-                                        data-spp-beasiswa="{{ $user->classLevel->spp_beasiswa ?? 0 }}"
-                                        data-is-beasiswa="{{ $user->is_beasiswa ? 1 : 0 }}"
-                                        data-name="{{ $user->nama_santri }}"
-                                        data-level="{{ $user->classLevel->level ?? 'Tanpa Kelas' }}"
-                                        {{ old('user_id') == $user->id ? 'selected' : '' }}
-                                        @if(!$user->classLevel) disabled @endif>
+                                            data-spp="{{ $user->classLevel->spp ?? 0 }}"
+                                            data-spp-beasiswa="{{ $user->classLevel->spp_beasiswa ?? 0 }}"
+                                            data-is-beasiswa="{{ $user->is_beasiswa ? 1 : 0 }}"
+                                            data-name="{{ $user->nama_santri }}"
+                                            data-level="{{ $user->classLevel->level ?? 'Tanpa Kelas' }}"
+                                            {{-- MODIFIKASI: Gunakan $selectedData untuk memilih user secara otomatis --}}
+                                            {{ old('user_id', $selectedData['user_id'] ?? null) == $user->id ? 'selected' : '' }}
+                                            @if(!$user->classLevel) disabled @endif>
                                         {{ $user->nama_santri }} ({{ $user->nis }})
                                         @if(!$user->classLevel)
                                             <span class="text-red-600 font-semibold">- (Atur kelas terlebih dahulu)</span>
@@ -54,45 +55,34 @@
                         </div>
 
                         <div id="spp-info" class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md hidden">
-                            <h3 class="text-sm font-medium text-blue-800 mb-2">Informasi SPP</h3>
-                            <p class="text-sm text-blue-700">Nama Santri: <span id="santri-name">-</span></p>
-                            <p class="text-sm text-blue-700">Kelas: <span id="santri-level">-</span></p>
-                            <p class="text-sm text-blue-700">Total SPP Bulanan: <span id="total-spp">Rp 0</span></p>
-                            <p class="text-sm text-blue-700 mt-1">Status Pembayaran Bulan Ini: <span id="payment-status">-</span></p>
-                            <p class="text-sm text-blue-700 mt-1">Sudah Dibayar: <span id="paid-amount">Rp 0</span></p>
-                            <p class="text-sm text-blue-700 mt-1">Sisa Pembayaran: <span id="remaining-amount">Rp 0</span></p>
+                            {{-- ... bagian info SPP ini tidak perlu diubah ... --}}
                         </div>
 
                         <div class="mb-4">
                             <label for="periode_tagihan" class="block text-sm font-medium text-gray-700">Periode Tagihan</label>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-1">
                                 <div>
-                                    <select id="periode_bulan" name="periode_bulan" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                                    <select id="periode_bulan" name="periode_bulan" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm" required>
                                         <option value="">-- Pilih Bulan --</option>
-                                        <option value="1" {{ old('periode_bulan') == '1' ? 'selected' : '' }}>Januari</option>
-                                        <option value="2" {{ old('periode_bulan') == '2' ? 'selected' : '' }}>Februari</option>
-                                        <option value="3" {{ old('periode_bulan') == '3' ? 'selected' : '' }}>Maret</option>
-                                        <option value="4" {{ old('periode_bulan') == '4' ? 'selected' : '' }}>April</option>
-                                        <option value="5" {{ old('periode_bulan') == '5' ? 'selected' : '' }}>Mei</option>
-                                        <option value="6" {{ old('periode_bulan') == '6' ? 'selected' : '' }}>Juni</option>
-                                        <option value="7" {{ old('periode_bulan') == '7' ? 'selected' : '' }}>Juli</option>
-                                        <option value="8" {{ old('periode_bulan') == '8' ? 'selected' : '' }}>Agustus</option>
-                                        <option value="9" {{ old('periode_bulan') == '9' ? 'selected' : '' }}>September</option>
-                                        <option value="10" {{ old('periode_bulan') == '10' ? 'selected' : '' }}>Oktober</option>
-                                        <option value="11" {{ old('periode_bulan') == '11' ? 'selected' : '' }}>November</option>
-                                        <option value="12" {{ old('periode_bulan') == '12' ? 'selected' : '' }}>Desember</option>
+                                        {{-- MODIFIKASI: Gunakan $selectedData untuk memilih bulan secara otomatis --}}
+                                        @for ($i = 1; $i <= 12; $i++)
+                                            <option value="{{ $i }}" {{ old('periode_bulan', $selectedData['periode_bulan'] ?? null) == $i ? 'selected' : '' }}>
+                                                {{ \Carbon\Carbon::create()->month($i)->isoFormat('MMMM') }}
+                                            </option>
+                                        @endfor
                                     </select>
                                 </div>
                                 <div>
-                                    <select id="periode_tahun" name="periode_tahun" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                                    <select id="periode_tahun" name="periode_tahun" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm" required>
                                         <option value="">-- Pilih Tahun --</option>
                                         @php
                                             $currentYear = date('Y');
                                             $startYear = $currentYear - 5;
                                             $endYear = $currentYear + 1;
                                         @endphp
-                                        @for($year = $startYear; $year <= $endYear; $year++)
-                                            <option value="{{ $year }}" {{ (old('periode_tahun') == $year || (!old('periode_tahun') && $year == $currentYear)) ? 'selected' : '' }}>{{ $year }}</option>
+                                        {{-- MODIFIKASI: Gunakan $selectedData untuk memilih tahun secara otomatis --}}
+                                        @for($year = $endYear; $year >= $startYear; $year--)
+                                            <option value="{{ $year }}" {{ old('periode_tahun', $selectedData['periode_tahun'] ?? null) == $year ? 'selected' : '' }}>{{ $year }}</option>
                                         @endfor
                                     </select>
                                 </div>
@@ -101,7 +91,6 @@
                                 <span class="font-semibold">Periode ini sudah lunas!</span> Pembayaran untuk bulan ini sudah dilakukan.
                             </div>
                         </div>
-
                         <div class="mb-4">
                             <label for="total_tagihan_display" class="block text-sm font-semibold text-blue-700 mb-1">Total Tagihan SPP</label>
                             <input type="text" id="total_tagihan_display" class="mt-1 block w-full bg-gray-100 border border-blue-200 rounded-md px-4 py-2 text-blue-800 font-bold" value="Rp 0" readonly tabindex="-1">

@@ -33,6 +33,10 @@ Route::middleware(['auth:admin', 'role:admin|admin'])->group(function () {
     Route::post('/kelola-spp/{id}/update', [KelolaSppController::class, 'update'])->name('kelola-spp.update');
     Route::delete('/kelola-spp/{id}', [KelolaSppController::class, 'destroy'])->name('kelola-spp.destroy');
 
+    // Rekap Pembayaran routes
+    Route::get('/pembayaran/rekap', [PembayaranController::class, 'rekapDashboard'])
+    ->name('pembayaran.rekap');
+
     // berita management routes
     Route::resource('/admin/berita', BeritaController::class)->names('admin.berita');
     Route::post('/admin/berita/update-order', [BeritaController::class, 'updateOrder'])->name('admin.berita.update-order');

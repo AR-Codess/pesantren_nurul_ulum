@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\ClassLevel;
 use App\Models\Pembayaran;
 use App\Models\DetailPembayaran;
 use App\Models\Admin;
@@ -15,6 +16,8 @@ use Illuminate\Support\Facades\Storage;
 use Midtrans\Config;
 use Midtrans\Snap;
 use Midtrans\Notification;
+use Carbon\Carbon; 
+use Carbon\CarbonPeriod; 
 
 class PembayaranController extends Controller
 {
@@ -134,11 +137,19 @@ public function createAndPay($year, $month)
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        $users = User::role('user')->get();
-        return view('pembayaran.create', compact('users'));
-    }
+    public function create(Request $request) // Tambahkan Request $request
+{
+    $users = User::role('user')->get();
+
+    // Ambil data dari parameter URL jika ada
+    $selectedData = [
+        'user_id' => $request->query('user_id'),
+        'periode_bulan' => $request->query('periode_bulan'),
+        'periode_tahun' => $request->query('periode_tahun'),
+    ];
+
+    return view('pembayaran.create', compact('users', 'selectedData'));
+}
 
     /**
      * Store a newly created resource in storage.
@@ -753,4 +764,65 @@ public function midtransNotificationHandler(Request $request)
         return response()->json(['message' => 'Internal server error'], 500);
     }
 }
+
+/**
+     * Menampilkan dashboard rekapitulasi pembayaran SPP per kelas dan per tahun.
+     */
+    public function rekapDashboard(Request $request)
+    {
+        // 1. Ambil input dari filter
+        $selectedClassId = $request->input('class_level_id');
+        $selectedYear = $request->input('tahun', Carbon::now()->year);
+        $search = $request->input('search'); // <-- BARU: Ambil input pencarian
+
+        // 2. Ambil data untuk dropdown filter
+        $classLevels = ClassLevel::orderBy('level')->get();
+        $availableYears = Pembayaran::select('periode_tahun')->distinct()->orderBy('periode_tahun', 'desc')->pluck('periode_tahun');
+
+        // 3. Tentukan periode (kolom bulan) berdasarkan filter tahun
+        $periods = [];
+        if ($selectedYear) {
+            $startDate = Carbon::create($selectedYear, 1, 1);
+            $endDate = Carbon::create($selectedYear, 12, 1);
+            $periods = CarbonPeriod::create($startDate, '1 month', $endDate);
+        } else {
+            $firstUserDate = User::min('created_at');
+            if ($firstUserDate) {
+                $startDate = Carbon::parse($firstUserDate)->startOfMonth();
+                $endDate = Carbon::now()->startOfMonth();
+                $periods = CarbonPeriod::create($startDate, '1 month', $endDate);
+            }
+        }
+
+        // 4. Ambil data santri, terapkan semua filter
+        $students = User::role('user')
+            ->when($selectedClassId, function ($query) use ($selectedClassId) {
+                return $query->where('class_level_id', $selectedClassId);
+            })
+            // BARU: Tambahkan kondisi 'when' untuk filter pencarian nama
+            ->when($search, function ($query, $search) {
+                return $query->where('nama_santri', 'like', '%' . $search . '%');
+            })
+            ->with('pembayaran')
+            ->orderBy('nama_santri', 'asc')
+            ->get()
+            ->map(function ($student) {
+                $student->pembayaranLookup = $student->pembayaran->keyBy(function ($item) {
+                    return $item->periode_tahun . '-' . $item->periode_bulan;
+                });
+                unset($student->pembayaran);
+                return $student;
+            });
+
+        // 5. Kirim semua data ke view
+        return view('pembayaran.rekap', [
+            'classLevels'       => $classLevels,
+            'students'          => $students,
+            'periods'           => $periods,
+            'availableYears'    => $availableYears,
+            'selectedClassId'   => $selectedClassId,
+            'selectedYear'      => $selectedYear,
+            'search'            => $search, // <-- BARU: Kirim nilai pencarian ke view
+        ]);
+    }
 }

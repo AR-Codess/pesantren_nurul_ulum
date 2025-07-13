@@ -12,10 +12,16 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-bold">Daftar Pembayaran</h2>
-                        <a href="{{ route('pembayaran.create') }}"
+                        <div class="flex gap-4">
+                            <a href="{{ route('pembayaran.rekap') }}"
+                            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                            Rekap Pembayaran
+                            </a>
+                            <a href="{{ route('pembayaran.create') }}"
                             class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
                             + Tambah Pembayaran
-                        </a>
+                            </a>
+                        </div>
                     </div>
 
                     <div class="mb-4">
@@ -161,7 +167,13 @@
                                         <td class="px-6 py-4 flex space-x-2">
                                             <a href="{{ route('pembayaran.show', $pembayaran->id) }}" class="font-medium text-blue-600 hover:underline">Lihat</a>
                                             {{-- <a href="{{ route('pembayaran.edit', $pembayaran->id) }}" class="font-medium text-green-600 hover:underline">Edit</a> --}}
-                                            
+                                            @if($pembayaran->status == 'belum_bayar' && $pembayaran->user)
+                                            <a href="{{ route('pembayaran.create', [
+                                                'user_id' => $pembayaran->user_id,
+                                                'periode_bulan' => $pembayaran->periode_bulan,
+                                                'periode_tahun' => $pembayaran->periode_tahun
+                                            ]) }}" class="font-medium text-green-600 hover:underline">Bayar</a>
+                                        @endif
                                             @php
                                                 $showCicilanButton = false;
                                                 // Tampilkan tombol cicilan jika pembayaran adalah cicilan dan belum lunas
