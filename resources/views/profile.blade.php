@@ -24,13 +24,13 @@
             </div>
 
             {{-- HANYA TAMPIL JIKA ROLE BUKAN 'user' ATAU 'guru' --}}
-            @if (Auth::user() && !Auth::user()->hasAnyRole(['user', 'guru']))
+            {{-- @if (Auth::user() && !Auth::user()->hasAnyRole(['user', 'guru']))
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <div class="max-w-xl">
                         <livewire:profile.delete-user-form />
                     </div>
                 </div>
-            @endif
+            @endif --}}
         </div>
     </div>
 </x-app-layout>

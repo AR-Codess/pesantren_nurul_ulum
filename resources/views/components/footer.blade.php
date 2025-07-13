@@ -92,7 +92,7 @@
                     <h6 class="fw-bold">Tautan</h6>
                     <hr class="heading-garis mt-2 mb-4 d-inline-block mx-auto mx-md-0">
                     <p><a href="#unit-pendidikan">Unit Pendidikan</a></p>
-                    <p><a href="#!">Pendaftaran</a></p>
+                    <p><a href="https://docs.google.com/forms/d/e/1FAIpQLScqtqKj0PG-akpNkyTtChRlBog1rOcMsN2M9M0yS-FgNEUbYw/viewform?usp=header">Pendaftaran</a></p>
                     <p><a href="/berita">Berita</a></p>
                 </div>
                 
@@ -101,20 +101,22 @@
                     <hr class="heading-garis mt-2 mb-4 d-inline-block mx-auto mx-md-0">
                     <ul class="list-kontak">
                         <li>
-                            <i class="bi bi-envelope-fill me-3"></i>
-                            <a href="mailto:info@nurululum.ac.id">info@nurululum.ac.id</a>
+                            <a href="mailto:info@nurululum.ac.id" target="_blank">
+                                <i class="bi bi-envelope-fill me-3"></i>
+                                info@nurululum.ac.id
+                            </a>
                         </li>
                         <li>
                           <a href="https://wa.me/6282223333841" target="_blank">
                               <i class="bi bi-whatsapp me-3"></i>
                               <span>Pondok Putra: 0822-2333-3841</span>
                           </a>
-                      </li>
-                      <li>
-                          <a href="https://wa.me/6282223333842" target="_blank">
-                              <i class="bi bi-whatsapp me-3"></i>
-                              <span>Pondok Putri: 0822-2333-3842</span>
-                          </a>
+                        </li>
+                        <li>
+                            <a href="https://wa.me/6282223333842" target="_blank">
+                                <i class="bi bi-whatsapp me-3"></i>
+                                <span>Pondok Putri: 0822-2333-3842</span>
+                            </a>
                       </li>
                       <li>
                           <a href="https://wa.me/6282223333843" target="_blank">

@@ -6,10 +6,23 @@ use Livewire\Component;
 use App\Models\User;
 use App\Models\Pembayaran;
 use App\Models\Guru;
+use App\Models\Kelas;
+use App\Models\Berita;
 use Carbon\Carbon;
 
 class AdminDashboard extends Component
 {
+    public $totalUnpaid;
+    public $totalClasses;
+    public $totalNews;
+
+    public function mount()
+    {
+        $this->totalUnpaid = Pembayaran::where('status', 'belum_bayar')->count();
+        $this->totalClasses = Kelas::count();
+        $this->totalNews = Berita::count();
+    }
+
     public function render()
     {
         // 1. Ambil semua tahun yang memiliki status 'lunas' dari database

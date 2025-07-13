@@ -29,7 +29,7 @@ class GuruController extends Controller
                       ->orWhere('email', 'like', '%' . $search . '%');
                 });
             })
-            ->latest()
+            ->orderBy('nama_pendidik', 'asc')
             ->paginate($perPage)
             ->withQueryString();
 

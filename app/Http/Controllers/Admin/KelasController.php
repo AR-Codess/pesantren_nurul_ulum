@@ -38,7 +38,7 @@ class KelasController extends Controller
             ->when($mataPelajaranFilter, function ($query, $mataPelajaranFilter) {
                 return $query->where('mata_pelajaran', $mataPelajaranFilter);
             })
-            ->latest()
+            ->orderBy('mata_pelajaran', 'asc')
             ->paginate($perPage)
             ->withQueryString();
 

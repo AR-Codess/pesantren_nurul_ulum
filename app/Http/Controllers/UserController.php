@@ -42,7 +42,7 @@ class UserController extends Controller
                     $q->where('status', $status);
                 });
             })
-            ->latest()
+            ->orderBy('nama_santri', 'asc')
             ->paginate($perPage)
             ->withQueryString();
 

@@ -138,7 +138,7 @@
                 <div class="col-md-6 col-lg-3 mb-4">
                     <div class="education-card h-100">
                         <div class="img-wrapper">
-                            <img src="{{ asset('images/4.jpg') }}" class="img-fluid" alt="SMK Kesehatan">
+                            <img src="{{ asset('images/hero-8.jpg') }}" class="img-fluid" alt="SMK Kesehatan">
                             <div class="overlay-content">
                             </div>
                             <span class="akreditasi-badge">Akreditasi B</span>
@@ -161,7 +161,7 @@
                 <div class="col-md-6 col-lg-3 mb-4">
                     <div class="education-card h-100">
                         <div class="img-wrapper">
-                            <img src="{{ asset('images/6.jpg') }}" class="img-fluid" alt="Tahfidz Qur'an">
+                            <img src="{{ asset('images/tahfidz.jpg') }}" class="img-fluid" alt="Tahfidz Qur'an">
                             <div class="overlay-content">
                             </div>
                         </div>

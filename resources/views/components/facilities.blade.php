@@ -85,6 +85,32 @@
     .facility-card p {
         color: #666;
     }
+
+    /* Tambahan CSS untuk efek fade */
+    .fade {
+        transition: opacity 0.5s ease;
+    }
+    .fade-out {
+        opacity: 0;
+    }
+    .fade-in {
+        opacity: 1;
+    }
+
+    /* Tambahan CSS untuk efek slide */
+    .slide {
+        transition: transform 0.5s ease, opacity 0.5s ease;
+        opacity: 1;
+        transform: translateX(0);
+    }
+    .slide-out {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    .slide-in {
+        opacity: 1;
+        transform: translateX(0);
+    }
 </style>
 
 <section class="facilities-section section-padding section-bg">
@@ -100,45 +126,45 @@
         <div class="facilities-container">
             <div class="row g-0">
                 <div class="col-lg-6">
-                    <img src="{{ asset('images/2.jpg') }}" alt="Fasilitas Pondok Pesantren" class="facilities-image w-100">
+                    <img id="facility-image" src="{{ asset('images/2.jpg') }}" alt="Fasilitas Pondok Pesantren" class="facilities-image w-100 fade">
                 </div>
                 <div class="col-lg-6">
                     <div class="facilities-content">
                         <h3 class="mb-4 text-success">Fasilitas Unggulan</h3>
                         <p class="text-muted">Kami menyediakan beragam fasilitas untuk menunjang kenyamanan dan keberhasilan pendidikan santri di Pesantren Nurul Ulum Wirowongso.</p>
                         
-                        <ul class="facilities-list">
-                            <li>
+                        <ul id="facility-list" class="facilities-list">
+                            <li data-index="0">
                                 <div class="facility-icon">
                                     <i class="bi bi-house-door-fill"></i>
                                 </div>
                                 <strong>Asrama Pondok</strong>
                             </li>
-                            <li>
+                            <li data-index="1">
                                 <div class="facility-icon">
                                     <i class="bi bi-building"></i>
                                 </div>
                                 <strong>Mushola</strong>
                             </li>
-                            <li>
+                            <li data-index="2">
                                 <div class="facility-icon">
                                     <i class="bi bi-pc-display"></i>
                                 </div>
                                 <strong>Laboratorium Keperawatan Modern</strong>
                             </li>
-                            <li>
+                            <li data-index="3">
                                 <div class="facility-icon">
                                     <i class="bi bi-heart-pulse"></i>
                                 </div>
                                 <strong>Klinik Insan Medika</strong>
                             </li>
-                            <li>
+                            <li data-index="4">
                                 <div class="facility-icon">
                                     <i class="bi bi-shield-plus"></i>
                                 </div>
                                 <strong>Jaminan Kesehatan Santri</strong>
                             </li>
-                            <li>
+                            <li data-index="5">
                                 <div class="facility-icon">
                                     <i class="bi bi-laptop"></i>
                                 </div>
@@ -181,3 +207,76 @@
         </div>
     </div>
 </section>
+
+<script>
+    // Data Fasilitas (sesuaikan path jika perlu)
+    const facilities = [
+      { title: 'Asrama Pondok', image: "{{ asset('images/asrama.jpg') }}" },
+      { title: 'Mushola', image: "{{ asset('images/mushola.jpg') }}" },
+      { title: 'Laboratorium Keperawatan Modern', image: "{{ asset('images/keperawatan.jpg') }}" },
+      { title: 'Klinik Insan Medika', image: "{{ asset('images/klinik.jpg') }}" },
+      { title: 'Jaminan Kesehatan Santri', image: "{{ asset('images/jaminankesehatan.jpg') }}" },
+      { title: 'Lab Komputer', image: "{{ asset('images/2.jpg') }}" } // Ganti '2.jpg' dengan gambar yang sesuai
+    ];
+    
+    // Seleksi Elemen DOM
+    const facilityImage = document.getElementById('facility-image');
+    const facilityListItems = document.querySelectorAll('#facility-list li');
+    
+    // Variabel untuk melacak indeks saat ini
+    let currentIndex = 0;
+    let slideshowInterval;
+    
+    // Perbaikan fungsi updateView untuk animasi yang lebih halus
+function updateView(index) {
+    // Siapkan gambar berikutnya sebelum transisi
+    const nextImage = new Image();
+    nextImage.src = facilities[index].image;
+    nextImage.onload = () => {
+        // Tambahkan animasi transisi yang lebih halus
+        facilityImage.style.transition = 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s ease';
+        facilityImage.style.opacity = '0';
+        facilityImage.style.transform = 'translateX(-50%) scale(0.8)';
+
+        setTimeout(() => {
+            // Ganti gambar setelah transisi selesai
+            facilityImage.src = nextImage.src;
+            facilityImage.alt = facilities[index].title;
+
+            // Reset gaya transisi
+            facilityImage.style.opacity = '1';
+            facilityImage.style.transform = 'translateX(0) scale(1)';
+
+            // Perbarui 'active' state pada list
+            facilityListItems.forEach(item => item.classList.remove('active'));
+            facilityListItems[index].classList.add('active');
+
+            currentIndex = index;
+        }, 800); // Durasi transisi keluar
+    };
+}
+    
+    // Tambahkan event listener untuk klik manual
+    facilityListItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const index = parseInt(item.getAttribute('data-index'), 10);
+        updateView(index);
+    
+        // Reset timer slideshow otomatis
+        clearInterval(slideshowInterval);
+        startSlideshow();
+      });
+    });
+    
+    // Fungsi untuk memulai slideshow otomatis
+    function startSlideshow() {
+      slideshowInterval = setInterval(() => {
+        const nextIndex = (currentIndex + 1) % facilities.length;
+        updateView(nextIndex);
+      }, 5000);
+    }
+    
+    // Inisialisasi tampilan awal
+    updateView(0);
+    startSlideshow();
+</script>

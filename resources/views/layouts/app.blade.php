@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
+        <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png">
 
         <title>{{ config('app.name', 'Ponpes Nurul Ulum Wirowongso') }}</title>
 

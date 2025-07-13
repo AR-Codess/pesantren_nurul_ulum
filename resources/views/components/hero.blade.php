@@ -60,9 +60,9 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(
-                rgba(0, 0, 0, 0.4), 
-                rgba(0, 0, 0, 0.6)
-            ); /* Gradient overlay yang lebih halus */
+                rgba(0, 0, 0, 0.3), 
+                rgba(0, 0, 0, 0.3)
+            ); 
             z-index: 2;
         }
 
@@ -140,10 +140,13 @@
     <div class="hero-section">
         <div class="hero-slider">
             <div>
-                <img src="{{ asset('images/hero-1.jpg') }}" alt="Hero Image 1">
+                <img src="{{ asset('images/hero-1.jpg') }}" alt="Pondok Pesantren Nurul Ulum">
             </div>
             <div>
-                <img src="{{ asset('images/hero-2.jpg') }}" alt="Hero Image 2">
+                <img src="{{ asset('images/hero-2.jpg') }}" alt="SMP Nurul Ulum">
+            </div>
+            <div>
+                <img src="{{ asset('images/hero-8.jpg') }}" alt="SMK Kesehatan Bina Mitra Husada">
             </div>
         </div>
         <div class="hero-content">

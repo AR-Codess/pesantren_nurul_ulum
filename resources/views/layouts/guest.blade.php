@@ -19,7 +19,7 @@
             <div>
                 <a href="/" wire:navigate>
                     {{-- <x-application-logo class="w-20 h-20 fill-current text-gray-500" /> --}}
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo Aplikasi" class="block h-32 w-auto">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo Aplikasi" class="block h-20 w-auto">
                 </a>
             </div>
 

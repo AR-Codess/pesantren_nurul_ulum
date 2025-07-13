@@ -24,6 +24,27 @@
                     <a href="{{ route('pembayaran.index', ['status' => 'lunas']) }}" class="text-purple-800 hover:underline text-sm">Lihat semua →</a>
                 </div>
             </div>
+            <div class="bg-red-100 p-4 rounded-lg shadow">
+                <h3 class="font-bold text-lg text-red-800">Total Belum Bayar</h3>
+                <p class="text-3xl font-bold">{{ $totalUnpaid }}</p>
+                <div class="mt-2 text-right">
+                    <a href="{{ route('pembayaran.index', ['status' => 'belum_bayar']) }}" class="text-red-800 hover:underline text-sm">Lihat semua →</a>
+                </div>
+            </div>
+            <div class="bg-indigo-100 p-4 rounded-lg shadow">
+                <h3 class="font-bold text-lg text-indigo-800">Total Kelas</h3>
+                <p class="text-3xl font-bold">{{ $totalClasses }}</p>
+                <div class="mt-2 text-right">
+                    <a href="{{ route('admin.kelas.index') }}" class="text-indigo-800 hover:underline text-sm">Lihat semua →</a>
+                </div>
+            </div>
+            <div class="bg-pink-100 p-4 rounded-lg shadow">
+                <h3 class="font-bold text-lg text-pink-800">Total Berita</h3>
+                <p class="text-3xl font-bold">{{ $totalNews }}</p>
+                <div class="mt-2 text-right">
+                    <a href="{{ route('berita.index') }}" class="text-pink-800 hover:underline text-sm">Lihat semua →</a>
+                </div>
+            </div>
         </div>
 
         <!-- Chart.js Charts -->
