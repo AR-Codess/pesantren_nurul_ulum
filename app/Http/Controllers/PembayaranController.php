@@ -79,50 +79,57 @@ public function createAndPay($year, $month)
     /**
      * Display a listing of the resource.
      */
+    /**
+     * Display a listing of the resource.
+     * * [MODIFIED] Filter tanggal kini berdasarkan riwayat pembayaran (tanggal_bayar)
+     * bukan lagi berdasarkan tanggal pembuatan tagihan (created_at).
+     */
     public function index(Request $request)
-{
-    $search = $request->input('search');
-    $bulan = $request->input('bulan');
-    $status = $request->input('status');
-    $tahun = $request->input('tahun');
-    $startDate = $request->input('start_date'); // [BARU] Ambil input tanggal mulai
-    $endDate = $request->input('end_date');     // [BARU] Ambil input tanggal akhir
-    $perPage = $request->input('per_page', 10);
+    {
+        $search = $request->input('search');
+        $status = $request->input('status');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $perPage = $request->input('per_page', 10);
 
-    $pembayarans = Pembayaran::with(['user', 'detailPembayaran']) // Eager load relasi
-        ->when($search, function ($query, $search) {
-            return $query->whereHas('user', function($q) use ($search) {
-                $q->where('nama_santri', 'like', '%' . $search . '%')
-                  ->orWhere('nis', 'like', '%' . $search . '%');
+        // Membangun query dasar dengan semua filter yang diterapkan
+        $query = Pembayaran::with(['user', 'detailPembayaran'])
+            ->when($search, function ($query, $search) {
+                return $query->whereHas('user', function ($q) use ($search) {
+                    $q->where('nama_santri', 'like', '%' . $search . '%')
+                        ->orWhere('nis', 'like', '%' . $search . '%');
+                });
+            })
+            ->when($status, function ($query, $status) {
+                return $query->where('status', $status);
+            })
+            // =================================================================
+            // == BAGIAN INI DIUBAH ==
+            // =================================================================
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                // Logika baru: Filter berdasarkan tanggal di riwayat pembayaran (detailPembayaran)
+                // Ini memastikan pembayaran yang dicicil/dilunasi dalam rentang tanggal akan muncul.
+                return $query->whereHas('detailPembayaran', function($subQuery) use ($startDate, $endDate) {
+                    $endDateCarbon = \Carbon\Carbon::parse($endDate)->endOfDay();
+                    $subQuery->whereBetween('tanggal_bayar', [$startDate, $endDateCarbon]);
+                });
             });
-        })
-        ->when($bulan, function ($query, $bulan) {
-            $bulanAngka = [
-                'Januari' => 1, 'Februari' => 2, 'Maret' => 3, 'April' => 4,
-                'Mei' => 5, 'Juni' => 6, 'Juli' => 7, 'Agustus' => 8,
-                'September' => 9, 'Oktober' => 10, 'November' => 11, 'Desember' => 12
-            ];
-            return isset($bulanAngka[$bulan]) ? $query->where('periode_bulan', $bulanAngka[$bulan]) : $query;
-        })
-        ->when($status, function ($query, $status) {
-            return $query->where('status', $status);
-        })
-        ->when($tahun, function ($query, $tahun) {
-            return $query->where('periode_tahun', $tahun);
-        })
-        // [BARU] Logika untuk filter rentang tanggal
-        ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-            // Filter berdasarkan tanggal pembayaran dibuat (created_at)
-            // Mengubah endDate ke akhir hari agar data pada tanggal tersebut ikut terfilter
-            $endDateCarbon = \Carbon\Carbon::parse($endDate)->endOfDay();
-            return $query->whereBetween('created_at', [$startDate, $endDateCarbon]);
-        })
-        ->latest()
-        ->paginate($perPage)
-        ->withQueryString();
+            // =================================================================
 
-    return view('pembayaran.index', compact('pembayarans'));
-}
+        // Clone query SEBELUM paginasi untuk menghitung total pembayaran lunas.
+        $queryForTotal = clone $query;
+        
+        // Hitung total dari kolom 'total_tagihan' hanya untuk pembayaran yang berstatus 'lunas'.
+        $totalLunasFiltered = $queryForTotal->where('status', 'lunas')->sum('total_tagihan');
+
+        // Ambil data untuk tabel dengan paginasi setelah semua filter diterapkan.
+        $pembayarans = $query->latest()
+            ->paginate($perPage)
+            ->withQueryString();
+
+        // Kirim data pembayaran dan total yang sudah dihitung ke view.
+        return view('pembayaran.index', compact('pembayarans', 'totalLunasFiltered'));
+    }
 
     /**
      * Show the form for creating a new resource.

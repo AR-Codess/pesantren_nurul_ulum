@@ -36,6 +36,7 @@
                                         <option value="">-- Semua Status --</option>
                                         <option value="lunas" {{ request('status') == 'lunas' ? 'selected' : '' }}>Lunas</option>
                                         <option value="belum_lunas" {{ request('status') == 'belum_lunas' ? 'selected' : '' }}>Belum Lunas</option>
+                                        <option value="belum_bayar" {{ request('status') == 'belum_bayar' ? 'selected' : '' }}>Belum Bayar</option>
                                     </select>
                                 </div>
                     
@@ -189,6 +190,13 @@
                             </tbody>
                         </table>
                     </div>
+                    @isset($totalLunasFiltered)
+                    <div class="mb-4 p-4">
+                        <p class="font-bold text-gray-600">Total Pembayaran yang Sudah Lunas (Sesuai Filter): 
+                            <span class="text-xl font-semibold text-green-600">Rp {{ number_format($totalLunasFiltered, 0, ',', '.') }}</span>
+                        </p>
+                    </div>
+                @endisset
 
                     <!-- Pagination Links -->
                     <div class="mt-6">
