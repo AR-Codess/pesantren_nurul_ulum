@@ -52,6 +52,8 @@ Route::middleware(['auth:admin', 'role:admin|admin'])->group(function () {
     Route::resource('/users', UserController::class);
     Route::resource('/guru', GuruController::class);
     Route::resource('/pembayaran', PembayaranController::class);
+    Route::get('/admin/profile/edit', [AdminController::class, 'editProfile'])->name('admin.profile.edit');
+    Route::post('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
 });
 
 // Guru routes

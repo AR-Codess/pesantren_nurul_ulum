@@ -118,6 +118,13 @@ new class extends Component
                         <x-dropdown-link :href="route('profile')" wire:navigate>
                             {{ __('Profile') }}
                         </x-dropdown-link>
+                        <x-dropdown-link :href="route('admin.profile.edit')" wire:navigate>
+                            {{ __('Update Email') }}
+                        </x-dropdown-link>
+                        {{-- Jika ingin verifikasi email, tambahkan menu di sini --}}
+                        {{-- <x-dropdown-link :href="route('admin.email.verify')" wire:navigate>
+                            {{ __('Verifikasi Email') }}
+                        </x-dropdown-link> --}}
 
                         <!-- Authentication -->
                         <button wire:click="logout" class="w-full text-start">
@@ -191,6 +198,13 @@ new class extends Component
                 <x-responsive-nav-link :href="route('profile')" wire:navigate>
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.profile.edit')" wire:navigate>
+                    {{ __('Update Email') }}
+                </x-responsive-nav-link>
+                {{-- Jika ingin verifikasi email, tambahkan menu di sini --}}
+                {{-- <x-responsive-nav-link :href="route('admin.email.verify')" wire:navigate>
+                    {{ __('Verifikasi Email') }}
+                </x-responsive-nav-link> --}}
 
                 <!-- Authentication -->
                 <button wire:click="logout" class="w-full text-start">
