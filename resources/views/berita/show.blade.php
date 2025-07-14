@@ -344,14 +344,14 @@
             @endif
             
             <div class="mt-6">
-                <a href="{{ route('berita.index') }}" class="inline-block w-full py-2 px-4 bg-green-600 text-white text-center rounded-md hover:bg-green-700 transition">
-                    <div class="flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <div class="d-grid gap-2">
+                    <a href="{{ route('berita.index') }}" class="btn btn-success d-flex align-items-center justify-content-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
                         </svg>
                         Lihat Semua Berita
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
     </div>

@@ -151,7 +151,7 @@
         </div>
         <div class="hero-content">
             <h1>Mencetak Generasi Qur'ani Berakhlak Mulia</h1>
-            <p>Selamat datang di Yayasan Pendidikan Pondok Pesantren Nuru Ulum Wirowongso.</p>
+            <p>Selamat datang di Yayasan Pendidikan Pondok Pesantren Nurul Ulum Wirowongso.</p>
         </div>
     </div>
 
