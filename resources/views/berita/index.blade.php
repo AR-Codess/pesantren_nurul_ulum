@@ -155,7 +155,9 @@
                                     <div class="card-body d-flex flex-column">
                                         <h5 class="card-title fw-bold">{{ $item->title }}</h5>
                                         @if(isset($item->description))
-                                        <p class="card-text text-muted mb-3">{{ Str::limit(strip_tags($item->description), 100) }}</p>
+                                        <p class="card-text text-muted mb-3 line-clamp-3">
+                                            {{ Str::limit(html_entity_decode(strip_tags($item->description)), 120) }}
+                                        </p>
                                         @endif
                                         <div class="mt-auto text-end">
                                             <a href="{{ route('berita.show', ['hashed_id' => $item->hashed_id, 'slug' => Str::slug($item->title)]) }}" class="btn btn-sm btn-outline-success">Baca selengkapnya</a>

@@ -118,7 +118,7 @@
                 <div class="col-md-6 col-lg-3 mb-4">
                     <div class="education-card h-100">
                         <div class="img-wrapper">
-                            <img src="{{ asset('images/hero-2.jpg') }}" class="img-fluid" alt="SMP Nurul Ulum">
+                            <img src="{{ asset('images/unitpendidikan/smp.jpg') }}" class="img-fluid" alt="SMP Nurul Ulum">
                             <span class="akreditasi-badge">Akreditasi B</span>
                         </div>
                         <div class="card-body p-4">
@@ -138,7 +138,7 @@
                 <div class="col-md-6 col-lg-3 mb-4">
                     <div class="education-card h-100">
                         <div class="img-wrapper">
-                            <img src="{{ asset('images/hero-8.jpg') }}" class="img-fluid" alt="SMK Kesehatan">
+                            <img src="{{ asset('images/unitpendidikan/smk.jpg') }}" class="img-fluid" alt="SMK Kesehatan">
                             <div class="overlay-content">
                             </div>
                             <span class="akreditasi-badge">Akreditasi B</span>
@@ -161,7 +161,7 @@
                 <div class="col-md-6 col-lg-3 mb-4">
                     <div class="education-card h-100">
                         <div class="img-wrapper">
-                            <img src="{{ asset('images/tahfidz.jpg') }}" class="img-fluid" alt="Tahfidz Qur'an">
+                            <img src="{{ asset('images/unitpendidikan/tahfidz.jpg') }}" class="img-fluid" alt="Tahfidz Qur'an">
                             <div class="overlay-content">
                             </div>
                         </div>
@@ -182,7 +182,7 @@
                 <div class="col-md-6 col-lg-3 mb-4">
                     <div class="education-card h-100">
                         <div class="img-wrapper">
-                            <img src="{{ asset('images/6.jpg') }}" class="img-fluid" alt="Madrasah Diniyah">
+                            <img src="{{ asset('images/unitpendidikan/madrasahdiniyah.jpg') }}" class="img-fluid" alt="Madrasah Diniyah">
                             <div class="overlay-content">
                             </div>
                         </div>

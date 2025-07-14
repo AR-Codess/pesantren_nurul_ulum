@@ -304,51 +304,58 @@
                                 
                             </div>
                             
-                            <!-- Sidebar -->
-                            <div>
-                                <div class="sticky top-8">
-                                    <div class="bg-gray-50 rounded-lg p-5 shadow-sm mb-8">
-                                        <h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">Berita Terkait</h3>
-                                        
-                                        @if($relatedBerita->count() > 0)
-                                            <div class="space-y-4">
-                                                @foreach($relatedBerita as $item)
-                                                    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                                                        <a href="{{ route('berita.show', ['hashed_id' => $item->hashed_id, 'slug' => Str::slug($item->title)]) }}" class="btn btn-sm btn-outline-success">Baca selengkapnya</a>
-                                                            <div class="h-32 overflow-hidden">
-                                                                <img src="{{ $item->image_url }}" class="w-full h-full object-cover transition duration-300 hover:scale-105" alt="{{ $item->title }}">
-                                                            </div>
-                                                            <div class="p-3">
-                                                                <h5 class="font-medium text-gray-800 hover:text-green-700 line-clamp-2">{{ $item->title }}</h5>
-                                                                <div class="mt-2 flex items-center text-xs text-gray-500">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                                    </svg>
-                                                                    {{ $item->created_at ? $item->created_at->format('d M Y') : date('d M Y') }}
-                                                                </div>
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        @else
-                                            <p class="text-gray-600">Tidak ada berita terkait.</p>
-                                        @endif
-                                        
-                                        <div class="mt-6">
-                                            <a href="{{ route('berita.index') }}" class="inline-block w-full py-2 px-4 bg-green-600 text-white text-center rounded-md hover:bg-green-700 transition">
-                                                <div class="flex items-center justify-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                                    </svg>
-                                                    Lihat Semua Berita
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
+                            {{-- Sidebar --}}
+<div>
+    <div class="sticky top-8">
+        <div class="bg-gray-50 rounded-lg p-5 shadow-sm mb-8">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">Berita Terkait</h3>
+            
+            @if($relatedBerita->count() > 0)
+                <div class="space-y-4">
+                    @foreach($relatedBerita as $item)
+                        {{-- MEMBUNGKUS SELURUH CARD DENGAN <a> --}}
+                        <a href="{{ route('berita.show', ['hashed_id' => $item->hashed_id, 'slug' => Str::slug($item->title)]) }}" class="block bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+                            
+                            {{-- Gambar --}}
+                            <div class="h-32 overflow-hidden">
+                                <img src="{{ $item->image_url }}" class="w-full h-full object-cover transition duration-300 hover:scale-105" alt="{{ $item->title }}">
+                            </div>
+
+                            {{-- Konten Teks & Tombol --}}
+                            <div class="p-3">
+                                <h5 class="font-medium text-gray-800 hover:text-green-700 line-clamp-2 mb-2">{{ $item->title }}</h5>
+                                <div class="flex items-center text-xs text-gray-500 mb-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    {{ $item->created_at ? $item->created_at->format('d M Y') : date('d M Y') }}
+                                </div>
+                                
+                                {{-- TOMBOL "BACA SELENGKAPNYA" DIUBAH MENJADI DIV --}}
+                                <div class="btn btn-sm btn-outline-success mt-2">
+                                    Baca selengkapnya
                                 </div>
                             </div>
-                        </div>
+                        </a>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-gray-600">Tidak ada berita terkait.</p>
+            @endif
+            
+            <div class="mt-6">
+                <a href="{{ route('berita.index') }}" class="inline-block w-full py-2 px-4 bg-green-600 text-white text-center rounded-md hover:bg-green-700 transition">
+                    <div class="flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Lihat Semua Berita
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
                     </div>
                 </div>
             </div>
