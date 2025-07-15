@@ -78,7 +78,7 @@
                             </div>
                             <div class="bg-white rounded-lg p-4 shadow flex flex-col">
                                 <span class="font-medium text-gray-700 mb-1">Status Beasiswa:</span>
-                                <span class="text-gray-900">{{ auth()->user()->is_beasiswa ? 'Penerimas Beasiswa' : 'Bukan Psenerima Beasiswa' }}</span>
+                                <span class="text-gray-900">{{ auth()->user()->is_beasiswa ? 'Penerima Beasiswa' : 'Bukan Penerima Beasiswa' }}</span>
                             </div>
                         </div>
                     </div>
