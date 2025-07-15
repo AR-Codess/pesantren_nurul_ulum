@@ -69,7 +69,7 @@
 
     <div class="container mt-32 mb-10">
         <div class="text-center">
-            <h2 class="mt-4 md:m-0 mb-4 text-success">Profil Pesantren Nurul Ulum</h2>
+            <h2 class="mb-4 text-success">Profil Pesantren Nurul Ulum</h2>
             <p class="mx-auto text-muted" style="max-width: 800px;">Didirikan pada tahun 1994 oleh RKH. Abdullah Abdul Kholiq, Pesantren Nurul Ulum berkomitmen untuk memberikan pendidikan Islam yang komprehensif, menyeimbangkan antara ilmu agama, pengetahuan umum, dan pengembangan karakter untuk menghadapi tantangan zaman.</p>
         </div>
     </div>
