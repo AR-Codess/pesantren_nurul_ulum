@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('detail_pembayaran', function (Blueprint $table) {
             // Mengubah tipe kolom menjadi TEXT
-            $table->text('bukti_pembayaran')->change();
+            $table->text('bukti_pembayaran')->nullable()->change();
         });
     }
 
@@ -18,7 +18,7 @@ return new class extends Migration
     {
         Schema::table('detail_pembayaran', function (Blueprint $table) {
             // Opsi untuk mengembalikan jika diperlukan
-            $table->string('bukti_pembayaran')->change();
+            $table->string('bukti_pembayaran')->nullable()->change();
         });
     }
 };

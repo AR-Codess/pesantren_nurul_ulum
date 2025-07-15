@@ -107,4 +107,28 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', 'Status pembayaran berhasil diperbarui');
     }
+
+    /**
+     * Show admin profile edit form
+     */
+    public function editProfile()
+    {
+        $admin = auth('admin')->user();
+        return view('admin.edit-profile', compact('admin'));
+    }
+
+    /**
+     * Update admin profile (email)
+     */
+    public function updateProfile(Request $request)
+    {
+        $adminUser = auth('admin')->user();
+        $admin = \App\Models\Admin::findOrFail($adminUser->id);
+        $request->validate([
+            'email' => 'required|email|unique:admins,email,' . $admin->id,
+        ]);
+        $admin->email = $request->email;
+        $admin->save();
+        return redirect()->back()->with('success', 'Email berhasil diperbarui');
+    }
 }
