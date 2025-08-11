@@ -34,29 +34,26 @@
                             <select id="user_id" name="user_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                 <option value="">-- Pilih Santri --</option>
                                 @foreach($users as $user)
-                                    <option value="{{ $user->id }}"
-                                            data-spp="{{ $user->classLevel->spp ?? 0 }}"
-                                            data-spp-beasiswa="{{ $user->classLevel->spp_beasiswa ?? 0 }}"
-                                            data-is-beasiswa="{{ $user->is_beasiswa ? 1 : 0 }}"
-                                            data-name="{{ $user->nama_santri }}"
-                                            data-level="{{ $user->classLevel->level ?? 'Tanpa Kelas' }}"
-                                            {{-- MODIFIKASI: Gunakan $selectedData untuk memilih user secara otomatis --}}
-                                            {{ old('user_id', $selectedData['user_id'] ?? null) == $user->id ? 'selected' : '' }}
-                                            @if(!$user->classLevel) disabled @endif>
-                                        {{ $user->nama_santri }} ({{ $user->nis }})
-                                        @if(!$user->classLevel)
-                                            <span class="text-red-600 font-semibold">- (Atur kelas terlebih dahulu)</span>
-                                        @elseif($user->is_beasiswa)
-                                            <span class="text-green-600">- Beasiswa</span>
-                                        @endif
-                                    </option>
+                                <option value="{{ $user->id }}"
+                                    data-spp="{{ $user->spp_bulanan ?? 0 }}"
+                                    data-spp-beasiswa="0"
+                                    data-is-beasiswa="0"
+                                    data-name="{{ $user->nama_santri }}"
+                                    data-level="{{ $user->classLevel->level ?? 'Tanpa Kelas' }}"
+                                    {{ old('user_id', $selectedData['user_id'] ?? null) == $user->id ? 'selected' : '' }}
+                                    @if(!$user->classLevel) disabled @endif>
+                                    {{ $user->nama_santri }} ({{ $user->nis }})
+                                    @if(!$user->classLevel)
+                                    <span class="text-red-600 font-semibold">- (Atur kelas terlebih dahulu)</span>
+                                    @elseif($user->is_beasiswa)
+                                    <span class="text-green-600">- Beasiswa</span>
+                                    @endif
+                                </option>
                                 @endforeach
                             </select>
                         </div>
 
-                        <div id="spp-info" class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md hidden">
-                            {{-- ... bagian info SPP ini tidak perlu diubah ... --}}
-                        </div>
+                        <!-- spp-info dihilangkan sesuai permintaan, tidak perlu render UI ini lagi -->
 
                         <div class="mb-4">
                             <label for="periode_tagihan" class="block text-sm font-medium text-gray-700">Periode Tagihan</label>
@@ -67,22 +64,22 @@
                                         {{-- MODIFIKASI: Gunakan $selectedData untuk memilih bulan secara otomatis --}}
                                         @for ($i = 1; $i <= 12; $i++)
                                             <option value="{{ $i }}" {{ old('periode_bulan', $selectedData['periode_bulan'] ?? null) == $i ? 'selected' : '' }}>
-                                                {{ \Carbon\Carbon::create()->month($i)->isoFormat('MMMM') }}
+                                            {{ \Carbon\Carbon::create()->month($i)->isoFormat('MMMM') }}
                                             </option>
-                                        @endfor
+                                            @endfor
                                     </select>
                                 </div>
                                 <div>
                                     <select id="periode_tahun" name="periode_tahun" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm" required>
                                         <option value="">-- Pilih Tahun --</option>
                                         @php
-                                            $currentYear = date('Y');
-                                            $startYear = $currentYear - 5;
-                                            $endYear = $currentYear + 1;
+                                        $currentYear = date('Y');
+                                        $startYear = $currentYear - 5;
+                                        $endYear = $currentYear + 1;
                                         @endphp
                                         {{-- MODIFIKASI: Gunakan $selectedData untuk memilih tahun secara otomatis --}}
                                         @for($year = $endYear; $year >= $startYear; $year--)
-                                            <option value="{{ $year }}" {{ old('periode_tahun', $selectedData['periode_tahun'] ?? null) == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                        <option value="{{ $year }}" {{ old('periode_tahun', $selectedData['periode_tahun'] ?? null) == $year ? 'selected' : '' }}>{{ $year }}</option>
                                         @endfor
                                     </select>
                                 </div>
@@ -98,7 +95,7 @@
                         </div>
                         <div class="mb-4">
                             <label for="jumlah" class="block text-sm font-medium text-gray-700">Jumlah Pembayaran (Rp)</label>
-                            <input type="number" id="jumlah" name="jumlah_dibayar" value="{{ old('jumlah_dibayar') }}" placeholder="0" required class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                            <input type="number" id="jumlah" name="jumlah_dibayar" value="{{ old('jumlah_dibayar') }}" placeholder="0" required class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" min="1">
                         </div>
 
                         <div class="mb-4">
@@ -136,6 +133,48 @@
     </div>
 
     <script>
+        function validateJumlahPembayaran() {
+            const jumlahInput = document.getElementById('jumlah');
+            const totalTagihanInput = document.getElementById('total_tagihan');
+            const isCicilan = document.getElementById('is_cicilan').checked;
+            const submitBtn = document.getElementById('submit-payment-btn');
+            const jumlah = parseInt(jumlahInput.value);
+            const totalTagihan = parseInt(totalTagihanInput.value);
+
+            // Set max attribute sesuai total tagihan jika bukan cicilan
+            if (!isCicilan && totalTagihan > 0) {
+                jumlahInput.setAttribute('max', totalTagihan);
+            } else {
+                jumlahInput.removeAttribute('max');
+            }
+
+            // Validasi tombol
+            if (!jumlah || jumlah <= 0) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                return;
+            }
+            if (isCicilan) {
+                // Cicilan: boleh kurang dari total tagihan, tapi harus > 0
+                if (jumlah > 0 && jumlah < totalTagihan) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            } else {
+                // Bukan cicilan: harus sama persis dengan total tagihan
+                if (jumlah === totalTagihan && jumlah > 0) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+
         function updateSppInfo(userId) {
             const sppInfoDiv = document.getElementById('spp-info');
             const totalSppSpan = document.getElementById('total-spp');
@@ -178,24 +217,22 @@
                 return;
             }
 
-            // Determine the appropriate SPP amount based on scholarship status
+
+            // Ambil spp_bulanan langsung dari data-spp
             let actualSpp = sppBulanan;
-            if (isBeasiswa) {
-                if (sppBeasiswa && parseInt(sppBeasiswa) > 0) {
-                    actualSpp = sppBeasiswa;
-                } else {
-                    actualSpp = sppBulanan; // Fallback to regular SPP
-                }
-            }
-
-            // Display information
-            totalSppSpan.innerText = `Rp ${parseInt(actualSpp).toLocaleString()}${isBeasiswa ? ' (Beasiswa)' : ''}`;
-            santriNameSpan.innerText = santriName;
-            santriLevelSpan.innerText = santriLevel;
-
-            // Set default values for payment
             totalTagihanInput.value = actualSpp;
             totalTagihanDisplay.value = `Rp ${parseInt(actualSpp).toLocaleString()}`;
+
+            // Display information (jika ada elemen info lain)
+            if (typeof totalSppSpan !== 'undefined' && totalSppSpan) {
+                totalSppSpan.innerText = `Rp ${parseInt(actualSpp).toLocaleString()}`;
+            }
+            if (typeof santriNameSpan !== 'undefined' && santriNameSpan) {
+                santriNameSpan.innerText = santriName;
+            }
+            if (typeof santriLevelSpan !== 'undefined' && santriLevelSpan) {
+                santriLevelSpan.innerText = santriLevel;
+            }
 
             checkPaymentStatus(userId);
 
@@ -212,16 +249,16 @@
             const paymentStatusSpan = document.getElementById('payment-status');
             const paidAmountSpan = document.getElementById('paid-amount');
             const remainingAmountSpan = document.getElementById('remaining-amount');
-            
+
             if (!userId || !periodeBulan || !periodeTahun) return;
-            
+
             // Convert month number to month name for API call
             const monthNames = [
                 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
                 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
             ];
             const monthName = monthNames[periodeBulan - 1];
-            
+
             // Fetch payment data for the selected student and month
             fetch(`/api/check-payment-status/${userId}/${monthName}`)
                 .then(response => response.json())
@@ -231,7 +268,7 @@
                     const sppBeasiswa = selectedOption.getAttribute('data-spp-beasiswa');
                     const isBeasiswa = selectedOption.getAttribute('data-is-beasiswa') === '1';
                     const actualSpp = isBeasiswa && sppBeasiswa && parseInt(sppBeasiswa) > 0 ? sppBeasiswa : sppBulanan;
-                    
+
                     if (data.exists) {
                         // Payment exists for this period
                         if (data.payment.status === 'lunas') {
@@ -247,7 +284,7 @@
                             submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                             paymentStatusSpan.innerHTML = `<span class="px-2 py-1 text-xs text-white bg-yellow-600 rounded">Cicilan</span>`;
                         }
-                        
+
                         if (data.payment.is_cicilan) {
                             paidAmountSpan.innerText = `Rp ${parseInt(data.total_paid).toLocaleString()}`;
                             remainingAmountSpan.innerText = `Rp ${parseInt(data.remaining).toLocaleString()}`;
@@ -275,7 +312,7 @@
                     const sppBeasiswa = selectedOption.getAttribute('data-spp-beasiswa');
                     const isBeasiswa = selectedOption.getAttribute('data-is-beasiswa') === '1';
                     const actualSpp = isBeasiswa && sppBeasiswa && parseInt(sppBeasiswa) > 0 ? sppBeasiswa : sppBulanan;
-                    
+
                     paymentStatusSpan.innerText = 'Belum Dibayar';
                     paidAmountSpan.innerText = 'Rp 0';
                     remainingAmountSpan.innerText = `Rp ${parseInt(actualSpp).toLocaleString()}`;
@@ -295,19 +332,25 @@
             // Event listeners
             document.getElementById('user_id').addEventListener('change', function() {
                 updateSppInfo(this.value);
+                validateJumlahPembayaran();
             });
-            
+
             document.getElementById('periode_bulan').addEventListener('change', function() {
                 if (document.getElementById('user_id').value) {
                     checkPaymentStatus(document.getElementById('user_id').value);
                 }
+                validateJumlahPembayaran();
             });
-            
+
             document.getElementById('periode_tahun').addEventListener('change', function() {
                 if (document.getElementById('user_id').value) {
                     checkPaymentStatus(document.getElementById('user_id').value);
                 }
+                validateJumlahPembayaran();
             });
+
+            document.getElementById('jumlah').addEventListener('input', validateJumlahPembayaran);
+            document.getElementById('is_cicilan').addEventListener('change', validateJumlahPembayaran);
         });
     </script>
 </x-app-layout>
