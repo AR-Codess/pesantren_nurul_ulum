@@ -100,7 +100,7 @@
             <h3 class="text-lg font-bold mb-4">Edit Level Kelas</h3>
             <form id="formEditKelas" method="POST">
                 @csrf
-                <input type="hidden" name="_method" value="POST">
+                <input type="hidden" name="_method" value="PATCH">
                 <div class="mb-4">
                     <label for="edit_level" class="block text-sm font-semibold text-blue-700 mb-1">Level Kelas</label>
                     <input type="text" id="edit_level" name="level" class="border border-blue-300 rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition" required>
@@ -126,9 +126,9 @@
         document.getElementById('modalEditKelas').classList.remove('hidden');
         document.getElementById('edit_level').value = level;
         document.getElementById('edit_spp').value = spp;
-        document.getElementById('edit_spp_beasiswa').value = spp_beasiswa || '';
+        document.getElementById('edit_spp_beasiswa').value = spp_beasiswa !== null && spp_beasiswa !== undefined ? spp_beasiswa : '';
         var form = document.getElementById('formEditKelas');
-        form.action = '/kelola-spp/' + id + '/update';
+        form.action = '/kelola-spp/' + id;
     }
 </script>
 @endsection

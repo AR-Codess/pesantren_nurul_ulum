@@ -294,7 +294,7 @@
                                                 $jumlahPertemuan = \App\Models\Absensi::where('kelas_id', $kelas->id)->distinct('tanggal')->count('tanggal');
                                                 @endphp
                                                 {{ $jumlahPertemuan }}
-                                </td>
+                                            </td>
                                             <td class="py-2 px-4 text-center">
                                                 <button type="button" class="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 text-xs" onclick="document.getElementById('rekap-santri-{{ $kelas->id }}').classList.toggle('hidden')">Lihat Absensi</button>
                                             </td>
@@ -478,7 +478,7 @@
                                         $sppBulanan = $user->classLevel->spp ?? 0;
 
                                         if ($user->is_beasiswa && isset($user->classLevel->spp_beasiswa)) {
-                                            $sppBulanan = $user->classLevel->spp_beasiswa;
+                                        $sppBulanan = $user->classLevel->spp_beasiswa;
                                         }
 
                                         $mulai = \Carbon\Carbon::parse($user->created_at)->startOfMonth();
@@ -486,69 +486,89 @@
                                         $periodeTagihan = \Carbon\CarbonPeriod::create($mulai, '1 month', $selesai);
 
                                         $pembayaranTerdahulu = \App\Models\Pembayaran::with('detailPembayaran')
-                                            ->where('user_id', $user->id)
-                                            ->get()
-                                            ->keyBy(function ($item) {
-                                                return $item->periode_tahun . '-' . $item->periode_bulan;
-                                            });
-                                    @endphp
+                                        ->where('user_id', $user->id)
+                                        ->get()
+                                        ->keyBy(function ($item) {
+                                        return $item->periode_tahun . '-' . $item->periode_bulan;
+                                        });
+                                        @endphp
 
-                                    @forelse ($periodeTagihan as $bulan)
+                                        @forelse ($periodeTagihan as $bulan)
                                         @php
-                                            $key = $bulan->year . '-' . $bulan->month;
-                                            $pembayaran = $pembayaranTerdahulu->get($key);
+                                        $key = $bulan->year . '-' . $bulan->month;
+                                        $pembayaran = $pembayaranTerdahulu->get($key);
                                         @endphp
                                         <tr class="border-b">
                                             <td class="py-3 px-4">{{ $bulan->isoFormat('MMMM YYYY') }}</td>
                                             <td class="py-3 px-4">Rp {{ number_format($sppBulanan, 0, ',', '.') }}</td>
                                             <td class="py-3 px-4">
                                                 @if ($pembayaran && strtolower($pembayaran->status) == 'lunas')
-                                                    <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full font-semibold">Lunas</span>
+                                                <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full font-semibold">Lunas</span>
                                                 @elseif ($pembayaran && strtolower($pembayaran->status) == 'pending')
-                                                    <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full font-semibold">Pending</span>
+                                                <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full font-semibold">Pending</span>
                                                 @else
-                                                    <span class="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full font-semibold">Belum Lunas</span>
+                                                <span class="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full font-semibold">Belum Lunas</span>
                                                 @endif
                                             </td>
                                             <td class="py-3 px-4">
                                                 @if ($pembayaran && strtolower($pembayaran->status) == 'lunas')
-                                                    <a href="{{ route('invoice.download', $pembayaran->id) }}" target="_blank"
-                                                        class="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 text-xs">
-                                                        Download Invoice
-                                                    </a>
+                                                <a href="{{ route('invoice.download', $pembayaran->id) }}" target="_blank"
+                                                    class="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 text-xs">
+                                                    Download Invoice
+                                                </a>
                                                 @else
-                                                    <span>-</span>
+                                                <span>-</span>
                                                 @endif
                                             </td>
                                             <td class="py-3 px-4">
                                                 @if ($pembayaran && strtolower($pembayaran->status) == 'lunas')
-                                                    <span class="px-3 py-1 bg-gray-300 text-gray-600 rounded text-xs cursor-not-allowed">Lunas</span>
+                                                <span class="px-3 py-1 bg-gray-300 text-gray-600 rounded text-xs cursor-not-allowed">Lunas</span>
                                                 @elseif ($pembayaran)
-                                                    <a href="{{ route('pembayaran.pay_midtrans', $pembayaran->id) }}"
-                                                        class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs">
-                                                        Bayar Online
-                                                    </a>
+                                                <a href="#"
+                                                    onclick="showToastPeringatan('Fitur pembayaran online masih dalam tahap pengembangan. Silakan lakukan pembayaran langsung ke admin pondok pesantren.'); return false;"
+                                                    class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs">
+                                                    Bayar Online
+                                                </a>
                                                 @else
-                                                    <a href="{{ route('pembayaran.create_and_pay', ['year' => $bulan->year, 'month' => $bulan->month]) }}"
-                                                        class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs">
-                                                        Buat & Bayar
-                                                    </a>
+                                                <a href="#"
+                                                    onclick="showToastPeringatan(); return false;"
+                                                    class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs">
+                                                    Buat & Bayar
+                                                </a>
+                                                @push('scripts')
+                                                <script>
+                                                    function showToastPeringatan(message = 'Fitur pembayaran online masih dalam tahap pengembangan. Silakan lakukan pembayaran langsung ke admin pondok pesantren.') {
+                                                        let toast = document.getElementById('toast-peringatan');
+                                                        if (!toast) {
+                                                            toast = document.createElement('div');
+                                                            toast.id = 'toast-peringatan';
+                                                            toast.className = 'fixed bottom-6 right-6 bg-yellow-400 text-yellow-900 px-6 py-3 rounded shadow-lg z-50 font-semibold';
+                                                            document.body.appendChild(toast);
+                                                        }
+                                                        toast.innerText = message;
+                                                        toast.style.display = 'block';
+                                                        setTimeout(() => {
+                                                            toast.style.display = 'none';
+                                                        }, 3000);
+                                                    }
+                                                </script>
+                                                @endpush
                                                 @endif
                                             </td>
                                         </tr>
-                                    @empty
+                                        @empty
                                         <tr>
                                             <td colspan="5" class="py-3 px-4 text-center text-gray-500">Belum ada data tagihan.</td>
                                         </tr>
-                                    @endforelse
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
                             <div class="mt-4 text-sm text-white opacity-80">* Mohon melakukan pembayaran sebelum tanggal 20.</div>
                         </div>
 
-                         <!-- Rekap Absensi UI -->
-                         <div class="bg-gradient-to-br from-blue-400 to-green-400 p-6 rounded-xl shadow-lg">
+                        <!-- Rekap Absensi UI -->
+                        <div class="bg-gradient-to-br from-blue-400 to-green-400 p-6 rounded-xl shadow-lg">
                             <div class="flex items-center mb-4">
                                 <svg class="w-8 h-8 text-white mr-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2a4 4 0 018 0v2M12 7a4 4 0 100 8 4 4 0 000-8zm0 0V3m0 8v8m8-8a8 8 0 11-16 0 8 8 0 0116 0z" />
@@ -557,9 +577,9 @@
                             </div>
                             @php
                             $absensiData = \App\Models\Absensi::with('kelas')
-                                ->selectRaw('kelas_id, COUNT(CASE WHEN user_id = ? AND status = "hadir" THEN 1 END) as hadir_count, COUNT(CASE WHEN user_id = ? AND status = "izin" THEN 1 END) as izin_count, COUNT(CASE WHEN user_id = ? AND status = "sakit" THEN 1 END) as sakit_count, COUNT(CASE WHEN user_id = ? AND status = "alpha" THEN 1 END) as alpha_count', [auth()->id(), auth()->id(), auth()->id(), auth()->id()])
-                                ->groupBy('kelas_id')
-                                ->get();
+                            ->selectRaw('kelas_id, COUNT(CASE WHEN user_id = ? AND status = "hadir" THEN 1 END) as hadir_count, COUNT(CASE WHEN user_id = ? AND status = "izin" THEN 1 END) as izin_count, COUNT(CASE WHEN user_id = ? AND status = "sakit" THEN 1 END) as sakit_count, COUNT(CASE WHEN user_id = ? AND status = "alpha" THEN 1 END) as alpha_count', [auth()->id(), auth()->id(), auth()->id(), auth()->id()])
+                            ->groupBy('kelas_id')
+                            ->get();
                             @endphp
                             <div class="overflow-x-auto">
                                 <table class="min-w-full bg-white rounded-lg shadow overflow-hidden">
@@ -586,8 +606,8 @@
                                 </table>
                             </div>
                         </div>
-                        
-                        </div>
+
+                    </div>
                     @endif
                 </div>
             </div>

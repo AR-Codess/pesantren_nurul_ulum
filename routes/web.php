@@ -30,25 +30,25 @@ Route::middleware(['auth:admin', 'role:admin|admin'])->group(function () {
     // CRUD Kelola SPP
     Route::get('/kelola-spp', [KelolaSppController::class, 'index'])->name('kelola-spp');
     Route::post('/kelola-spp', [KelolaSppController::class, 'store'])->name('kelola-spp.store');
-    Route::post('/kelola-spp/{id}/update', [KelolaSppController::class, 'update'])->name('kelola-spp.update');
+    Route::patch('/kelola-spp/{id}', [KelolaSppController::class, 'update'])->name('kelola-spp.update');
     Route::delete('/kelola-spp/{id}', [KelolaSppController::class, 'destroy'])->name('kelola-spp.destroy');
 
     // Rekap Pembayaran routes
     Route::get('/pembayaran/rekap', [PembayaranController::class, 'rekapDashboard'])
-    ->name('pembayaran.rekap');
+        ->name('pembayaran.rekap');
 
     // berita management routes
     Route::resource('/admin/berita', BeritaController::class)->names('admin.berita');
     Route::post('/admin/berita/update-order', [BeritaController::class, 'updateOrder'])->name('admin.berita.update-order');
-    
+
     // Kelas (Class) management routes
     Route::resource('/admin/kelas', KelasController::class)->names('admin.kelas');
     Route::get('/admin/get-santri-by-class/{class_level_id}', [KelasController::class, 'getSantriByClassLevel'])->name('admin.getSantriByClass');
-    
+
     // CKEditor image upload dan browse routes
     Route::post('/ckeditor/upload', [CKEditorController::class, 'upload'])->name('ckeditor.upload');
     Route::get('/ckeditor/browse', [CKEditorController::class, 'browse'])->name('ckeditor.browse');
-    
+
     Route::resource('/users', UserController::class);
     Route::resource('/guru', GuruController::class);
     Route::resource('/pembayaran', PembayaranController::class);
