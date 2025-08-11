@@ -118,9 +118,11 @@ new class extends Component
                         <x-dropdown-link :href="route('profile')" wire:navigate>
                             {{ __('Profile') }}
                         </x-dropdown-link>
+                        @if(Auth::guard('admin')->check())
                         <x-dropdown-link :href="route('admin.profile.edit')" wire:navigate>
                             {{ __('Update Email') }}
                         </x-dropdown-link>
+                        @endif
                         {{-- Jika ingin verifikasi email, tambahkan menu di sini --}}
                         {{-- <x-dropdown-link :href="route('admin.email.verify')" wire:navigate>
                             {{ __('Verifikasi Email') }}
@@ -198,9 +200,11 @@ new class extends Component
                 <x-responsive-nav-link :href="route('profile')" wire:navigate>
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
+                @if(Auth::guard('admin')->check())
                 <x-responsive-nav-link :href="route('admin.profile.edit')" wire:navigate>
                     {{ __('Update Email') }}
                 </x-responsive-nav-link>
+                @endif
                 {{-- Jika ingin verifikasi email, tambahkan menu di sini --}}
                 {{-- <x-responsive-nav-link :href="route('admin.email.verify')" wire:navigate>
                     {{ __('Verifikasi Email') }}
