@@ -201,7 +201,7 @@ new class extends Component
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
                 @if(Auth::guard('admin')->check())
-                <x-responsive-nav-link :href="route('admin.profile.edit')" wire:navigate>
+                <x-responsive-nav-link :href="route('admin.profile.edit')" wire:navigate> 
                     {{ __('Update Email') }}
                 </x-responsive-nav-link>
                 @endif

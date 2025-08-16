@@ -181,8 +181,8 @@
                 <img src="{{ public_path('images/logo.png') }}" alt="Logo Pesantren Nurul Ulum" class="logo-img">
                 <div style="font-size: 24px; font-weight: bold; color: #21503a;">PESANTREN NURUL ULUM</div>
             </div>
-            <p>Jl. Contoh Alamat No. 123, Kota, Provinsi</p>
-            <p>Telp: (021) 12345678 | Email: info@pesantren-nurul-ulum.ac.id</p>
+            <p>Jl. Rs. Prawiro dirjo no.1a, Wirowongso-Ajung-Jember</p>
+            <p>Telp: 082223333841 | Email: Nurululumofficial87@gmail.com</p>
         </div>
         
         @if($remainingBalance == 0)
