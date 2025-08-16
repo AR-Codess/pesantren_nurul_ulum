@@ -34,11 +34,11 @@ class Kelas extends Model
     }
 
     /**
-     * Get the class level (jenjang kelas) this class belongs to.
+     * Get the class levels (jenjang kelas) this class belongs to (many-to-many).
      */
-    public function classLevel(): BelongsTo
+    public function classLevels(): BelongsToMany
     {
-        return $this->belongsTo(ClassLevel::class);
+        return $this->belongsToMany(ClassLevel::class, 'kelas_class_level');
     }
 
     /**

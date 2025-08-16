@@ -96,7 +96,13 @@
                                 <tr class="bg-white border-b hover:bg-gray-50">
                                     <td class="px-6 py-4">{{ $loop->iteration + ($kelas->currentPage() - 1) * $kelas->perPage() }}</td>
                                     <td class="px-6 py-4">{{ $item->mata_pelajaran }}</td>
-                                    <td class="px-6 py-4">{{ $item->classLevel->level ?? '-' }}</td>
+                                    <td class="px-6 py-4">
+                                        @if($item->classLevels && $item->classLevels->count())
+                                        {{ $item->classLevels->pluck('level')->join(', ') }}
+                                        @else
+                                        -
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4">{{ $item->tahun_ajaran }}</td>
                                     <td class="px-6 py-4">{{ $item->jadwal_hari ?? '-' }}</td>
                                     <td class="px-6 py-4">{{ $item->guru->nama_pendidik ?? '-' }}</td>

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('status', 20); // e.g., 'hadir', 'izin', 'sakit', 'alpha'
             $table->timestamps();
-            
+
             // Create a unique constraint to prevent duplicate entries
             $table->unique(['absensi_id', 'user_id']);
         });
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->foreignId('absensi_id')->constrained('absensi')->onDelete('cascade');
             $table->foreignId('guru_id')->constrained('guru')->onDelete('cascade');
             $table->timestamps();
-            
+
             // Create a unique constraint to prevent duplicate entries
             $table->unique(['absensi_id', 'guru_id']);
         });
@@ -38,7 +38,7 @@ return new class extends Migration
         Schema::table('absensi', function (Blueprint $table) {
             // First remove the foreign key constraints
             $table->dropForeign(['guru_id']);
-            
+
             // Then drop the columns
             $table->dropColumn('guru_id');
             $table->dropColumn('status'); // Status will now be in the pivot table
@@ -50,11 +50,17 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Add back the columns to absensi table
+        // Add back the columns to absensi table only if not exists
         Schema::table('absensi', function (Blueprint $table) {
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->foreignId('guru_id')->nullable()->constrained('guru')->onDelete('cascade');
-            $table->string('status', 20)->nullable(); // Add status column back
+            if (!Schema::hasColumn('absensi', 'user_id')) {
+                $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            }
+            if (!Schema::hasColumn('absensi', 'guru_id')) {
+                $table->foreignId('guru_id')->nullable()->constrained('guru')->onDelete('cascade');
+            }
+            if (!Schema::hasColumn('absensi', 'status')) {
+                $table->string('status', 20)->nullable();
+            }
         });
 
         // Drop the pivot tables

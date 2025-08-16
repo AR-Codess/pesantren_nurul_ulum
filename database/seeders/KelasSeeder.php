@@ -13,6 +13,11 @@ class KelasSeeder extends Seeder
      */
     public function run(): void
     {
+        // Bersihkan data lama agar tidak duplikat
+        DB::table('kelas_user')->truncate();
+        DB::table('kelas_class_level')->truncate();
+        DB::table('kelas')->delete();
+
         // Ensure guru and class_level tables have entries
         if (DB::table('guru')->count() == 0) {
             $this->call(GuruSeeder::class);
@@ -22,118 +27,72 @@ class KelasSeeder extends Seeder
             $this->call(ClassLevelSeeder::class);
         }
 
-        // Sample data for kelas (classes)
+        // 6 kelas, beberapa punya lebih dari 1 jenjang
         $kelasData = [
             [
                 'mata_pelajaran' => 'Matematika Dasar',
-                'class_level_id' => 1, // Kelas 1
                 'jadwal_hari' => 'Senin',
                 'tahun_ajaran' => '2025/2026',
-                'guru_id' => 1, // KH. Abdullah Hakim
+                'guru_id' => 1,
+                'class_levels' => [1, 2], // multi jenjang
             ],
             [
                 'mata_pelajaran' => 'Bahasa Arab',
-                'class_level_id' => 1, // Kelas 1
                 'jadwal_hari' => 'Selasa',
                 'tahun_ajaran' => '2025/2026',
-                'guru_id' => 2, // Ustadz Muhammad Yusuf
+                'guru_id' => 2,
+                'class_levels' => [1],
             ],
             [
                 'mata_pelajaran' => 'Fiqih',
-                'class_level_id' => 2, // Kelas 2
-                'jadwal_hari' => 'Senin',
+                'jadwal_hari' => 'Rabu',
                 'tahun_ajaran' => '2025/2026',
-                'guru_id' => 3, // Ustadzah Siti Aminah
+                'guru_id' => 3,
+                'class_levels' => [2, 3], // multi jenjang
             ],
             [
                 'mata_pelajaran' => 'Tahfidz Al-Quran',
-                'class_level_id' => 2, // Kelas 2
-                'jadwal_hari' => 'Rabu',
+                'jadwal_hari' => 'Kamis',
                 'tahun_ajaran' => '2025/2026',
-                'guru_id' => 4, // Ustadz Ahmad Husaini
+                'guru_id' => 4,
+                'class_levels' => [3],
             ],
             [
                 'mata_pelajaran' => 'Hadits',
-                'class_level_id' => 3, // Kelas 3
-                'jadwal_hari' => 'Kamis',
+                'jadwal_hari' => 'Jumat',
                 'tahun_ajaran' => '2025/2026',
-                'guru_id' => 5, // Ustadzah Fatimah Zahra
+                'guru_id' => 5,
+                'class_levels' => [4, 5], // multi jenjang
             ],
             [
                 'mata_pelajaran' => 'Akidah Akhlak',
-                'class_level_id' => 3, // Kelas 3
                 'jadwal_hari' => 'Sabtu',
                 'tahun_ajaran' => '2025/2026',
-                'guru_id' => 1, // KH. Abdullah Hakim
-            ],
-            [
-                'mata_pelajaran' => 'Matematika Lanjutan',
-                'class_level_id' => 4, // Kelas 4
-                'jadwal_hari' => 'Minggu',
-                'tahun_ajaran' => '2025/2026',
-                'guru_id' => 2, // Ustadz Muhammad Yusuf
-            ],
-            [
-                'mata_pelajaran' => 'Bahasa Inggris',
-                'class_level_id' => 4, // Kelas 4
-                'jadwal_hari' => 'Kamis',
-                'tahun_ajaran' => '2025/2026',
-                'guru_id' => 3, // Ustadzah Siti Aminah
-            ],
-            [
-                'mata_pelajaran' => 'Tafsir Al-Quran',
-                'class_level_id' => 5, // Kelas 5
-                'jadwal_hari' => 'Sabtu',
-                'tahun_ajaran' => '2025/2026',
-                'guru_id' => 4, // Ustadz Ahmad Husaini
-            ],
-            [
-                'mata_pelajaran' => 'Sejarah Islam',
-                'class_level_id' => 6, // Kelas 6
-                'jadwal_hari' => 'Rabu',
-                'tahun_ajaran' => '2025/2026',
-                'guru_id' => 5, // Ustadzah Fatimah Zahra
+                'guru_id' => 1,
+                'class_levels' => [6],
             ],
         ];
 
-        // Create kelas records
+        // Create kelas records and sync class levels
         foreach ($kelasData as $data) {
-            Kelas::create($data);
+            $classLevels = $data['class_levels'];
+            unset($data['class_levels']);
+            $kelas = Kelas::create($data);
+            $kelas->classLevels()->sync($classLevels);
         }
-        
-        // Assign users to classes
-        // We'll assign users of each class level to the appropriate classes
-        for ($classLevel = 1; $classLevel <= 6; $classLevel++) {
-            // Get users in this class level
-            $userIds = DB::table('users')
-                ->where('class_level_id', $classLevel)
-                ->pluck('id')
-                ->toArray();
-                
-            // Get classes for this level
-            $kelasIds = DB::table('kelas')
-                ->where('class_level_id', $classLevel)
-                ->pluck('id')
-                ->toArray();
-                
-            // Assign each user to all classes in their level
-            foreach ($userIds as $userId) {
-                foreach ($kelasIds as $kelasId) {
-                    // Check if this relationship already exists
-                    $exists = DB::table('kelas_user')
-                        ->where('user_id', $userId)
-                        ->where('kelas_id', $kelasId)
-                        ->exists();
-                        
-                    if (!$exists) {
-                        DB::table('kelas_user')->insert([
-                            'user_id' => $userId,
-                            'kelas_id' => $kelasId,
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ]);
-                    }
-                }
+
+        // Assign users to classes: setiap kelas dapat santri sesuai jenjang
+        foreach ($kelasData as $data) {
+            $classLevels = $data['class_levels'];
+            $kelas = Kelas::where('mata_pelajaran', $data['mata_pelajaran'])
+                ->where('jadwal_hari', $data['jadwal_hari'])
+                ->first();
+            if ($kelas) {
+                $userIds = DB::table('users')
+                    ->whereIn('class_level_id', $classLevels)
+                    ->pluck('id')
+                    ->toArray();
+                $kelas->users()->sync($userIds);
             }
         }
     }

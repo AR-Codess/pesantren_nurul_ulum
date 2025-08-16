@@ -44,6 +44,7 @@ Route::middleware(['auth:admin', 'role:admin|admin'])->group(function () {
     // Kelas (Class) management routes
     Route::resource('/admin/kelas', KelasController::class)->names('admin.kelas');
     Route::get('/admin/get-santri-by-class/{class_level_id}', [KelasController::class, 'getSantriByClassLevel'])->name('admin.getSantriByClass');
+    Route::get('/admin/get-santri-by-class-multi', [KelasController::class, 'getSantriByClassMulti'])->name('admin.getSantriByClassMulti');
 
     // CKEditor image upload dan browse routes
     Route::post('/ckeditor/upload', [CKEditorController::class, 'upload'])->name('ckeditor.upload');

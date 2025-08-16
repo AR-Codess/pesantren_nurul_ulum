@@ -13,6 +13,19 @@ use Illuminate\Support\Facades\Validator;
 class KelasController extends Controller
 {
     /**
+     * Mengambil data santri berdasarkan banyak Jenjang Kelas untuk request AJAX.
+     */
+    public function getSantriByClassMulti(Request $request)
+    {
+        $ids = $request->input('class_level_ids');
+        $idArray = array_filter(explode(',', $ids));
+        $santri = \App\Models\User::role('user')
+            ->whereIn('class_level_id', $idArray)
+            ->orderBy('nama_santri')
+            ->get(['id', 'nis', 'nama_santri']);
+        return response()->json($santri);
+    }
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
@@ -23,7 +36,7 @@ class KelasController extends Controller
         $guruFilter = $request->input('guru_id');
         $mataPelajaranFilter = $request->input('mata_pelajaran');
 
-        $kelas = Kelas::with(['guru', 'classLevel'])
+        $kelas = Kelas::with(['guru', 'classLevels'])
             ->withCount('users')
             ->when($search, function ($query, $search) {
                 return $query->where('mata_pelajaran', 'like', '%' . $search . '%')
@@ -72,7 +85,8 @@ class KelasController extends Controller
             'mata_pelajaran' => 'required|string|max:255',
             'tahun_ajaran' => 'required|string|max:9', // Format: 2024/2025
             'guru_id' => 'required|exists:guru,id',
-            'class_level_id' => 'required|exists:class_level,id',
+            'class_level_id' => 'required|array|min:1',
+            'class_level_id.*' => 'exists:class_level,id',
             'jadwal_hari' => 'required|string|max:20',
             'users' => 'sometimes|array',
             'users.*' => 'exists:users,id'
@@ -99,9 +113,11 @@ class KelasController extends Controller
             'mata_pelajaran' => $validatedData['mata_pelajaran'],
             'tahun_ajaran' => $validatedData['tahun_ajaran'],
             'guru_id' => $validatedData['guru_id'],
-            'class_level_id' => $validatedData['class_level_id'],
             'jadwal_hari' => $validatedData['jadwal_hari'],
         ]);
+
+        // Attach jenjang kelas (many-to-many)
+        $kelas->classLevels()->attach($validatedData['class_level_id']);
 
         // Add students to the class if selected
         if (isset($validatedData['users'])) {
@@ -117,7 +133,7 @@ class KelasController extends Controller
      */
     public function show(Kelas $kela)
     {
-        $kela->load(['guru', 'classLevel', 'users']);
+        $kela->load(['guru', 'classLevels', 'users']);
 
         return view('admin.kelas.show', compact('kela'));
     }
@@ -131,7 +147,7 @@ class KelasController extends Controller
         $classLevels = ClassLevel::orderBy('level')->get();
 
         // Get all students (users with role 'user')
-        $users = User::with('classLevel')->get(); 
+        $users = User::with('classLevel')->get();
 
         // Get IDs of students already in this class
         $selectedUserIds = $kela->users->pluck('id')->toArray();
@@ -176,11 +192,16 @@ class KelasController extends Controller
             'mata_pelajaran' => $validatedData['mata_pelajaran'],
             'tahun_ajaran' => $validatedData['tahun_ajaran'],
             'guru_id' => $validatedData['guru_id'],
-            'class_level_id' => $validatedData['class_level_id'],
             'jadwal_hari' => $validatedData['jadwal_hari'],
         ]);
 
         // Update the students in this class
+        // Update the class levels (jenjang kelas) for this class
+        if (isset($validatedData['class_level_id'])) {
+            $kela->classLevels()->sync($validatedData['class_level_id']);
+        } else {
+            $kela->classLevels()->sync([]);
+        }
         if (isset($validatedData['users'])) {
             $kela->users()->sync($validatedData['users']);
         } else {
@@ -193,15 +214,15 @@ class KelasController extends Controller
     }
 
     /**
-    * Mengambil data santri berdasarkan Jenjang Kelas untuk request AJAX.
-    */
+     * Mengambil data santri berdasarkan Jenjang Kelas untuk request AJAX.
+     */
     public function getSantriByClassLevel($class_level_id)
     {
         // Cari santri (user dengan role 'user') yang sesuai dengan class_level_id
         $santri = \App\Models\User::role('user')
-                        ->where('class_level_id', $class_level_id)
-                        ->orderBy('nama_santri')
-                        ->get(['id', 'nis', 'nama_santri']);
+            ->where('class_level_id', $class_level_id)
+            ->orderBy('nama_santri')
+            ->get(['id', 'nis', 'nama_santri']);
 
         // Kembalikan data dalam format JSON
         return response()->json($santri);
