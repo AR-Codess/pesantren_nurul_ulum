@@ -18,6 +18,11 @@
                                 Edit
                             </a>
                         </div>
+                        <div>
+                            <a href="{{ route('rekap.kumulatif.pdf', $kela->id) }}" target="_blank" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                Download Rekap Absensi PDF
+                            </a>
+                        </div>
                     </div>
 
                     <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">

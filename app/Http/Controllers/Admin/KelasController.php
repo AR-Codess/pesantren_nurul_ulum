@@ -43,7 +43,9 @@ class KelasController extends Controller
                     ->orWhere('tahun_ajaran', 'like', '%' . $search . '%');
             })
             ->when($classLevelFilter, function ($query, $classLevelFilter) {
-                return $query->where('class_level_id', $classLevelFilter);
+                return $query->whereHas('classLevels', function ($q) use ($classLevelFilter) {
+                    $q->where('class_level.id', $classLevelFilter);
+                });
             })
             ->when($guruFilter, function ($query, $guruFilter) {
                 return $query->where('guru_id', $guruFilter);

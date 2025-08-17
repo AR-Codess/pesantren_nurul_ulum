@@ -632,4 +632,5 @@
         </div>
     </div>
     @endsection
+    @stack('scripts')
 </x-app-layout>
