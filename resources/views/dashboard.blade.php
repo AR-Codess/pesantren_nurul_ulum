@@ -131,6 +131,7 @@
                                 <thead class="bg-blue-100">
                                     <tr>
                                         <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Nama Kelas</th>
+                                        <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Jenjang Kelas</th>
                                         <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Hari</th>
                                         <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Jumlah Murid</th>
                                         <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Aksi</th>
@@ -159,7 +160,14 @@
                                     ->exists();
                                     @endphp
                                     <tr class="border-b">
-                                        <td class="py-2 px-4">{{ $kelas->nama_kelas ?? $kelas->mata_pelajaran }} - {{ optional($kelas->classLevel)->level ?? '-' }} </td>
+                                        <td class="py-2 px-4">{{ $kelas->nama_kelas ?? $kelas->mata_pelajaran }}</td>
+                                        <td class="py-2 px-4">
+                                            @if($kelas->classLevels && $kelas->classLevels->count())
+                                            {{ $kelas->classLevels->pluck('level')->join(', ') }}
+                                            @else
+                                            -
+                                            @endif
+                                        </td>
                                         <td class="py-2 px-4">{{ $kelas->jadwal_hari ?? '-' }}</td>
                                         <td class="py-2 px-4">{{ $kelas->users()->count() }}</td>
                                         <td class="py-2 px-4">
@@ -231,12 +239,12 @@
                                     @php
                                     $kelasObj = $row['kelas'];
                                     $namaKelas = $kelasObj ? ($kelasObj->nama_kelas ?? $kelasObj->mata_pelajaran) : '-';
-                                    $level = $kelasObj && isset($kelasObj->classLevel) ? optional($kelasObj->classLevel)->level : '-';
+                                    $jenjang = $kelasObj && $kelasObj->classLevels && $kelasObj->classLevels->count() ? $kelasObj->classLevels->pluck('level')->join(', ') : '-';
                                     $jumlahSantri = $kelasObj ? $kelasObj->users()->count() : '-';
                                     @endphp
                                     <tr class="border-b hover:bg-green-50 transition-all">
                                         <td class="py-2 px-4">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->translatedFormat('d F Y') }}</td>
-                                        <td class="py-2 px-4">{{ $namaKelas }} - {{ $level }}</td>
+                                        <td class="py-2 px-4">{{ $namaKelas }} - {{ $jenjang }}</td>
                                         <td class="py-2 px-4">{{ $jumlahSantri }}</td>
                                         <td class="py-2 px-4 text-center font-semibold text-green-700">{{ $row['hadir'] }}</td>
                                         <td class="py-2 px-4 text-center font-semibold text-yellow-700">{{ $row['izin'] }}</td>
@@ -278,8 +286,8 @@
                                     <thead class="bg-indigo-100">
                                         <tr>
                                             <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Nama Kelas</th>
-                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Level</th>
-                                            <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Jumlah Pertemuan</th>
+                                            <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700">Jenjang Kelas</th>
+                                            <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Jumlah Pertemuan</th>
                                             <th class="py-2 px-4 text-center text-sm font-semibold text-gray-700">Aksi</th>
                                         </tr>
                                     </thead>
@@ -287,7 +295,13 @@
                                         @forelse($kelasListAll as $kelas)
                                         <tr class="border-b hover:bg-indigo-50 transition-all">
                                             <td class="py-2 px-4">{{ $kelas->nama_kelas ?? $kelas->mata_pelajaran }}</td>
-                                            <td class="py-2 px-4">{{ optional($kelas->classLevel)->level ?? '-' }}</td>
+                                            <td class="py-2 px-4">
+                                                @if($kelas->classLevels && $kelas->classLevels->count())
+                                                {{ $kelas->classLevels->pluck('level')->join(', ') }}
+                                                @else
+                                                -
+                                                @endif
+                                            </td>
                                             <td class="py-2 px-4 text-center font-semibold text-indigo-700">
                                                 @php
                                                 // Hitung jumlah pertemuan (jumlah tanggal unik absensi kelas ini)
@@ -297,6 +311,9 @@
                                             </td>
                                             <td class="py-2 px-4 text-center">
                                                 <button type="button" class="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 text-xs" onclick="document.getElementById('rekap-santri-{{ $kelas->id }}').classList.toggle('hidden')">Lihat Absensi</button>
+                                                <a href="{{ route('rekap.kumulatif.pdf', $kelas->id) }}" target="_blank" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs ml-2">
+                                                    Download PDF
+                                                </a>
                                             </td>
                                         </tr>
                                         <tr id="rekap-santri-{{ $kelas->id }}" class="hidden">
@@ -310,6 +327,7 @@
                                                                 <th class="py-1 px-2 text-center">Izin</th>
                                                                 <th class="py-1 px-2 text-center">Sakit</th>
                                                                 <th class="py-1 px-2 text-center">Alpha</th>
+                                                                <th class="py-1 px-2 text-center">Aksi</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -388,7 +406,7 @@
                                     $first = $absensiGroup->first();
                                     $kelasObj = $kelasMap[$first->kelas_id] ?? null;
                                     $namaKelas = $kelasObj ? ($kelasObj->nama_kelas ?? $kelasObj->mata_pelajaran) : '-';
-                                    $level = $kelasObj && isset($kelasObj->classLevel) ? optional($kelasObj->classLevel)->level : '-';
+                                    $jenjang = $kelasObj && $kelasObj->classLevels && $kelasObj->classLevels->count() ? $kelasObj->classLevels->pluck('level')->join(', ') : '-';
                                     $jumlahSantri = $kelasObj ? $kelasObj->users()->count() : '-';
                                     $tanggal = $first->tanggal;
                                     $hadir = $absensiGroup->where('status', 'hadir')->count();
@@ -398,7 +416,7 @@
                                     @endphp
                                     <tr class="border-b hover:bg-blue-50 transition-all">
                                         <td class="py-2 px-4">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->translatedFormat('d F Y') }}</td>
-                                        <td class="py-2 px-4">{{ $namaKelas }} - {{ $level }}</td>
+                                        <td class="py-2 px-4">{{ $namaKelas }} - {{ $jenjang }}</td>
                                         <td class="py-2 px-4">{{ $jumlahSantri }}</td>
                                         <td class="py-2 px-4 text-center font-semibold text-green-700">{{ $hadir }}</td>
                                         <td class="py-2 px-4 text-center font-semibold text-yellow-700">{{ $izin }}</td>

@@ -88,7 +88,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Pembayaran::class);
     }
-    
+
     /**
      * Get the class level that the santri belongs to.
      */

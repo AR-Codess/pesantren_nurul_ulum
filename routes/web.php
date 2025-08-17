@@ -69,8 +69,9 @@ Route::middleware(['auth:web', 'role:user|web'])->group(function () {
 });
 
 // Export Absensi (PDF/Excel) - akses untuk admin dan guru
-Route::middleware(['auth:admin,guru', 'role:admin|admin,guru|guru'])->group(function () {
+Route::middleware(['auth:web,admin,guru'])->group(function () {
     Route::get('/absensi/export/{format}', [AbsensiController::class, 'export'])->name('absensi.export');
+    Route::get('/rekap-absensi/kumulatif/{kelas}', [\App\Http\Controllers\RekapAbsensiController::class, 'downloadKumulatif'])->name('rekap.kumulatif.pdf');
 });
 
 // Dashboard route accessible by any authenticated user

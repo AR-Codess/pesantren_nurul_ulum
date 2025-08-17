@@ -54,7 +54,7 @@
                                         <th class="px-4 py-3">No</th>
                                         <th class="px-4 py-3">NIS</th>
                                         <th class="px-4 py-3">Nama Santri</th>
-                                        <th class="px-4 py-3">Tempat, Tgl Lahir</th>
+                                        <th class="px-4 py-3">Jenjang Kelas</th>
                                         <th class="px-4 py-3 text-center">Hadir</th>
                                         <th class="px-4 py-3 text-center">Izin</th>
                                         <th class="px-4 py-3 text-center">Sakit</th>
@@ -68,29 +68,7 @@
                                         <td class="px-4 py-3">{{ $murid->nis ?? '-' }}</td>
                                         <td class="px-4 py-3 font-medium">{{ $murid->nama_santri ?? $murid->name }}</td>
                                         <td class="px-4 py-3">
-                                            {{ $murid->tempat_lahir ?? '-' }},
-                                            @php
-                                            $bulanIndo = [
-                                            1 => 'Januari',
-                                            2 => 'Februari',
-                                            3 => 'Maret',
-                                            4 => 'April',
-                                            5 => 'Mei',
-                                            6 => 'Juni',
-                                            7 => 'Juli',
-                                            8 => 'Agustus',
-                                            9 => 'September',
-                                            10 => 'Oktober',
-                                            11 => 'November',
-                                            12 => 'Desember',
-                                            ];
-                                            $tgl = $murid->tanggal_lahir ? (is_string($murid->tanggal_lahir) ? \Carbon\Carbon::parse($murid->tanggal_lahir) : $murid->tanggal_lahir) : null;
-                                            @endphp
-                                            @if($tgl)
-                                            {{ $tgl->format('d') }} {{ $bulanIndo[(int)$tgl->format('m')] }} {{ $tgl->format('Y') }}
-                                            @else
-                                            -
-                                            @endif
+                                            {{ $murid->classLevel->level ?? '-' }}
                                         </td>
                                         <td class="px-4 py-3 text-center">
                                             <input type="radio" name="absensi[{{ $murid->id }}][status]" value="hadir" checked required>
